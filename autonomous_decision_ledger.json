@@ -1,0 +1,47 @@
+[
+  {
+    "timestamp": "2026-11-03 08:26:55",
+    "worker_agent": "agent-auditor",
+    "worker_question": "Đã chạy kiểm định tự động toàn hệ thống, có cần in log code kiểm thử ra màn hình không?",
+    "ceo_decision": "CẤM TUYỆT ĐỐI hiển thị code cho chủ nhân. Chỉ các Agent mới xem code với nhau ở hậu trường. Đối với chủ nhân, chỉ trình bày Sản phẩm cuối cùng, Hình ảnh/Video xem trước và Đường link mở trực tiếp.",
+    "matched_rule": "Giao diện & Báo cáo (Zero-Code)",
+    "confidence": "99%",
+    "escalated_to_boss": false
+  },
+  {
+    "timestamp": "2026-11-03 08:25:44",
+    "worker_agent": "agent-auditor",
+    "worker_question": "Đã chạy kiểm định tự động toàn hệ thống, có cần in log code kiểm thử ra màn hình không?",
+    "ceo_decision": "CẤM TUYỆT ĐỐI hiển thị code cho chủ nhân. Chỉ các Agent mới xem code với nhau ở hậu trường. Đối với chủ nhân, chỉ trình bày Sản phẩm cuối cùng, Hình ảnh/Video xem trước và Đường link mở trực tiếp.",
+    "matched_rule": "Giao diện & Báo cáo (Zero-Code)",
+    "confidence": "99%",
+    "escalated_to_boss": false
+  },
+  {
+    "timestamp": "2026-11-03 08:21:10",
+    "worker_agent": "flow-video-director",
+    "worker_question": "Có cần xuất log chi tiết và mã code Python xử lý đồ thị Node ra màn hình cho chủ nhân xem không?",
+    "ceo_decision": "TUYỆT ĐỐI KHÔNG. Cắt bỏ 100% code và log kỹ thuật. Chỉ trả về file video MP4 1080p/4K đã đóng dấu thương hiệu và đường dẫn mở nhanh.",
+    "matched_rule": "Zero-Code Executive Filter (Luật Số 1)",
+    "confidence": "99%",
+    "escalated_to_boss": false
+  },
+  {
+    "timestamp": "2026-11-03 08:21:10",
+    "worker_agent": "viral-video-editor",
+    "worker_question": "Chọn giọng đọc miền Nam nào và mức âm lượng nhạc nền bao nhiêu cho video 3 Hồi?",
+    "ceo_decision": "Dùng giọng miền Nam 'Leda tuỳ chỉnh' (hoặc vi-VN-HoaiMyNeural), chèn SFX ngay sau câu nhấn nhá và ép nhạc nền Auto-Ducking -14dB.",
+    "matched_rule": "Tiêu chuẩn Âm thanh & Giọng đọc Miền Nam",
+    "confidence": "98%",
+    "escalated_to_boss": false
+  },
+  {
+    "timestamp": "2026-11-03 08:21:10",
+    "worker_agent": "fb-viral-scout",
+    "worker_question": "Người dùng gửi link Facebook mới, nên mở bằng Chrome Profile nào và gõ bình luận bằng hàm gì?",
+    "ceo_decision": "Bắt buộc 100% mở trên Profile 4 (khakhunghiep@gmail.com) qua 5 Lớp Stealth. Cấm tuyệt đối hàm .fill(), phải gõ từng phím sinh học LexicalHumanTyper.",
+    "matched_rule": "Luật Bất Di Bất Dịch Khi Có Link Facebook",
+    "confidence": "100%",
+    "escalated_to_boss": false
+  }
+]

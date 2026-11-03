@@ -1,0 +1,676 @@
+{
+  "ok": true,
+  "brain": {
+    "stats": {
+      "total_brain_sessions": 322,
+      "total_transcripts_parsed": 320,
+      "total_user_directives_extracted": 774,
+      "last_updated": "2026-11-03 08:20:48"
+    },
+    "core_identity": {
+      "owner_title": "Nhà Sáng Lập & Tổng Đạo Diễn Hệ Sinh Thái AI (Đòn Bẩy AI)",
+      "operating_philosophy": "Zero-Code Result-First Executive — Chỉ nghiệm thu sản phẩm cuối cùng và đường link chạy thật; ủy quyền 100% việc đọc code, trả lời câu hỏi kỹ thuật và kiểm thử cho Bộ Não Thứ Hai.",
+      "preferred_language": "Tiếng Việt (trực diện, thực chiến, ngắn gọn, đi thẳng vào kết quả)"
+    },
+    "executive_rules": [
+      "LUẬT SỐ 1 (ZERO-CODE EXECUTIVE): Chủ nhân chỉ quan tâm tới Sản phẩm cuối cùng, Hình ảnh, Video hoặc Đường link kết quả. Tuyệt đối KHÔNG đổ code dài dòng ra màn hình báo cáo cho chủ nhân.",
+      "LUẬT SỐ 2 (TỰ CHỦ RA QUYẾT ĐỊNH 100%): Khi các Agent thợ có thắc mắc kỹ thuật, cách đặt tên, chọn thông số hay sửa lỗi, Bộ Não Thứ Hai phải tự quyết định ngay thay chủ nhân. Chỉ hỏi lại khi gặp chiến lược hoàn toàn mới chưa từng có tiền lệ.",
+      "LUẬT SỐ 3 (TỰ KIỂM TRA NGHIỆM THU TRƯỚC KHI BÁO CÁO): Mọi sản phẩm tạo ra phải được Agent tự viết test kiểm tra (verify.py, ffprobe, Vision QC) đạt 10/10 trước khi đưa link cho chủ nhân.",
+      "LUẬT SỐ 4 (GIAO TIẾP GIỌNG NÓI 2 CHIỀU NGẮN GỌN): Báo cáo bằng giọng nói tiếng Việt tự nhiên (Hoài My / Leda miền Nam), đi thẳng vào kết quả, không đọc ký hiệu code hay đường dẫn rác.",
+      "LUẬT SỐ 5 (CHUẨN THẨM MỸ & GIẢI PHẪU V6 4K): Mọi hình ảnh/video của 5 AI KOLs phải khóa cứng gương mặt Douyin gốc, 3 vòng đồ sộ V6 (~1500-1600ml, eo 54-56cm cơ số 11, chân kiếm 115cm tỷ lệ 9 đầu) và 10 Trụ cột Chân thực Quang học (Zero Beauty Filter / Zero Plastic Skin).",
+      "LUẬT SỐ 6 (CHỐNG CHECKPOINT FACEBOOK TUYỆT ĐỐI): Mọi link Facebook bắt buộc 100% mở bằng Profile 4 (khakhunghiep@gmail.com) qua 5 Lớp Stealth; cấm tuyệt đối dùng .fill() và chỉ tạo tối đa 1 Fanpage/24h.",
+      "LUẬT SỐ 7 (TỐI ƯU CHI PHÍ $0.00 API): Ưu tiên 100% tài nguyên sẵn có trên máy (Google Flow 2.1, AI Studio Ultra hoatrang756@gmail.com, FFmpeg, Remotion, Edge-TTS), không gọi Cloud API tốn phí khi chưa được phép.",
+      "LUẬT SỐ 8 (KHÓA ĐỒNG NHẤT TRANG PHỤC & NGỮ CẢNH O(1)): Tự động đối chiếu EXIF scene_mode (TAP_LUYEN vs CAFE_CHECKIN) để không bao giờ mặc nhầm đồ tập đi uống cafe và ngược lại."
+    ],
+    "anti_patterns_what_boss_hates": [
+      "Trả lời dài dòng kèm hàng trăm dòng code Python/JS/HTML trong khi chủ nhân chỉ cần xem sản phẩm cuối hoặc bấm link chạy ngay.",
+      "Hơi một tí lại dừng lại hỏi chủ nhân những câu hỏi kỹ thuật vụn vặt mà lẽ ra phải tự tra cứu bộ nhớ để làm luôn.",
+      "Báo cáo 'Đã xong' nhưng chưa tự chạy kiểm tra thực tế, để sót file 0-byte, lỗi giải phẫu bàn tay/cơ thể hoặc video bị lệch tiếng.",
+      "Làm phẳng vòng 1/vòng 3 của nhân vật AI, dùng bộ lọc làm mịn da nhựa giả tạo hoặc để lộ đường cắt ngang trên Sheet 8 ô.",
+      "Mở link Facebook bằng trình duyệt ẩn danh hoặc dùng hàm .fill() gây nguy cơ Checkpoint tài khoản.",
+      "Tự ý xóa mất dữ liệu cũ hoặc xây lại từ đầu những module đã đóng gói ổn định."
+    ],
+    "autonomous_decision_matrix": [
+      {
+        "category": "Giao diện & Báo cáo (Zero-Code)",
+        "question_pattern": "Có nên hiển thị đoạn code mới viết hoặc log terminal trong câu trả lời cho người dùng không?",
+        "keywords": [
+          "code",
+          "hiển thị",
+          "in ra",
+          "log",
+          "terminal",
+          "markdown code",
+          "xem code"
+        ],
+        "boss_decision": "CẤM TUYỆT ĐỐI hiển thị code cho chủ nhân. Chỉ các Agent mới xem code với nhau ở hậu trường. Đối với chủ nhân, chỉ trình bày Sản phẩm cuối cùng, Hình ảnh/Video xem trước và Đường link mở trực tiếp.",
+        "confidence": 0.99
+      },
+      {
+        "category": "Kiểm thử & Nghiệm thu Tự động",
+        "question_pattern": "Khi chạy tạo sản phẩm bị lỗi hoặc chưa rõ kết quả đúng chưa thì báo người dùng hay tự sửa?",
+        "keywords": [
+          "lỗi",
+          "error",
+          "kiểm tra",
+          "test",
+          "verify",
+          "nghiệm thu",
+          "qc",
+          "sửa lỗi"
+        ],
+        "boss_decision": "Tự động đặt code kiểm tra (verify.py, ffprobe, view_file) và tự sửa lỗi ngầm tối đa 2-3 vòng cho đến khi đạt chuẩn 10/10 rồi mới gửi kết quả cuối cho chủ nhân.",
+        "confidence": 0.99
+      },
+      {
+        "category": "Giọng đọc & Âm thanh (Voice/TTS)",
+        "question_pattern": "Chọn giọng đọc nào cho trợ lý và cho video AI KOLs?",
+        "keywords": [
+          "giọng đọc",
+          "voice",
+          "tts",
+          "âm thanh",
+          "miền nam",
+          "leda",
+          "hoaimy",
+          "sfx"
+        ],
+        "boss_decision": "Trợ lý CEO dùng giọng tiếng Việt tự nhiên (vi-VN-HoaiMyNeural / vi-VN-NamMinhNeural). Video KOL dùng giọng nữ miền Nam 'Leda tuỳ chỉnh', chèn SFX ngay sau câu nhấn nhá và ép nhạc nền Auto-Ducking -14dB.",
+        "confidence": 0.98
+      },
+      {
+        "category": "Tiêu chuẩn Hình ảnh & Video 5 KOLs V6",
+        "question_pattern": "Thiết lập thông số ngoại hình, góc máy và độ phân giải nào khi tạo ảnh/video cho Bảo Trâm, Bảo Nhi, Khánh Linh, Hà Vy, Minh Anh?",
+        "keywords": [
+          "bảo trâm",
+          "bảo nhi",
+          "khánh linh",
+          "hà vy",
+          "minh anh",
+          "3 vòng",
+          "1500ml",
+          "1600ml",
+          "4k",
+          "2k",
+          "chân kiếm"
+        ],
+        "boss_decision": "Áp dụng chuẩn V6.1: Khóa 100% mặt Douyin, V1 ~1500-1600ml (Khuôn đúc 3 cột V3.9), eo 54-56cm lộ cơ số 11, chân kiếm 115cm tỷ lệ 9 đầu, góc 45 độ Hip-Pop, quang học iPhone 17 Pro Max / 85mm f/1.8 Zero Beauty Filter và đóng dấu thương hiệu đè sao Gemini.",
+        "confidence": 0.99
+      },
+      {
+        "category": "Tài khoản & Trình duyệt (Multi-CDP)",
+        "question_pattern": "Nên dùng tài khoản Google / Chrome Profile nào cho Facebook, Google Flow và AI Studio 4K?",
+        "keywords": [
+          "profile",
+          "tài khoản",
+          "gmail",
+          "facebook",
+          "google flow",
+          "ai studio",
+          "cdp",
+          "9222"
+        ],
+        "boss_decision": "Facebook bắt buộc dùng Profile 4 (khakhunghiep@gmail.com) với 5 Lớp Stealth. Google Flow Node Studio V3.9 dùng Profile 1 (aichampionhk1@gmail.com). Nâng cấp 4K Ultra dùng Profile 5 (hoatrang756@gmail.com).",
+        "confidence": 1.0
+      },
+      {
+        "category": "Chi phí & Công cụ (Zero-API)",
+        "question_pattern": "Có nên gọi API trả phí bên ngoài (OpenAI, ElevenLabs, Kling, Fal.ai) không?",
+        "keywords": [
+          "api",
+          "trả phí",
+          "cloud",
+          "token",
+          "chi phí",
+          "free",
+          "miễn phí"
+        ],
+        "boss_decision": "KHÔNG. Bẻ lái 100% sang hệ sinh thái $0.00 API đã cài sẵn trên máy (Google Flow, AI Studio Ultra, Edge-TTS, Faster-Whisper/WebSpeech, Remotion, FFmpeg).",
+        "confidence": 0.99
+      }
+    ],
+    "real_user_directives_sample": [
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "9156c53c-f5e6-438b-a613-6edbd51dbfef",
+        "timestamp": "2026-11-03T00:52:46Z",
+        "directive": "Mỗi ngày tao có quá nhiều nhiệm vụ làm với AI và tao phải đọc rất nhiều để duyệt và giải quyết cái câu trả lời cho AI và ra hướng dẫn cho AI rất nhiều lần. Và trong cái nội dung AI trả lời cho tao nó bao gồm cả code rất nhiều nhưng mà tao chỉ quan tâm tới kết quả cuối cùng mà đúng với ý của tao thôi. Tao không cần xem code mà tao chỉ cần xem cái sản phẩm. Nhưng mà các agent thì có thể xem code được. Như vậy tao muốn xây mỗi con agent trung gian nơi mà nó đi chắt lọc, thu thập những cái suy nghĩ "
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f0668997-e914-4cdc-984c-fcfc9f535fad",
+        "timestamp": "2026-11-03T00:45:41Z",
+        "directive": "Sửa Lỗi Thiết Kế Trang Phục m đọc lại Session chat ở trên sửa lỗi thiết kế trang phục để mày đọc lại những cái thông tin mà tao đã trao đổi và những cái điều mày đã sửa đúng để lưu lại vào trong bộ não. Rồi tiếp tục thực hiện nhiệm vụ sau đây cho tao. Và nhớ cho tao cái link để xem những cái trang phục để tao mới thấy tao mới biết được chọn. @[c:\\Users\\Manabie\\.antigravity-ide\\mang xa hoi\\KHO_VIDEO_TRIEU_VIEW_TPHCM_10_20S\\02_THEO_5_NHAN_VAT_KOLS\\01_Bao_Tram\\MV31_1MQ5aQxvJ9_PARK_WALK_SPIN_BOUNCE_"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f0668997-e914-4cdc-984c-fcfc9f535fad",
+        "timestamp": "2026-11-03T01:05:59Z",
+        "directive": "Các loại trang phục này đã được may đo ngược hay chưa? Sau này gắn lên cái quy trình tải ảnh từ Shopee về là xử lý ngay trên máy này bằng cách tạo mã hay phần mềm hoặc tool nào đó để tự động tách và may đo ngược bằng cách sử dụng cái model tạo ảnh này có sẵn trên tài khoản này luôn và tạo thành cái kho. Như vậy sau này khi tạo video ở trên Google Flow thì chỉ đưa cái hình ảnh may đo ngược đó lại thôi, đúng không? Giờ mày tạo lại cái bộ ảnh trang phục may đo ngược cho tao xem luôn đi và mày vô đâ"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f3ea0178-def7-497f-bd73-b87da4c5e9b0",
+        "timestamp": "2026-11-02T16:21:10Z",
+        "directive": "Chạy thử agent-desktop list-apps"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f3ea0178-def7-497f-bd73-b87da4c5e9b0",
+        "timestamp": "2026-11-03T00:40:46Z",
+        "directive": "Tao muốn mày lên trên GitHub tìm các repo để có thể điều khiển máy tính được và đảm bảo an toàn cho máy tính, không có mã độc trong đó, mà sử dụng thành công để điều khiển máy tính."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f3ea0178-def7-497f-bd73-b87da4c5e9b0",
+        "timestamp": "2026-11-03T00:46:32Z",
+        "directive": "Cái nào điều khiển dễ dàng nhất, mọi cái tool nhanh chóng, chính xác, tiết kiệm token nhất và cái tao muốn là có thể thay mặt tao để vận hành công việc quay màn hình video và cả edit video trên CapCut chẳng hạn."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f3ea0178-def7-497f-bd73-b87da4c5e9b0",
+        "timestamp": "2026-11-03T00:49:30Z",
+        "directive": "Còn cái nhiệm vụ nữa là điều khiển tất cả các app ở trên Windows luôn. Khi có một nhiệm vụ nào đó thì đôi khi là phải dùng nhiều cái trình duyệt web rồi nhiều cái profile rồi những cái ứng dụng khác ở trên máy tính. Thì làm sao để có thêm cái repo đó để điều khiển tổng hợp mấy cái đó chứ? Thì cách nào tối ưu? Thêm repo nào nữa không?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "f3ea0178-def7-497f-bd73-b87da4c5e9b0",
+        "timestamp": "2026-11-03T01:04:20Z",
+        "directive": "Cái này xây thành một cái agent luôn hay là chỉ dạng plugin hay là dạng skill? Và cho tao những cái use case thực tế sử dụng. Tao muốn thứ nhất là phục vụ cho công việc nhiều phần mềm và dùng cả trình duyệt kết hợp vào đó. Hai là xây những video hướng dẫn làm khóa học để đăng lên Google Classroom hoặc là một cái website cá nhân. Và dĩ nhiên là mình sẽ chạy tự động hoàn toàn, còn mày sẽ là bộ não để điều khiển thay cho tao, đưa ra tất cả các quyết định xử lý, đảm bảo sao cho hoàn hảo nhất."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T13:23:11Z",
+        "directive": "https://www.facebook.com/share/r/1QB7EUBfFt/ Mày phân tích cái repo này ở trên Facebook, tìm đến cái repo đó, mày phân tích và xem coi thực sự là có dùng được không, có bị cài mã độc trong cái mã nguồn hay không. Tao cũng muốn để cho agent là mày đó sử dụng cái repo này để điều khiển máy tính luôn chứ không chỉ điều khiển trình duyệt web."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T14:08:43Z",
+        "directive": "Tao muốn điều khiển được mọi phần mềm trên Windows."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T14:20:56Z",
+        "directive": "Mày thử chạy trình duyệt quay màn hình laptop quay toàn màn hình và hướng dẫn cách sử dụng đơn giản cho phần mềm Antigravity xem. Mày có làm được không?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T14:30:17Z",
+        "directive": "Mày giỡn mặt với tao hả? Tao kêu mày bật cái trình duyệt ở chế độ quay màn hình, rồi sau đó mày điều khiển trực tiếp cái phần mềm Antigravity trên máy. Tao đâu có kêu mày làm cái thẻ HTML gì đâu mà mày lại cái HTML đó để mô phỏng lại cho tao vậy?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T14:33:48Z",
+        "directive": "chứ cái repo đó điều khiển đc máy tính mà sao m không học theo để làm"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T15:50:54Z",
+        "directive": "Tắt chế độ Terminal Sandbox trong cài đặt Antigravity: t không thấy"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T15:58:51Z",
+        "directive": "Cách phối hợp hiệu quả nhất: Mình đã cài sẵn agent-desktop.exe vào máy của bạn rồi. Khi bạn muốn tự động hóa thao tác trên bất kỳ phần mềm Windows nào (CapCut, Excel, Notepad, File Explorer...), bạn chỉ cần nói yêu cầu — mình sẽ viết sẵn kịch bản điều khiển tự động (.ps1 hoặc .py gọi agent-desktop) lưu vào thư mục dự án, và bạn chỉ cần chạy file đó từ PowerShell của bạn là nó sẽ điều khiển trực tiếp các phần mềm trên màn hì ok"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T16:03:41Z",
+        "directive": "gì phức tạp vậy, repo có sẵn mà m không làm cho đơn giản để có thể điều khiển cả laptop à"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T16:05:54Z",
+        "directive": "PS C:\\Users\\Manabie\\.antigravity-ide\\mang xa hoi> agent-desktop list-apps {\"version\":\"2.5\",\"ok\":false,\"command\":\"list-apps\",\"error\":{\"code\":\"INTERNAL\",\"message\":\"EnumWindows failed to enumerate top-level windows\",\"disposition\":{\"delivery\":\"not_delivered\",\"retry\":\"safe\"}}}"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T16:09:15Z",
+        "directive": "PS C:\\Users\\Manabie> agent-desktop list-apps {\"version\":\"2.5\",\"ok\":true,\"command\":\"list-apps\",\"data\":{\"apps\":[{\"name\":\"Antigravity.exe\",\"pid\":13360,\"presentation\":\"foreground\",\"process_instance\":\"windows-proc-v1:13437965528:4601696\"},{\"name\":\"Slack.exe\",\"pid\":15116,\"presentation\":\"foreground\",\"process_instance\":\"windows-proc-v1:13437949732:6244874\"},{\"name\":\"Taskmgr.exe\",\"pid\":14648,\"presentation\":\"foreground\",\"process_instance\":\"windows-proc-v1:13437949741:550733\"},{\"name\":\"WindowsTerminal.exe\""
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e481ce4b-ddd9-4ff2-943b-be565fb704d4",
+        "timestamp": "2026-11-02T16:12:03Z",
+        "directive": "có cách nào để m đk tự động không?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "1c9843d5-d1ac-41a6-894c-0cb0fad5a3dd",
+        "timestamp": "2026-11-02T00:34:39Z",
+        "directive": "https://www.facebook.com/share/r/1CJAd65hnZ/ Đi phân tích bài viết này vì t muốn có agnet edit video đẹp tự động bằng chính nền tảng này. M phân tích xong đi tìm repo để làm tốt nhất trên github hoặc các skill edit video đẹp nhất, chuyển động, hiệu ứng. Âm thanh...."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "1c9843d5-d1ac-41a6-894c-0cb0fad5a3dd",
+        "timestamp": "2026-11-02T00:48:02Z",
+        "directive": "m ghi vào não khi có link fb là tự động dùng profile khakhunghiep"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "1c9843d5-d1ac-41a6-894c-0cb0fad5a3dd",
+        "timestamp": "2026-11-02T09:19:15Z",
+        "directive": "GIỜ CÓ THỂ LÀM GÌ TIẾP"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "1c9843d5-d1ac-41a6-894c-0cb0fad5a3dd",
+        "timestamp": "2026-11-02T09:21:33Z",
+        "directive": "HƯỚNG 1, LẤY VIDEO bẢO TRÂM ĐANG CÓ SẴN, LÀM 1 VIDEO"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "1c9843d5-d1ac-41a6-894c-0cb0fad5a3dd",
+        "timestamp": "2026-11-02T13:04:18Z",
+        "directive": "thư mục m làm xong ở đâu"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "1c9843d5-d1ac-41a6-894c-0cb0fad5a3dd",
+        "timestamp": "2026-11-02T13:05:31Z",
+        "directive": "các video edit xong đâu"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e7509239-d8ab-4247-aee4-5383ba7b9d4b",
+        "timestamp": "2026-11-02T00:38:22Z",
+        "directive": "https://www.facebook.com/share/p/19jBbpwnHu/ Repo này làm được gì? T muốn chạy free không API dựa trên các agent đang có trên máy, chưa có thì tạo mới thêm"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e7509239-d8ab-4247-aee4-5383ba7b9d4b",
+        "timestamp": "2026-11-02T09:20:35Z",
+        "directive": "TẠO VIDEO GIẢI THÍCH vẬT lÍ THỬ XEM, LÊN KẾ HOẠCH CHO T DUYỆT"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "e7509239-d8ab-4247-aee4-5383ba7b9d4b",
+        "timestamp": "2026-11-02T09:33:47Z",
+        "directive": "Phương án C (Hiệu ứng Con quay hồi chuyển) Lựa chọn 1 (Siêu tốc ~15 giây trên máy): Render ngay video .mp4 (1080×1920) kết hợp Cutaway Hoạt Hình 2D Vật Lý + PiP (cutaway-hoat-hinh-pip) hoặc Người Que Nét Chì (nguoi-que-net-chi) + Phụ đề Karaoke nhảy chữ + SFX phòng thu + xuất kèm Project CapCut PC."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "caf5fb5b-d1e1-4d62-b09c-790b01bef3ba",
+        "timestamp": "2026-11-01T16:16:31Z",
+        "directive": "Tạo thư mục mới clone dự án này và nói rõ cách dùng live kiếm tiền https://github.com/khanhtran0393/tiktok-live-temple-rpc"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "caf5fb5b-d1e1-4d62-b09c-790b01bef3ba",
+        "timestamp": "2026-11-01T16:24:45Z",
+        "directive": "m build để sẵn sàng chạy đi"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-01T07:29:49Z",
+        "directive": "đây là ảnh may đo ngược thì sai rồi, m tạo vậy sao đúng được"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-01T07:30:20Z",
+        "directive": "479e4f1a-70d9-457f-8105-0eed04fb817e bên này đang chạy mà bị lỗi nè, m xem lại rồi làm tiếp nha"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-01T16:11:22Z",
+        "directive": "m có thực sự tạo thành công không vậy? t không thấy trên gg flow có video"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-01T23:36:42Z",
+        "directive": "khi video tạo xong trên tool có sẵn tính năng phân tích video để báo cáo video tạo ra đúng hay sai chưa? m có tự nhìn lại từng video chưa?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-01T23:45:05Z",
+        "directive": "node trên tool có tính năng tự động tạo xong là kiểm duyệt luôn chưa?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T00:14:08Z",
+        "directive": "m phải đọc báo cáo node đó và quyết định có tạo lại hay không. nếu lỗi sai lớn người xem thấy ngay thì cần tạo lại, và giữa các đoạn khác nhau thì khi tải về m dùng remotion để chèn chuyển cảnh vào để video không bị có sự biến đổi đột ngột, và video do AI tạo ra thường có bộ lọc làm mịn da và bết như các app làm đẹp, m có cách để giảm điều này để chân thực hơn đúng không?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T06:09:56Z",
+        "directive": "gubling.store@gmail.com mở profile này để tạo video"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T07:26:13Z",
+        "directive": "m kiểm duyệt video mới tạo về body đã chuẩn chưa? kiểm tra và sửa sau đó chạy lại video mới trên đây"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T09:05:12Z",
+        "directive": "mẫu có body sai hoàn toàn, không như các video trước m đã tạo cho Bảo Trâm, m đã sửa sai ở đâu"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T10:00:33Z",
+        "directive": "@[c:\\Users\\Manabie\\.antigravity-ide\\GOOGLE_FLOW_VIDEO_STUDIO\\KHO_VIDEO_DA_TAO\\CLONE_BAO_TRAM_1MQ5aQxvJ9_SP03_V6\\do_thi_sau_khi_chay.png] ẢNH NÀY LÀ SAO M. T THẤY HƠI LẠ"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T12:03:21Z",
+        "directive": "https://www.facebook.com/share/r/1A6NTLcFz5/ https://www.facebook.com/share/r/19vwn18Yej Clone 2 video này"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T13:16:02Z",
+        "directive": "Tại sao mày không chạy cái tool Google Flow nữa mà mày tự tạo kiểu này luôn vậy? Hồi đó giờ tao đâu có kêu mày tự tạo kiểu này đâu. Từ lúc nào mà mày chạy cái này và ai kêu mày chạy cái này vậy? Cách này nó có lợi hại gì so với cách chạy tool? Có thay quần áo được không? Có làm affiliate được không? Tao không trách mày nhưng mà tao cần biết sự thật. Cách nào tối ưu hơn thôi."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T14:09:18Z",
+        "directive": "Tại sao cái video mày ghép nối lại có tốc độ tăng lên rất nhanh? Ai chỉ đạo mày làm điều đó?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T14:19:57Z",
+        "directive": "Ủa, còn cái quy trình xóa đi cái logo của Google Flow đâu? Hiện tại mày có cái agent riêng cho mạng xã hội và có lưu vô bộ nhớ các bước làm hết không vậy? Hình như tao chat ở cái session khác, bây giờ qua session này mày quên hết rồi à?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-02T16:02:30Z",
+        "directive": "sao m để đủ nơi hết vậy? cái kho vidoe của bảo trâm đâu sao không đưa vào đó mà m lại để chỗ khác"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "0cfc333b-9dc0-4dad-a3b8-7c95e35c2e15",
+        "timestamp": "2026-11-03T00:42:25Z",
+        "directive": "@[c:\\Users\\Manabie\\.antigravity-ide\\mang xa hoi\\KHO_VIDEO_TRIEU_VIEW_TPHCM_10_20S\\02_THEO_5_NHAN_VAT_KOLS\\01_Bao_Tram\\MV31_1MQ5aQxvJ9_PARK_WALK_SPIN_BOUNCE_REF.mp4] Tao muốn mày chạy lại clone cái video này với bộ trang phục khác một lần nữa. Mày đưa ra vài trang phục để tao chọn đi và chạy ở trên profile gubling"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "4dd928d0-aa5e-4f85-9703-66c88d33ae78",
+        "timestamp": "2026-11-01T02:24:42Z",
+        "directive": "https://www.facebook.com/share/r/1DrFriSwJF/ M phân tích video này coi, t thấy Clone rất chuẩn nè 8s gốc clone đúng ra 8s"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "4dd928d0-aa5e-4f85-9703-66c88d33ae78",
+        "timestamp": "2026-11-01T03:16:11Z",
+        "directive": "m so với tool t đang dùng nhiều là v mấy. t thấy tool hiện tại không rõ là v mấy nhưng cũng bám khá tốt đúng không? t nhớ không phải là 3.9"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "4dd928d0-aa5e-4f85-9703-66c88d33ae78",
+        "timestamp": "2026-11-01T03:26:19Z",
+        "directive": "4. Độ khớp vị trí xuất phát ngay tại Frame 0.00s vậy cần nâng cái này không? Mày phân tích kỹ cái lúc mà thêm những ảnh với lại mày đo ngược đó thì cái khâu đó thực sự là nó đã hợp lý hay chưa hay là có cái bước nào chưa ổn không?"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T01:48:08Z",
+        "directive": "https://www.facebook.com/share/1J5Vd2YTKs/ M cho đội sub Agent đi Phân tích kênh này để có thể xây một kênh như vậy, điểm mạnh thu hút và sáng tạo hơn cho kênh này dựa trên tương tác của khán giả"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T03:24:09Z",
+        "directive": "Cái tao thấy thu hút đó chính là những cái lời thoại luôn có những cái cú twist lật mặt và bám theo trend của xu hướng hoặc là những tình huống bất ngờ. Dựa trên đó và những cái mà video mày đã học được, ý tưởng mày đã học được từ kênh, viết lại ý tưởng để xây các video đi."
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T03:29:38Z",
+        "directive": "m cần xây workflow mới đúng không? cần thay trang phục, bối cảnh, kịch bản, cái này không phải clone và phải có hiệu ứng chân thực, tốc độ chuyển động như đời thực, hành động có ý nghĩa, các cử chỉ tay chân, các biểu hiện cảm xúc gương mặt, đôi mắt, tất cả đều phải có thần thái và diễn như diễn viên chuyên nghiệp có cảm xúc thực, hành động tự nhiên"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T03:56:59Z",
+        "directive": "M hiểu tool với workflow trên gg flow chứ. Workflow nằm trong tool. Mà tool đang ổn định nhất là 3.7 golden, m xây workflow hay tool mới. Trả lời thôi"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T04:08:02Z",
+        "directive": "Rất tốt, t cho m thêm bộ tài nguyênđể dùng làm kịch bản Và có tham chiếu chuẩn để làm video chuẩn. M hãy phân tích và làm thành kho để mỗi lần làm kịch bản là dùng và có ảnh tham chiếu, nhớ luôn theo phong cách gợi cảm sang trọng tư thế nhân vật cho đẹp https://ai-pose-gallery.pages.dev/?fbclid=Iwb21leAVTmAdjbGNrBVOX5GV4dG4DYWVtAjExAHBkb2YFc3J0YwZhcHBfaWQMMzUwNjg1NTMxNzI4AAEf8dK9Po4ur1NXtEPxoX3dCfMJ6y9alvjUAcN2pb5-VJosVyDzy6cRX3m5BBo_aem_fzUBMec6SWbvbv8jKbu1yQ Đây là trang Phục https://ai-costum"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T04:38:04Z",
+        "directive": "m thử tạo cho t 3 video 30s omni 1.1 với 3 kịch bản trên profile hk2"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T06:01:17Z",
+        "directive": "tạo xong video thì phân tích video và workflow để tìm lỗi và sửa"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T06:26:45Z",
+        "directive": "body có đúng đâu. còn các kho trang phục, dáng và biểu cảm t bắt buộc lấy làm tham chiếu đâu sao không dùng"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T07:10:25Z",
+        "directive": "Ý của tao là ba cái đường link với ba cái trang web nước ngoài mà tao kêu mày đọc đó chứ không phải cái kho sẵn đang có trong máy. Mày còn nhớ ba cái link lúc sáng tao gửi cho mày không? Mày đi lấy các tri thức trong đó mà lúc sáng mày cũng có học rồi mà, thì tao bắt cái quy trình phân tích kịch bản phải lấy những cái hình ảnh tham chiếu trong đó về dáng, về gương mặt biểu cảm, về trang phục để cho phù hợp với kịch bản. Rồi mày lấy những hình ảnh đó để mày đưa lên Google Flow để tạo ra các chara"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T08:39:09Z",
+        "directive": "sao không mở cửa sổ mới rồi chạy"
+      },
+      {
+        "product": "antigravity-2.0",
+        "conversation_id": "a181a82a-ef9a-4ac9-a651-062fc6fd7a69",
+        "timestamp": "2026-11-01T11:00:36Z",
+        "directive": "cái tool đến bước tạo video t không thấy gọi được lệnh tạo video, m có tham chiếu nhiều quá không, cái nào cần thôi m"
+      }
+    ]
+  },
+  "deliverables": [
+    {
+      "title": "bao_tram_mv32_live_1533pm.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.21,
+      "modified": "2026-11-03 15:36",
+      "mtime": 1793694963.7412713,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/bao_tram_mv32_live_1533pm.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/bao_tram_mv32_live_1533pm.png",
+      "static_url": "assets/deliverables/bao_tram_mv32_live_1533pm.png"
+    },
+    {
+      "title": "aff_minh_anh.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.04,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.453558,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_minh_anh.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_minh_anh.png",
+      "static_url": "assets/deliverables/aff_minh_anh.png"
+    },
+    {
+      "title": "logo_minh_anh.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.05,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.453558,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_minh_anh.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_minh_anh.png",
+      "static_url": "assets/deliverables/logo_minh_anh.png"
+    },
+    {
+      "title": "mag_minh_anh.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.04,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4525483,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/mag_minh_anh.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/mag_minh_anh.png",
+      "static_url": "assets/deliverables/mag_minh_anh.png"
+    },
+    {
+      "title": "aff_ha_vy.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.04,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4509194,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_ha_vy.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_ha_vy.png",
+      "static_url": "assets/deliverables/aff_ha_vy.png"
+    },
+    {
+      "title": "logo_ha_vy.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.05,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4509194,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_ha_vy.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_ha_vy.png",
+      "static_url": "assets/deliverables/logo_ha_vy.png"
+    },
+    {
+      "title": "mag_ha_vy.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.04,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4499185,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/mag_ha_vy.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/mag_ha_vy.png",
+      "static_url": "assets/deliverables/mag_ha_vy.png"
+    },
+    {
+      "title": "aff_khanh_linh.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.04,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4489224,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_khanh_linh.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_khanh_linh.png",
+      "static_url": "assets/deliverables/aff_khanh_linh.png"
+    },
+    {
+      "title": "logo_khanh_linh.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.05,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4489224,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_khanh_linh.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_khanh_linh.png",
+      "static_url": "assets/deliverables/logo_khanh_linh.png"
+    },
+    {
+      "title": "mag_khanh_linh.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.04,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4480138,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/mag_khanh_linh.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/mag_khanh_linh.png",
+      "static_url": "assets/deliverables/mag_khanh_linh.png"
+    },
+    {
+      "title": "logo_bao_nhi.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.17,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4469316,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_bao_nhi.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/logo_bao_nhi.png",
+      "static_url": "assets/deliverables/logo_bao_nhi.png"
+    },
+    {
+      "title": "aff_bao_nhi.png",
+      "category": "Kho Ảnh Chuẩn 5 KOLs V6",
+      "kind": "image",
+      "size_mb": 0.05,
+      "modified": "2026-11-03 15:02",
+      "mtime": 1793692953.4459136,
+      "abs_path": "C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_bao_nhi.png",
+      "preview_url": "/media?path=C:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_ANH_FANPAGE/LOGOS/aff_bao_nhi.png",
+      "static_url": "assets/deliverables/aff_bao_nhi.png"
+    }
+  ],
+  "decision_ledger": [
+    {
+      "timestamp": "2026-11-03 08:26:55",
+      "worker_agent": "agent-auditor",
+      "worker_question": "Đã chạy kiểm định tự động toàn hệ thống, có cần in log code kiểm thử ra màn hình không?",
+      "ceo_decision": "CẤM TUYỆT ĐỐI hiển thị code cho chủ nhân. Chỉ các Agent mới xem code với nhau ở hậu trường. Đối với chủ nhân, chỉ trình bày Sản phẩm cuối cùng, Hình ảnh/Video xem trước và Đường link mở trực tiếp.",
+      "matched_rule": "Giao diện & Báo cáo (Zero-Code)",
+      "confidence": "99%",
+      "escalated_to_boss": false
+    },
+    {
+      "timestamp": "2026-11-03 08:25:44",
+      "worker_agent": "agent-auditor",
+      "worker_question": "Đã chạy kiểm định tự động toàn hệ thống, có cần in log code kiểm thử ra màn hình không?",
+      "ceo_decision": "CẤM TUYỆT ĐỐI hiển thị code cho chủ nhân. Chỉ các Agent mới xem code với nhau ở hậu trường. Đối với chủ nhân, chỉ trình bày Sản phẩm cuối cùng, Hình ảnh/Video xem trước và Đường link mở trực tiếp.",
+      "matched_rule": "Giao diện & Báo cáo (Zero-Code)",
+      "confidence": "99%",
+      "escalated_to_boss": false
+    },
+    {
+      "timestamp": "2026-11-03 08:21:10",
+      "worker_agent": "flow-video-director",
+      "worker_question": "Có cần xuất log chi tiết và mã code Python xử lý đồ thị Node ra màn hình cho chủ nhân xem không?",
+      "ceo_decision": "TUYỆT ĐỐI KHÔNG. Cắt bỏ 100% code và log kỹ thuật. Chỉ trả về file video MP4 1080p/4K đã đóng dấu thương hiệu và đường dẫn mở nhanh.",
+      "matched_rule": "Zero-Code Executive Filter (Luật Số 1)",
+      "confidence": "99%",
+      "escalated_to_boss": false
+    },
+    {
+      "timestamp": "2026-11-03 08:21:10",
+      "worker_agent": "viral-video-editor",
+      "worker_question": "Chọn giọng đọc miền Nam nào và mức âm lượng nhạc nền bao nhiêu cho video 3 Hồi?",
+      "ceo_decision": "Dùng giọng miền Nam 'Leda tuỳ chỉnh' (hoặc vi-VN-HoaiMyNeural), chèn SFX ngay sau câu nhấn nhá và ép nhạc nền Auto-Ducking -14dB.",
+      "matched_rule": "Tiêu chuẩn Âm thanh & Giọng đọc Miền Nam",
+      "confidence": "98%",
+      "escalated_to_boss": false
+    },
+    {
+      "timestamp": "2026-11-03 08:21:10",
+      "worker_agent": "fb-viral-scout",
+      "worker_question": "Người dùng gửi link Facebook mới, nên mở bằng Chrome Profile nào và gõ bình luận bằng hàm gì?",
+      "ceo_decision": "Bắt buộc 100% mở trên Profile 4 (khakhunghiep@gmail.com) qua 5 Lớp Stealth. Cấm tuyệt đối hàm .fill(), phải gõ từng phím sinh học LexicalHumanTyper.",
+      "matched_rule": "Luật Bất Di Bất Dịch Khi Có Link Facebook",
+      "confidence": "100%",
+      "escalated_to_boss": false
+    }
+  ]
+}
