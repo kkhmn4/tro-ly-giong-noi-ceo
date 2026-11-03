@@ -1,2124 +1,2014 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- MANDATORY: Declare support for both light and dark themes -->
-  <meta name="color-scheme" content="light dark">
-  <title>Đòn Bẩy AI · Trung Tâm Theo Dõi Trực Tiếp Antigravity & Claude (Zero-Code)</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trợ Lý Điều Hành AI · Antigravity & Claude</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* MANDATORY: Apply color-scheme to :root for viewport-wide theming */
     :root {
-      --ground-light: #eef2f7;
-      --ground-dark: #0b0f17;
-      --surface-light: #ffffff;
-      --surface-dark: #111823;
-      --panel-alt-light: #f6f8fb;
-      --panel-alt-dark: #16202e;
-      --ink-light: #0f172a;
-      --ink-dark: #f1f5f9;
-      --muted-light: #475569;
-      --muted-dark: #94a3b8;
-      --faint-light: #64748b;
-      --faint-dark: #7c8b9e;
-      --border-light: #dce3ec;
-      --border-dark: #233044;
-      --border-strong-light: #c4d0df;
-      --border-strong-dark: #33445e;
-
-      --royal-light: #0a2777;
-      --royal-dark: #2b6cb0;
-      --accent-light: #1b6c80;
-      --accent-dark: #3898b0;
-      --accent-tint-light: #e3f1f5;
-      --accent-tint-dark: #152e38;
-
-      --pill-pos-bg-light: #d8f8e3;
-      --pill-pos-bg-dark: #0d331e;
-      --pill-pos-ink-light: #053316;
-      --pill-pos-ink-dark: #8ee6b0;
-
-      --pill-warn-bg-light: #fef3c7;
-      --pill-warn-bg-dark: #382607;
-      --pill-warn-ink-light: #78350f;
-      --pill-warn-ink-dark: #fcd34d;
-
-      --pill-neg-bg-light: #ffe4e6;
-      --pill-neg-bg-dark: #3b1319;
-      --pill-neg-ink-light: #881337;
-      --pill-neg-ink-dark: #fda4af;
-
-      --scroll-thumb-light: #94a3b8;
-      --scroll-thumb-dark: #334155;
-      --scroll-track-light: #eef2f7;
-      --scroll-track-dark: #0b0f17;
-
-      /* Default to crisp Daylight Studio (#eef2f7 / #ffffff / #0a2777) */
-      --ground: var(--ground-light);
-      --surface: var(--surface-light);
-      --panel-alt: var(--panel-alt-light);
-      --ink: var(--ink-light);
-      --muted: var(--muted-light);
-      --faint: var(--faint-light);
-      --border: var(--border-light);
-      --border-strong: var(--border-strong-light);
-      --royal: var(--royal-light);
-      --accent: var(--accent-light);
-      --accent-tint: var(--accent-tint-light);
-      --pill-pos-bg: var(--pill-pos-bg-light);
-      --pill-pos-ink: var(--pill-pos-ink-light);
-      --pill-warn-bg: var(--pill-warn-bg-light);
-      --pill-warn-ink: var(--pill-warn-ink-light);
-      --pill-neg-bg: var(--pill-neg-bg-light);
-      --pill-neg-ink: var(--pill-neg-ink-light);
-      --scroll-thumb: var(--scroll-thumb-light);
-      --scroll-track: var(--scroll-track-light);
-
-      --radius-sheet: 16px;
-      --radius-panel: 12px;
-      --radius-control: 8px;
-      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-
-      color-scheme: light dark;
-      accent-color: var(--accent);
-      scrollbar-width: thin;
-      scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+      --bg-app: #F8FAFC;
+      --bg-sidebar: #F1F5F9;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --bg-hover: #E2E8F0;
+      --text-main: #0F172A;
+      --text-secondary: #334155;
+      --text-muted: #475569;
+      --border-color: #E2E8F0;
+      --border-strong: #CBD5E1;
+      --accent: #1849C6;
+      --accent-hover: #133A9E;
+      --accent-soft: #E0E7FF;
+      --claude-bg: #CCFBF1;
+      --claude-text: #0F766E;
+      --ok-bg: #DCFCE7;
+      --ok-text: #15803D;
+      --warn-text: #B45309;
+      --danger-bg: #FEE2E2;
+      --danger-text: #B91C1C;
+      --user-bubble: #EEF2FF;
+      --popover-bg: #0F172A;
+      --popover-text: #F8FAFC;
+      --font-sans: 'IBM Plex Sans', 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     html[data-theme="dark"] {
-      --ground: var(--ground-dark);
-      --surface: var(--surface-dark);
-      --panel-alt: var(--panel-alt-dark);
-      --ink: var(--ink-dark);
-      --muted: var(--muted-dark);
-      --faint: var(--faint-dark);
-      --border: var(--border-dark);
-      --border-strong: var(--border-strong-dark);
-      --royal: var(--royal-dark);
-      --accent: var(--accent-dark);
-      --accent-tint: var(--accent-tint-dark);
-      --pill-pos-bg: var(--pill-pos-bg-dark);
-      --pill-pos-ink: var(--pill-pos-ink-dark);
-      --pill-warn-bg: var(--pill-warn-bg-dark);
-      --pill-warn-ink: var(--pill-warn-ink-dark);
-      --pill-neg-bg: var(--pill-neg-bg-dark);
-      --pill-neg-ink: var(--pill-neg-ink-dark);
-      --scroll-thumb: var(--scroll-thumb-dark);
-      --scroll-track: var(--scroll-track-dark);
+      --bg-app: #0B1120;
+      --bg-sidebar: #0F172A;
+      --bg-surface: #1E293B;
+      --bg-subtle: #162032;
+      --bg-hover: #334155;
+      --text-main: #F8FAFC;
+      --text-secondary: #CBD5E1;
+      --text-muted: #94A3B8;
+      --border-color: #1E293B;
+      --border-strong: #334155;
+      --accent: #2B6CB0;
+      --accent-hover: #1849C6;
+      --accent-soft: #1E3A8A;
+      --claude-bg: #134E4A;
+      --claude-text: #5EEAD4;
+      --ok-bg: #14532D;
+      --ok-text: #86EFAC;
+      --warn-text: #FCD34D;
+      --danger-bg: #7F1D1D;
+      --danger-text: #FCA5A5;
+      --user-bubble: #1E3A8A;
+      --popover-bg: #F8FAFC;
+      --popover-text: #0F172A;
     }
 
-    @supports not (scrollbar-color: auto) {
-      ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: var(--scroll-thumb);
-      }
-      ::-webkit-scrollbar-track {
-        background: var(--scroll-track);
-      }
-    }
-
-    *, *::before, *::after {
+    * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
     html, body {
-      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      font-family: var(--font-sans);
       font-size: 14px;
-      line-height: 1.5;
-      color: var(--ink);
-      background-color: var(--ground);
-      min-height: 100svh;
-      overflow-x: clip;
+      line-height: 1.55;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Framed-sheet Studio Architecture */
-    .app-shell {
-      display: grid;
-      grid-template-columns: 248px minmax(0, 1fr);
-      min-height: 100svh;
-      background-color: var(--ground);
+    code, pre {
+      font-family: var(--font-sans);
+      font-weight: 600;
     }
 
-    /* Left Navigation Rail */
-    aside.sidebar {
-      padding: 14px 12px 16px;
+    button, input, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* Main Minimal Layout */
+    .app-layout {
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 14px;
-      background-color: var(--ground);
-      user-select: none;
+      width: 100%;
+      height: 100dvh;
+      overflow: hidden;
     }
 
-    .brand-card {
-      background-color: var(--royal);
-      color: #ffffff;
-      border-radius: var(--radius-panel);
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .brand-monogram {
-      width: 32px;
-      height: 32px;
-      border-radius: var(--radius-control);
-      background-color: #ffffff;
-      color: var(--royal);
+    /* Icon Button + Instant Hover Popover Tooltip */
+    .icon-btn {
+      position: relative;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1px solid transparent; /* taste-skill-ignore */
+      background-color: transparent;
+      color: var(--text-secondary);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
-      font-size: 14px;
       flex-shrink: 0;
+      transition: background-color 140ms ease-out, color 140ms ease-out;
     }
 
-    .brand-title {
-      font-size: 14px;
-      font-weight: 700;
-      color: #ffffff;
-      line-height: 1.25;
+    .icon-btn:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
     }
 
-    .brand-subtitle {
-      font-size: 12px;
-      color: #dbeafe;
-      line-height: 1.25;
-    }
-
-    .nav-group-head {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      padding: 10px 8px 4px;
-    }
-
-    .nav-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    button.nav-item {
-      width: 100%;
-      height: 36px;
-      padding: 0 10px;
-      border: 1px solid transparent;
-      border-radius: var(--radius-control);
+    .icon-btn.active {
       background-color: transparent;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      text-align: left;
-      transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
-    }
-
-    button.nav-item.active {
-      background-color: var(--surface);
-      border-color: var(--border);
-      color: var(--ink);
-      font-weight: 600;
-    }
-
-    .nav-item-left {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 0;
-    }
-
-    .nav-badge {
-      font-size: 12px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      padding: 1px 7px;
-      border-radius: 999px;
-      background-color: var(--accent-tint);
-      color: var(--ink);
-    }
-
-    /* Live Sessions List inside Sidebar */
-    .session-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      max-height: 340px;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    button.session-pill {
-      width: 100%;
-      height: auto;
-      padding: 9px 10px;
-      border-radius: var(--radius-control);
-      border: 1px solid var(--border);
-      background-color: var(--surface);
-      color: var(--ink);
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      text-align: left;
-      white-space: normal;
-    }
-
-    button.session-pill.active {
-      border-color: var(--accent);
-      background-color: var(--accent-tint);
-    }
-
-    .session-pill-top {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      font-size: 12px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .session-engine-tag {
-      font-size: 12px;
-      font-weight: 600;
       color: var(--accent);
     }
 
-    .session-engine-tag.claude {
-      color: var(--pill-warn-ink);
+    .icon-btn.primary {
+      background-color: transparent;
+      color: var(--accent);
     }
 
-    .session-pill-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      overflow-wrap: anywhere;
+    .icon-btn.primary:hover {
+      background-color: var(--bg-hover);
     }
 
-    .session-pill-meta {
-      font-size: 12px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
+    .icon-btn.danger {
+      background-color: transparent;
+      color: var(--danger-text);
     }
 
-    .sidebar-footer {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-panel);
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    /* Main Right Column: Topbar + Sheet */
-    .frame-main {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      background-color: var(--ground);
-    }
-
-    header.topbar {
-      min-height: 52px;
-      padding: 6px 16px 6px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      background-color: var(--ground);
-    }
-
-    .live-indicator-bar {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .live-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 999px;
-      background-color: #059669;
-      display: inline-block;
-    }
-
-    .topbar-controls {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    /* Main White Sheet */
-    main.workspace-sheet {
-      flex: 1;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sheet);
-      margin: 0 8px 8px 0;
-      padding: 20px 24px 28px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      min-width: 0;
-    }
-
-    /* Sheet Header */
-    .sheet-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-      padding-bottom: 14px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .sheet-title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      max-width: 68ch;
-    }
-
-    h1.sheet-title {
-      font-size: 22px;
+    .icon-badge {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      border-radius: 8px;
+      background-color: var(--accent);
+      color: #FFFFFF;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-      line-height: 1.25;
-    }
-
-    .sheet-subtitle {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.45;
-    }
-
-    .sheet-cta-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    /* Controls */
-    button, .btn-link {
-      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1;
-      height: 36px;
-      padding: 0 12px;
-      border-radius: var(--radius-control);
-      border: 1px solid var(--border-strong);
-      background-color: var(--surface);
-      color: var(--ink);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      cursor: pointer;
-      text-decoration: none;
+      line-height: 1;
+    }
+
+    /* Instant Hover Tooltip Popover */
+    [data-popover] {
+      position: relative;
+    }
+
+    [data-popover]::after {
+      content: attr(data-popover);
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%) translateY(4px);
+      background-color: var(--popover-bg);
+      color: var(--popover-text);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
       white-space: nowrap;
-      transition: transform 140ms var(--ease-out), background-color 140ms var(--ease-out), border-color 140ms var(--ease-out);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 140ms ease-out, transform 140ms ease-out;
+      z-index: 90;
     }
 
-    button:active, .btn-link:active {
-      transform: scale(0.97);
+    [data-popover][data-popover-pos="bottom"]::after {
+      bottom: auto;
+      top: calc(100% + 8px);
     }
 
-    button.btn-primary {
-      background-color: var(--royal);
-      border-color: var(--royal);
-      color: #ffffff;
-      font-weight: 600;
+    [data-popover][data-popover-pos="left"]::after {
+      left: auto;
+      right: 0;
+      transform: translateY(4px);
     }
 
-    button.btn-mic {
-      background-color: var(--royal);
-      border-color: var(--royal);
-      color: #ffffff;
-      font-weight: 600;
-      height: 38px;
-      padding: 0 16px;
+    [data-popover]:hover::after,
+    [data-popover]:focus-visible::after {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
-    button.btn-mic.active {
-      background-color: var(--pill-neg-ink);
-      border-color: var(--pill-neg-ink);
-      color: #ffffff;
+    [data-popover][data-popover-pos="left"]:hover::after,
+    [data-popover][data-popover-pos="left"]:focus-visible::after {
+      transform: translateY(0);
     }
 
-    select, input[type="text"] {
-      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 13px;
-      height: 36px;
-      padding: 0 12px;
-      border-radius: var(--radius-control);
-      border: 1px solid var(--border-strong);
-      background-color: var(--surface);
-      color: var(--ink);
+    /* Left Sidebar: Clean Session History */
+    .sidebar {
+      width: 280px;
+      min-width: 280px;
+      height: 100dvh;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color); /* taste-skill-ignore */
+      display: flex;
+      flex-direction: column;
+      transition: margin-left 180ms ease-out;
+      z-index: 30;
+    }
+
+    .sidebar.collapsed {
+      margin-left: -280px;
+    }
+
+    .sidebar-top {
+      height: 56px;
+      padding: 0 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+      background-color: var(--bg-surface);
+    }
+
+    .sidebar-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-main);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--ok-text);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .status-dot.working {
+      background-color: var(--warn-text);
+    }
+
+    .sidebar-controls {
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+    }
+
+    .search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 10px;
+      width: 14px;
+      height: 14px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 6px 10px 6px 30px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong); /* taste-skill-ignore */
+      background-color: var(--bg-surface);
+      font-size: 12.5px;
       outline: none;
-      transition: border-color 140ms var(--ease-out);
     }
 
-    select:focus, input[type="text"]:focus {
+    .search-input:focus {
       border-color: var(--accent);
     }
 
-    input[type="text"]::placeholder {
-      color: var(--faint);
+    .filter-pills {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background-color: var(--bg-surface);
+      padding: 3px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
     }
 
-    .toggle-label {
+    .filter-pill {
+      padding: 4px 6px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .filter-pill.active {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .session-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .session-item {
+      width: 100%;
+      text-align: left;
+      padding: 9px 10px;
+      border-radius: 8px;
+      border: 1px solid transparent; /* taste-skill-ignore */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      transition: background-color 140ms ease-out;
+    }
+
+    .session-item:hover {
+      background-color: var(--bg-surface);
+    }
+
+    .session-item.active {
+      background-color: var(--bg-surface);
+      border-color: var(--border-strong);
+    }
+
+    .session-item-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .engine-mini {
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      justify-content: center;
+      flex-shrink: 0;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .engine-mini.claude {
+      background-color: var(--claude-bg);
+      color: var(--claude-text);
+    }
+
+    .session-item-title {
       font-size: 13px;
       font-weight: 500;
-      color: var(--ink);
-      cursor: pointer;
-      user-select: none;
-    }
-
-    /* Status Pills */
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      height: 24px;
-      padding: 0 10px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 600;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .status-pill.positive {
-      background-color: var(--pill-pos-bg);
-      color: var(--pill-pos-ink);
-    }
-
-    .status-pill.warning {
-      background-color: var(--pill-warn-bg);
-      color: var(--pill-warn-ink);
-    }
-
-    .status-pill.negative {
-      background-color: var(--pill-neg-bg);
-      color: var(--pill-neg-ink);
-    }
-
-    .status-pill.accent {
-      background-color: var(--accent-tint);
-      color: var(--ink);
-    }
-
-    /* Top Row: Live Voice Studio (left) + KPI & Activity Chart (right) */
-    .top-studio-grid {
-      display: grid;
-      grid-template-columns: 1.25fr 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .panel-card {
-      background-color: var(--panel-alt);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-panel);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .panel-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    h2.panel-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.3;
-    }
-
-    .command-bar {
-      display: flex;
-      gap: 8px;
-    }
-
-    .command-bar input {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .quick-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
-
-    button.quick-chip {
-      height: 30px;
-      padding: 0 10px;
-      font-size: 12px;
-      font-weight: 500;
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-
-    .voice-Console-box {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: 12px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .voice-console-meta {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-    }
-
-    .reply-body {
-      font-size: 14px;
-      font-weight: 500;
-      color: var(--ink);
-      line-height: 1.55;
-      max-width: 68ch;
-      overflow-wrap: anywhere;
-    }
-
-    .audio-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .audio-row audio {
-      flex: 1;
-      height: 34px;
-    }
-
-    /* Right Card: KPI Strip + SVG Chart + Worker Gate */
-    .kpi-strip {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      overflow: hidden;
-    }
-
-    .kpi-cell {
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      border-right: 1px solid var(--border);
-      min-width: 0;
-    }
-
-    .kpi-cell:last-child {
-      border-right: 0;
-    }
-
-    .kpi-label {
-      font-size: 12px;
-      color: var(--muted);
+      color: var(--text-main);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .kpi-value {
-      font-size: 24px;
+    .session-item.active .session-item-title {
       font-weight: 700;
-      color: var(--ink);
+    }
+
+    .session-item-time {
+      font-size: 11px;
+      color: var(--text-muted);
       font-variant-numeric: tabular-nums;
-      line-height: 1.2;
-    }
-
-    .chart-box {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .chart-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Real-Time Antigravity & Claude Zero-Code Stream */
-    .live-stream-section {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .stream-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      padding-bottom: 8px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .filter-tabs {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    button.tab-btn {
-      height: 32px;
-      padding: 0 12px;
-      border-radius: var(--radius-control);
-      border: 1px solid var(--border);
-      background-color: var(--panel-alt);
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    button.tab-btn.active {
-      background-color: var(--royal);
-      border-color: var(--royal);
-      color: #ffffff;
-      font-weight: 600;
-    }
-
-    .live-turns-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-      align-items: stretch;
-    }
-
-    .turn-card {
-      background-color: var(--panel-alt);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-panel);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 12px;
-      min-width: 0;
-    }
-
-    .turn-card-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .turn-user-box {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: 10px 12px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.4;
-      overflow-wrap: anywhere;
-    }
-
-    .turn-ai-box {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: 12px;
-      font-size: 14px;
-      color: var(--ink);
-      line-height: 1.55;
-      flex: 1;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .turn-footer {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .turn-links {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    /* Deliverables Showcase with Uncropped Preview Frame */
-    .deliverables-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-      align-items: stretch;
-    }
-
-    .product-card {
-      background-color: var(--panel-alt);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-panel);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .product-media-wrap {
-      position: relative;
-      width: 100%;
-      height: 196px;
-      background-color: #0f172a;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      padding: 6px;
-    }
-
-    .product-thumb {
-      max-width: 100%;
-      max-height: 100%;
-      width: auto;
-      height: auto;
-      object-fit: contain;
-      display: block;
-      border-radius: 4px;
-    }
-
-    .media-kind-tag {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      height: 22px;
-      padding: 0 8px;
-      border-radius: var(--radius-control);
-      background-color: var(--surface);
-      color: var(--ink);
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      border: 1px solid var(--border);
-    }
-
-    .product-body {
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 8px;
-      flex: 1;
-    }
-
-    .product-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-      line-height: 1.35;
-      overflow-wrap: anywhere;
-    }
-
-    .product-meta {
-      font-size: 12px;
-      color: var(--muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .product-actions {
-      display: flex;
-      gap: 6px;
-    }
-
-    .product-actions button,
-    .product-actions .btn-link {
-      height: 32px;
-      font-size: 12px;
-      flex: 1;
-    }
-
-    /* Bottom Split: Autonomous Decision Table + Brain Rules */
-    .bottom-split {
-      display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 16px;
-      align-items: stretch;
-    }
-
-    .table-wrap {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      overflow-x: auto;
-    }
-
-    table.data-table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-      font-size: 13px;
-    }
-
-    table.data-table th {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--muted);
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      background-color: var(--panel-alt);
-      white-space: nowrap;
-    }
-
-    table.data-table td {
-      padding: 10px 12px;
-      border-bottom: 1px solid var(--border);
-      vertical-align: top;
-      color: var(--ink);
-      line-height: 1.45;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    table.data-table tr:last-child td {
-      border-bottom: 0;
-    }
-
-    table.data-table th.num,
-    table.data-table td.num {
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-
-    .rules-stack {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .rule-group {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 0;
-      overflow: hidden;
-    }
-
-    .rule-group-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .rule-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 13px;
-      color: var(--muted);
-      min-width: 0;
-    }
-
-    .rule-list li {
-      position: relative;
-      padding-left: 12px;
-      line-height: 1.4;
-      overflow-wrap: anywhere;
-      word-break: break-word;
-    }
-
-    .rule-list li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 7px;
-      width: 5px;
-      height: 5px;
-      border-radius: 999px;
-      background-color: var(--accent);
-    }
-
-    /* Native Modal Dialog */
-    dialog#productModal {
-      margin: auto;
-      width: min(92vw, 900px);
-      max-height: 88svh;
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-sheet);
-      background-color: var(--surface);
-      color: var(--ink);
-      padding: 18px 20px;
-    }
-
-    dialog#productModal::backdrop {
-      background-color: rgba(15, 23, 42, 0.65);
-    }
-
-    .modal-preview-wrap {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 12px 0;
-      background-color: #0b0f17;
-      border-radius: var(--radius-panel);
-      overflow: hidden;
-      max-height: 64svh;
-    }
-
-    .modal-preview-wrap video,
-    .modal-preview-wrap img {
-      max-width: 100%;
-      max-height: 62svh;
-      object-fit: contain;
-    }
-
-    .icon-svg {
-      width: 15px;
-      height: 15px;
-      stroke: currentColor;
-      stroke-width: 1.7;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
       flex-shrink: 0;
     }
 
-    @media (hover: hover) and (pointer: fine) {
-      button.nav-item:hover {
-        background-color: var(--surface);
-        color: var(--ink);
-      }
-      button:hover, .btn-link:hover {
-        border-color: var(--royal);
-      }
-      button.btn-primary:hover, button.btn-mic:hover {
-        opacity: 0.93;
-      }
+    /* Center Chat Area */
+    .chat-main {
+      flex: 1;
+      min-width: 0;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-app);
+      position: relative;
     }
 
-    @media (max-width: 960px) {
-      .app-shell {
-        grid-template-columns: minmax(0, 1fr);
+    .chat-header {
+      height: 56px;
+      padding: 0 20px;
+      background-color: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .header-title-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .chat-h1 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.25;
+    }
+
+    .header-icon-bar {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    /* Clickable Popover Card (Deliverables, Second Brain, Quick Actions, Agent Picker) */
+    .popover-panel {
+      position: absolute;
+      z-index: 80;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-strong); /* taste-skill-ignore */
+      border-radius: 8px;
+      padding: 12px;
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .popover-panel.open {
+      display: flex;
+    }
+
+    .popover-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-main);
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+    }
+
+    /* Deliverables & Brain Popover Drawer from Top Right */
+    #hubPopoverPanel {
+      top: 52px;
+      right: 20px;
+      width: 360px;
+      max-height: 76dvh;
+      overflow-y: auto;
+    }
+
+    .hub-tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 4px;
+      background-color: var(--bg-subtle);
+      padding: 3px;
+      border-radius: 6px;
+    }
+
+    .hub-tab {
+      padding: 5px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .hub-tab.active {
+      background-color: var(--bg-surface);
+      color: var(--accent);
+    }
+
+    .deliverable-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .media-item {
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
+      border-radius: 8px;
+      overflow: hidden;
+      background-color: var(--bg-subtle);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-thumb {
+      width: 100%;
+      height: 110px;
+      background-color: #0F172A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .media-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .media-caption {
+      padding: 6px 8px;
+      font-size: 11.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Conversation Stream */
+    .chat-stream {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px 24px;
+      scroll-behavior: smooth;
+    }
+
+    .chat-stream-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .msg-row {
+      display: flex;
+      width: 100%;
+    }
+
+    .msg-row.user {
+      justify-content: flex-end;
+    }
+
+    .msg-row.assistant {
+      justify-content: flex-start;
+    }
+
+    .user-bubble {
+      max-width: 76%;
+      background-color: var(--user-bubble);
+      color: var(--text-main);
+      border: 1px solid var(--border-strong); /* taste-skill-ignore */
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .user-text {
+      font-size: 14px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+      word-break: break-word;
+      flex: 1;
+    }
+
+    .user-hover-icons {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      opacity: 0.65;
+      flex-shrink: 0;
+    }
+
+    .user-bubble:hover .user-hover-icons {
+      opacity: 1;
+    }
+
+    .mini-icon-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mini-icon-btn:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .ai-bubble {
+      width: 100%;
+      max-width: 88%;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+
+    .ai-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .ai-badge-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .ai-time {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ai-icon-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .code-pill-btn {
+      padding: 2px 7px;
+      border-radius: 6px;
+      background-color: var(--bg-subtle);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .code-pill-btn:hover {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .code-popover-box {
+      display: none;
+      padding: 8px 10px;
+      border-radius: 6px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
+      font-size: 12px;
+      color: var(--text-secondary);
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .code-popover-box.open {
+      display: flex;
+    }
+
+    .ai-text-body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      word-break: break-word;
+    }
+
+    .ai-text-body h4 {
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    .ai-text-body ul {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .link-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding-top: 2px;
+    }
+
+    .link-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .link-pill:hover {
+      background-color: var(--accent);
+      color: #FFFFFF;
+    }
+
+    /* Minimal Bottom Composer Bar */
+    .composer-wrap {
+      padding: 10px 24px 16px;
+      background-color: var(--bg-app);
+      flex-shrink: 0;
+    }
+
+    .composer-bar {
+      max-width: 780px;
+      margin: 0 auto;
+      background-color: var(--bg-surface);
+      border: 1px solid var(--border-strong); /* taste-skill-ignore */
+      border-radius: 8px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      position: relative;
+    }
+
+    .composer-bar:focus-within {
+      border-color: var(--accent);
+    }
+
+    .composer-input {
+      flex: 1;
+      min-height: 36px;
+      max-height: 120px;
+      padding: 6px 4px;
+      border: none;
+      background: transparent;
+      color: var(--text-main);
+      font-size: 14px;
+      line-height: 1.45;
+      resize: none;
+      outline: none;
+    }
+
+    /* Popover Menus above Composer (Quick Commands & Agent Selector) */
+    #quickCmdPopover {
+      bottom: calc(100% + 8px);
+      left: 0;
+      width: 310px;
+    }
+
+    #agentPickerPopover {
+      bottom: calc(100% + 8px);
+      left: 44px;
+      width: 280px;
+    }
+
+    .menu-option {
+      width: 100%;
+      text-align: left;
+      padding: 7px 10px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .menu-option:hover {
+      background-color: var(--bg-subtle);
+    }
+
+    .menu-option.selected {
+      background-color: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Modal Preview */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.76);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 120;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-dialog {
+      width: 100%;
+      max-width: 720px;
+      max-height: 86dvh;
+      background-color: var(--bg-surface);
+      border-radius: 8px;
+      border: 1px solid var(--border-strong); /* taste-skill-ignore */
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-weight: 700;
+    }
+
+    .modal-body {
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-body img, .modal-body video {
+      max-width: 100%;
+      max-height: 66dvh;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
       }
-      aside.sidebar {
+      .sidebar:not(.mobile-open) {
         display: none;
       }
-      header.topbar {
-        padding: 10px 16px;
+      .chat-header {
+        padding: 0 18px;
       }
-      main.workspace-sheet {
-        margin: 0 8px 8px 8px;
-        padding: 16px;
+      .chat-stream {
+        padding: 14px 18px;
       }
-      .top-studio-grid,
-      .live-turns-grid,
-      .bottom-split {
-        grid-template-columns: minmax(0, 1fr);
+      .composer-wrap {
+        padding: 8px 18px 14px;
       }
-      .deliverables-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .user-bubble, .ai-bubble {
+        max-width: 94%;
       }
-    }
-
-    @media (max-width: 560px) {
-      header.topbar {
-        padding: 10px 18px;
-      }
-      main.workspace-sheet {
-        margin: 0;
-        border-radius: 0;
-        border-left: 0;
-        border-right: 0;
-        padding: 18px;
-      }
-      .kpi-strip {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      .kpi-cell:nth-child(2) {
-        border-right: 0;
-      }
-      .kpi-cell:nth-child(1),
-      .kpi-cell:nth-child(2) {
-        border-bottom: 1px solid var(--border);
-      }
-      .deliverables-grid {
-        grid-template-columns: minmax(0, 1fr);
-      }
-      .command-bar {
-        flex-direction: column;
-      }
-      table.data-table th:nth-child(3),
-      table.data-table td:nth-child(3) {
-        display: none;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        transition-duration: 0.01ms !important;
-        animation-duration: 0.01ms !important;
+      #hubPopoverPanel {
+        right: 18px;
+        width: calc(100vw - 36px);
       }
     }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <!-- Left Navigation & Real-Time Active Sessions Sidebar -->
-    <aside class="sidebar" aria-label="Điều hướng và danh sách phiên chat thời gian thực">
-      <div>
-        <div class="brand-card">
-          <span class="brand-monogram">ĐB</span>
-          <div>
-            <div class="brand-title">Đòn Bẩy AI · CEO Hub</div>
-            <div class="brand-subtitle">Đồng bộ Antigravity & Claude</div>
-          </div>
+  <div class="app-layout">
+    <!-- LEFT SIDEBAR: Chỉ hiển thị Lịch sử Chat gọn gàng -->
+    <aside id="leftSidebar" class="sidebar" aria-label="Lịch sử trò chuyện">
+      <div class="sidebar-top">
+        <div class="sidebar-brand">
+          <span id="liveDot" class="status-dot" data-popover="Đang đồng bộ trực tiếp (1.5s/lần)" data-popover-pos="bottom"></span>
+          <span>Lịch sử Chat</span>
         </div>
-
-        <div class="nav-group-head">Chế độ màn hình</div>
-        <ul class="nav-list">
-          <li>
-            <button type="button" class="nav-item active" onclick="scrollToSection('sec-live-stream', this)">
-              <span class="nav-item-left">
-                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h4l3-9 4 18 3-9h6"/></svg>
-                <span>Luồng Chat trực tiếp</span>
-              </span>
-              <span class="nav-badge" id="navBadgeLiveCount">7 phiên</span>
-            </button>
-          </li>
-          <li>
-            <button type="button" class="nav-item" onclick="scrollToSection('sec-deliverables', this)">
-              <span class="nav-item-left">
-                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
-                <span>Bàn nghiệm thu</span>
-              </span>
-              <span class="nav-badge" id="navCountDeliverables">12</span>
-            </button>
-          </li>
-          <li>
-            <button type="button" class="nav-item" onclick="scrollToSection('sec-ledger', this)">
-              <span class="nav-item-left">
-                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                <span>Nhật ký tự quyết</span>
-              </span>
-              <span class="nav-badge">100%</span>
-            </button>
-          </li>
-        </ul>
-
-        <div class="nav-group-head">Cửa sổ đang chạy trên máy</div>
-        <div id="sidebarSessionList" class="session-list"></div>
+        <div style="display:flex; gap:4px;">
+          <button type="button" id="btnRefreshSessions" class="icon-btn" data-popover="Làm mới danh sách" data-popover-pos="bottom" aria-label="Làm mới">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
+            </svg>
+          </button>
+          <button type="button" id="btnNewSession" class="icon-btn primary" data-popover="Cuộc trò chuyện mới" data-popover-pos="bottom" aria-label="Cuộc trò chuyện mới">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+              <path d="M12 5v14M5 12h14"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div class="sidebar-footer">
-        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;">
-          <span class="live-dot" id="micOrb"></span>
-          <span id="voiceStatus">Đang đồng bộ trực tiếp (1.5s)</span>
+      <div class="sidebar-controls">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+          </svg>
+          <input type="search" id="sessionSearchInput" class="search-input" placeholder="Tìm cuộc trò chuyện..." />
         </div>
-        <div style="font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;" id="lastUpdatedLabel">
-          Đã học 320 phiên chat trên máy
+
+        <div class="filter-pills" role="tablist">
+          <button type="button" class="filter-pill active" data-provider="all">Tất cả</button>
+          <button type="button" class="filter-pill" data-provider="antigravity">Antigravity</button>
+          <button type="button" class="filter-pill" data-provider="claude">Claude</button>
         </div>
-        <button type="button" onclick="rescanBrain()" style="width: 100%; height: 32px;">
-          <span>Cập nhật lại Bộ não</span>
-        </button>
       </div>
+
+      <div id="sessionListContainer" class="session-list"></div>
     </aside>
 
-    <!-- Main Studio Frame -->
-    <div class="frame-main">
-      <header class="topbar">
-        <div class="live-indicator-bar">
-          <span class="status-pill positive">
-            <span class="live-dot"></span>
-            <span id="livePulseText">TRỰC TIẾP 1.5s · Antigravity & Claude</span>
-          </span>
-          <span style="font-size: 13px; color: var(--muted);" id="badgeSessions">
-            Tự động ẩn 100% code · Chỉ hiện câu trả lời cuối & thành phẩm
-          </span>
+    <!-- CENTER PANE: Khung Chat Qua Lại & Thanh Lệnh Icon Tối Giản -->
+    <main class="chat-main">
+      <header class="chat-header">
+        <div class="header-title-group">
+          <button type="button" id="btnToggleSidebar" class="icon-btn" data-popover="Ẩn/hiện danh sách chat" data-popover-pos="bottom" aria-label="Ẩn hiện danh sách chat">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>
+            </svg>
+          </button>
+          <span id="activeEngineSymbol" class="engine-mini" data-popover="Đang chạy trên Antigravity 2.0" data-popover-pos="bottom">AG</span>
+          <h1 id="activeSessionTitle" class="chat-h1">Trợ Lý Điều Hành AI</h1>
         </div>
 
-        <div class="topbar-controls">
-          <label class="toggle-label">
-            <input type="checkbox" id="chkAutoSpeakLive" checked>
-            <span>Tự đọc khi AI trả lời xong</span>
-          </label>
+        <!-- Thanh công cụ 100% Icon + Popover -->
+        <div class="header-icon-bar">
+          <button type="button" id="btnAutoSpeak" class="icon-btn active" data-popover="Tự động đọc giọng nói: Đang Bật" data-popover-pos="left" aria-label="Tự động đọc giọng nói">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+            </svg>
+          </button>
 
-          <label class="toggle-label" for="voiceSelect">
-            <select id="voiceSelect" aria-label="Chọn giọng đọc">
-              <option value="vi-VN-HoaiMyNeural">Giọng Nữ: Hoài My Neural</option>
-              <option value="vi-VN-NamMinhNeural">Giọng Nam: Nam Minh Neural</option>
-            </select>
-          </label>
+          <button type="button" id="btnZeroCode" class="icon-btn active" data-popover="Chế độ Sếp: Đang ẩn 100% Code" data-popover-pos="left" aria-label="Chế độ ẩn code">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </button>
 
-          <label class="toggle-label">
-            <input type="checkbox" id="chkContinuous" onchange="onContinuousChange()">
-            <span>Mic rảnh tay</span>
-          </label>
+          <button type="button" id="btnOpenHubPopover" class="icon-btn" data-popover="Xem Sản phẩm nghiệm thu & Bộ não" data-popover-pos="left" aria-label="Kho sản phẩm và Bộ não">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+              <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+            </svg>
+            <span id="deliverableCountBadge" class="icon-badge">12</span>
+          </button>
 
-          <button type="button" onclick="toggleThemeMode()" id="btnThemeToggle">Giao diện Tối</button>
+          <button type="button" id="btnCopyCli" class="icon-btn" data-popover="Sao chép lệnh mở trên Terminal" data-popover-pos="left" aria-label="Sao chép lệnh CLI">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/>
+            </svg>
+          </button>
+
+          <button type="button" id="btnThemeToggle" class="icon-btn" data-popover="Đổi giao diện Sáng / Tối" data-popover-pos="left" aria-label="Đổi giao diện">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.93 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.93 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- POPOVER KHO SẢN PHẨM & BỘ NÃO THỨ HAI (Chỉ mở khi bấm icon Hộp sản phẩm) -->
+        <div id="hubPopoverPanel" class="popover-panel" role="dialog" aria-label="Sản phẩm và Bộ não">
+          <div class="popover-header">
+            <span>Kho Nghiệm Thu & Bộ Não Thứ Hai</span>
+            <button type="button" id="btnCloseHubPopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <div class="hub-tabs">
+            <button type="button" class="hub-tab active" data-hubtab="deliverables">Sản phẩm (12)</button>
+            <button type="button" class="hub-tab" data-hubtab="brain">Luật của Sếp</button>
+          </div>
+          <div id="hubPopoverBody"></div>
         </div>
       </header>
 
-      <main class="workspace-sheet">
-        <!-- Sheet Header -->
-        <div class="sheet-header">
-          <div class="sheet-title-wrap">
-            <h1 class="sheet-title">Trợ lý giọng nói & Bộ não CEO</h1>
-            <p class="sheet-subtitle">
-              Theo dõi trực tiếp mọi cuộc trò chuyện trên Antigravity và Claude theo thời gian thực mà không cần mở cửa sổ chat kỹ thuật. Tự động lọc sạch 100% code, phát giọng nói báo cáo và hiển thị thành phẩm ngay lập tức.
-            </p>
+      <!-- Luồng Chat Qua Lại Tối Giản -->
+      <section id="chatStreamSection" class="chat-stream" aria-label="Nội dung hội thoại">
+        <div id="messagesListBox" class="chat-stream-inner"></div>
+      </section>
+
+      <!-- Thanh Nhập Lệnh Tối Giản (Icon + Popover) -->
+      <footer class="composer-wrap">
+        <div class="composer-bar">
+          <!-- Popover 1: Lệnh Nhanh (Mở khi bấm icon Tia chớp) -->
+          <div id="quickCmdPopover" class="popover-panel" role="menu">
+            <div class="popover-header">
+              <span>Chọn nhanh lệnh mẫu</span>
+              <button type="button" class="mini-icon-btn" data-close-pop="quickCmdPopover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+            <button type="button" class="menu-option" data-quick-cmd="Kiểm tra nghiệm thu toàn bộ sản phẩm mới nhất và báo cáo ngắn gọn cho tao">
+              <span>Nghiệm thu toàn hệ thống</span>
+              <span class="ai-time">/verify</span>
+            </button>
+            <button type="button" class="menu-option" data-quick-cmd="Nâng cấp ảnh và video 4K cho Bảo Trâm và Khánh Linh trên hoatrang756">
+              <span>Nâng cấp ảnh & video 4K</span>
+              <span class="ai-time">/4k</span>
+            </button>
+            <button type="button" class="menu-option" data-quick-cmd="Sản xuất kịch bản và video 3 Hồi cho sản phẩm Shopee V6 trên Google Flow V3.9">
+              <span>Sản xuất Video 3 Hồi</span>
+              <span class="ai-time">/3hoi</span>
+            </button>
+            <button type="button" class="menu-option" data-quick-cmd="Tạo bộ 4 ảnh 2K đăng Fanpage kèm đóng dấu thương hiệu và gắn link Shopee">
+              <span>Tạo bộ 4 ảnh 2K Fanpage</span>
+              <span class="ai-time">/2k</span>
+            </button>
           </div>
 
-          <div class="sheet-cta-group">
-            <button type="button" id="btnToggleMic" class="btn-mic" onclick="toggleVoiceRecognition()">
-              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-              <span id="micBtnLabel">Nói với trợ lý (Tiếng Việt)</span>
+          <!-- Popover 2: Chọn Trợ Lý / Engine (Mở khi bấm icon Robot) -->
+          <div id="agentPickerPopover" class="popover-panel" role="menu">
+            <div class="popover-header">
+              <span>Chọn người thực thi lệnh</span>
+              <button type="button" class="mini-icon-btn" data-close-pop="agentPickerPopover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+            </div>
+            <button type="button" class="menu-option selected" data-agent-val="auto" data-agent-short="AUTO">
+              <span>Tự động theo phiên chat</span>
+              <span class="engine-mini">AUTO</span>
             </button>
-
-            <button type="button" onclick="speakCurrentReply()">
-              <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-              <span>Đọc lại báo cáo</span>
+            <button type="button" class="menu-option" data-agent-val="antigravity" data-agent-short="AGY">
+              <span>Antigravity 2.0 CLI</span>
+              <span class="engine-mini">AGY</span>
+            </button>
+            <button type="button" class="menu-option" data-agent-val="claude" data-agent-short="CL">
+              <span>Claude Code CLI</span>
+              <span class="engine-mini claude">CL</span>
+            </button>
+            <button type="button" class="menu-option" data-agent-val="ceo-proxy" data-agent-short="CEO">
+              <span>Bộ Não Thứ Hai (Phản hồi ngay)</span>
+              <span class="engine-mini">CEO</span>
+            </button>
+            <button type="button" class="menu-option" data-agent-val="agent:flow-video-director" data-agent-short="FLOW">
+              <span>Đạo diễn Video Google Flow</span>
+              <span class="engine-mini">FLOW</span>
+            </button>
+            <button type="button" class="menu-option" data-agent-val="agent:aistudio-4k-upscaler" data-agent-short="4K">
+              <span>Chuyên gia Nâng cấp 4K Ultra</span>
+              <span class="engine-mini">4K</span>
             </button>
           </div>
+
+          <!-- Icon 1: Lệnh mẫu nhanh -->
+          <button type="button" id="btnQuickCmd" class="icon-btn" data-popover="Lệnh mẫu 1 chạm" aria-label="Lệnh mẫu">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </button>
+
+          <!-- Icon 2: Chọn Bộ máy / Agent -->
+          <button type="button" id="btnAgentPicker" class="icon-btn" data-popover="Chọn Trợ lý thực thi (Đang chọn: Tự động)" aria-label="Chọn Trợ lý thực thi">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect width="16" height="12" x="4" y="8" rx="2"/><path d="M12 4v4"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/>
+            </svg>
+          </button>
+
+          <!-- Ô gõ lệnh duy nhất -->
+          <textarea
+            id="composerTextarea"
+            class="composer-input"
+            rows="1"
+            placeholder="Nhập lệnh cho AI hoặc bấm Mic để nói..."
+          ></textarea>
+
+          <!-- Icon 3: Mic giọng nói tiếng Việt -->
+          <button type="button" id="btnVoiceMic" class="icon-btn" data-popover="Bấm để nói lệnh tiếng Việt" aria-label="Nói lệnh bằng giọng nói">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
+            </svg>
+          </button>
+
+          <!-- Icon 4: Dừng tác vụ (chỉ hiện khi đang chạy) -->
+          <button type="button" id="btnAbortJob" class="icon-btn danger" style="display:none;" data-popover="Dừng tác vụ đang chạy" aria-label="Dừng tác vụ">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="6" width="12" height="12" rx="2"/>
+            </svg>
+          </button>
+
+          <!-- Icon 5: Gửi lệnh -->
+          <button type="button" id="btnSendCommand" class="icon-btn primary" data-popover="Gửi lệnh (Enter)" data-popover-pos="left" aria-label="Gửi lệnh">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
+            </svg>
+          </button>
         </div>
+      </footer>
+    </main>
+  </div>
 
-        <!-- Section 1: Real-Time Antigravity & Claude Chat Monitor (Zero-Code) -->
-        <section class="live-stream-section" id="sec-live-stream" aria-label="Luồng cập nhật thời gian thực từ Antigravity và Claude">
-          <div class="stream-toolbar">
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <h2 class="panel-title">Luồng kết quả trực tiếp từ Antigravity & Claude</h2>
-              <span class="status-pill accent" id="filteredSummaryBadge">Đã tự động lọc bỏ 374 khối code & lệnh kỹ thuật</span>
-            </div>
-
-            <div class="filter-tabs" role="tablist">
-              <button type="button" class="tab-btn active" onclick="filterLiveEngine('all', this)">Tất cả cửa sổ (Hợp nhất)</button>
-              <button type="button" class="tab-btn" onclick="filterLiveEngine('antigravity', this)">Chỉ Antigravity 2.0</button>
-              <button type="button" class="tab-btn" onclick="filterLiveEngine('claude', this)">Chỉ Claude Code</button>
-            </div>
-          </div>
-
-          <div id="liveTurnsContainer" class="live-turns-grid"></div>
-        </section>
-
-        <!-- Section 2: Voice Command Console + Second Brain Metrics -->
-        <section class="top-studio-grid" aria-label="Bàn giao việc giọng nói và chỉ số Bộ não thứ hai">
-          <div class="panel-card" id="sec-voice">
-            <div class="panel-head">
-              <h2 class="panel-title">Đàm thoại & Ra lệnh trực tiếp</h2>
-              <span class="status-pill positive">Phản hồi giọng nói tức thì</span>
-            </div>
-
-            <div class="command-bar">
-              <input type="text" id="commandInput" placeholder="Nói hoặc gõ yêu cầu chỉ đạo tại đây, trợ lý sẽ tự điều phối Agent..." onkeydown="if(event.key==='Enter') sendCommand()">
-              <button type="button" class="btn-primary" onclick="sendCommand()">Giao việc ngay</button>
-            </div>
-
-            <div class="quick-pills">
-              <button type="button" class="quick-chip" onclick="quickRun('Báo cáo kiểm tra chất lượng toàn bộ sản phẩm hôm nay xem đạt chuẩn chưa')">Kiểm tra nghiệm thu hôm nay</button>
-              <button type="button" class="quick-chip" onclick="quickRun('Tóm tắt những nguyên tắc và suy nghĩ quan trọng nhất của tao trong Bộ Não Thứ Hai')">Đọc nguyên tắc cốt lõi</button>
-              <button type="button" class="quick-chip" onclick="quickRun('Ra lệnh cho đội Agent sản xuất video 3 Hồi và bộ 4 ảnh 2K cho Bảo Trâm chuẩn V6')">Sản xuất bộ ảnh & video Bảo Trâm</button>
-              <button type="button" class="quick-chip" onclick="quickRun('Nếu đám Agent thợ hỏi có cần gửi code Python và thông số kỹ thuật cho tao xem không thì mày trả lời sao?')">Thử nghiệm tự trả lời Agent thợ</button>
-            </div>
-
-            <div class="voice-Console-box">
-              <div class="voice-console-meta">
-                <span>Bản tin giọng nói từ Trợ lý CEO (Zero-Code)</span>
-                <span id="activeSpeakerLabel">Hoài My Neural</span>
-              </div>
-              <div id="replyText" class="reply-body">
-                Chào sếp. Em đang kết nối trực tiếp với toàn bộ cửa sổ Antigravity và Claude trên máy tính của sếp. Bất kỳ khi nào AI làm xong hoặc trả lời ở cửa sổ nào, em sẽ tự động lọc bỏ sạch code, đưa kết quả và sản phẩm lên màn hình này đồng thời đọc báo cáo cho sếp nghe.
-              </div>
-              <div class="audio-row">
-                <audio id="ttsAudioPlayer" src="audio_cache/tts_b6fc30c185a91849.mp3" controls></audio>
-              </div>
-            </div>
-          </div>
-
-          <div class="panel-card" id="sec-brain-metrics">
-            <div class="panel-head">
-              <h2 class="panel-title">Chỉ số Bộ não thứ hai</h2>
-              <span class="status-pill positive">Tự quyết định 100%</span>
-            </div>
-
-            <div class="kpi-strip">
-              <div class="kpi-cell">
-                <span class="kpi-label">Phiên đã học</span>
-                <span class="kpi-value" id="statSessions">322</span>
-              </div>
-              <div class="kpi-cell">
-                <span class="kpi-label">Lịch sử chat</span>
-                <span class="kpi-value" id="statTranscripts">320</span>
-              </div>
-              <div class="kpi-cell">
-                <span class="kpi-label">Chỉ đạo cốt lõi</span>
-                <span class="kpi-value" id="statDirectives">774</span>
-              </div>
-              <div class="kpi-cell">
-                <span class="kpi-label">Thành phẩm</span>
-                <span class="kpi-value" id="statDeliverables">12</span>
-              </div>
-            </div>
-
-            <div class="chart-box">
-              <div class="chart-header">
-                <span>Tốc độ tích lũy chỉ đạo & lọc code thời gian thực</span>
-                <span>774 chỉ đạo · 0 lần làm phiền sếp</span>
-              </div>
-              <svg viewBox="0 0 460 84" width="100%" height="80" role="img" aria-label="Biểu đồ tăng trưởng dữ liệu Bộ não thứ hai">
-                <line x1="0" y1="12" x2="460" y2="12" stroke="#dce3ec" stroke-width="1"/>
-                <line x1="0" y1="34" x2="460" y2="34" stroke="#dce3ec" stroke-width="1"/>
-                <line x1="0" y1="56" x2="460" y2="56" stroke="#dce3ec" stroke-width="1"/>
-                <line x1="0" y1="76" x2="460" y2="76" stroke="#c4d0df" stroke-width="1"/>
-                <polygon points="12,76 12,62 88,52 164,44 240,35 316,25 388,18 448,10 448,76" fill="#1b6c80" fill-opacity="0.14"/>
-                <polyline points="12,62 88,52 164,44 240,35 316,25 388,18 448,10" fill="none" stroke="#1b6c80" stroke-width="2.2"/>
-                <circle cx="448" cy="10" r="4" fill="#1b6c80"/>
-              </svg>
-            </div>
-
-            <div class="voice-Console-box">
-              <div style="font-size: 13px; font-weight: 600; color: var(--ink);">
-                Cổng tiếp nhận câu hỏi của đội Agent thợ (Tự chốt thay sếp)
-              </div>
-              <div class="command-bar">
-                <input type="text" id="workerQuestionInput" placeholder="Thử đóng vai Agent thợ hỏi: Có cần in code ra cho sếp xem không?" onkeydown="if(event.key==='Enter') testWorkerAsk()">
-                <button type="button" onclick="testWorkerAsk()">Tự quyết định</button>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Section 3: Deliverables Showcase (Uncropped Full Aspect Ratio) -->
-        <section class="live-stream-section" id="sec-deliverables" aria-label="Bàn nghiệm thu thành phẩm cuối cùng">
-          <div class="stream-toolbar">
-            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-              <h2 class="panel-title">Bàn nghiệm thu sản phẩm cuối</h2>
-              <span style="font-size: 13px; color: var(--muted);">Hiển thị nguyên vẹn khung hình gốc · Bấm vào ảnh hoặc video để phóng to</span>
-            </div>
-
-            <div class="filter-tabs" role="tablist">
-              <button type="button" class="tab-btn active" onclick="filterDeliverables('all', this)">Tất cả thành phẩm</button>
-              <button type="button" class="tab-btn" onclick="filterDeliverables('video', this)">Video MP4</button>
-              <button type="button" class="tab-btn" onclick="filterDeliverables('image', this)">Ảnh 4K / 2K</button>
-            </div>
-          </div>
-
-          <div id="deliverablesGrid" class="deliverables-grid"></div>
-        </section>
-
-        <!-- Section 4: Decision Ledger & Boss Rules -->
-        <section class="bottom-split" id="sec-ledger" aria-label="Nhật ký tự quyết định và luật cốt lõi của sếp">
-          <div class="panel-card" style="justify-content: flex-start;">
-            <div class="panel-head">
-              <h2 class="panel-title">Nhật ký tự quyết định</h2>
-              <span class="status-pill positive">0 lần làm phiền sếp</span>
-            </div>
-
-            <div class="table-wrap">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Agent thợ & Câu hỏi</th>
-                    <th>Quyết định từ Bộ não thứ hai</th>
-                    <th class="num">Độ khớp</th>
-                  </tr>
-                </thead>
-                <tbody id="decisionLedgerList"></tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="panel-card" id="sec-rules" style="justify-content: flex-start;">
-            <div class="panel-head">
-              <h2 class="panel-title">Nguyên tắc cốt lõi của sếp</h2>
-              <span class="status-pill warning">Khóa cứng 100%</span>
-            </div>
-
-            <div id="brainRulesList" class="rules-stack"></div>
-          </div>
-        </section>
-      </main>
+  <!-- MODAL XEM SẢN PHẨM -->
+  <div id="mediaModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Xem sản phẩm">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <span id="modalTitleText">Xem sản phẩm</span>
+        <button type="button" id="btnCloseModal" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+      </div>
+      <div id="modalBodyContent" class="modal-body"></div>
     </div>
   </div>
 
-  <!-- MANDATORY: Use closedby="any" to enable light-dismiss behavior -->
-  <dialog id="productModal" closedby="any" aria-labelledby="modalTitle" data-ui>
-    <form method="dialog">
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
-        <h2 id="modalTitle" class="panel-title">Nghiệm thu sản phẩm</h2>
-        <button type="submit">Đóng cửa sổ (Esc)</button>
-      </div>
-      <div id="modalPreviewContainer" class="modal-preview-wrap"></div>
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-        <span id="modalPathLabel" style="font-size: 12px; color: var(--muted); word-break: break-all;"></span>
-        <a id="modalDirectLink" href="#" target="_blank" rel="noopener" class="btn-link">Mở sản phẩm ở tab mới</a>
-      </div>
-    </form>
-  </dialog>
-
   <script>
-    let allDeliverables = [];
-    let cachedBrainData = null;
-    let cachedDecisionLedger = [];
-    let liveSessions = [];
-    let selectedEngineFilter = 'all';
-    let selectedSessionId = null;
-    let lastSpokenTurnSignature = '';
-    let hasInitializedLiveSignature = false;
-    let recognition = null;
-    let isListening = false;
-    const isLocalServer = (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
+    (function () {
+      const LOCAL_API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
+        ? ''
+        : 'http://127.0.0.1:8765';
 
-    const VIDEO_POSTER_DATA_URI = "data:image/svg+xml;utf8," + encodeURIComponent(
-      '<svg xmlns="http://www.w3.org/2000/svg" width="480" height="270" viewBox="0 0 480 270">' +
-      '<rect width="480" height="270" fill="#0f172a"/>' +
-      '<circle cx="240" cy="135" r="28" fill="#1b6c80"/>' +
-      '<polygon points="233,121 233,149 255,135" fill="#ffffff"/>' +
-      '</svg>'
-    );
+      const state = {
+        sessions: [],
+        conversationsById: {},
+        activeSessionId: '',
+        providerFilter: 'all',
+        searchQuery: '',
+        zeroCodeMode: true,
+        autoSpeak: true,
+        selectedAgentVal: 'auto',
+        hubTab: 'deliverables',
+        daemonOnline: false,
+        brainSnapshot: null,
+        lastAnnouncedMsgId: '',
+        isRecordingMic: false,
+      };
 
-    function toggleThemeMode() {
-      const root = document.documentElement;
-      const isDark = root.getAttribute('data-theme') === 'dark';
-      if (isDark) {
-        root.removeAttribute('data-theme');
-        document.getElementById('btnThemeToggle').textContent = 'Giao diện Tối';
-      } else {
-        root.setAttribute('data-theme', 'dark');
-        document.getElementById('btnThemeToggle').textContent = 'Giao diện Sáng';
-      }
-    }
+      const el = {
+        leftSidebar: document.getElementById('leftSidebar'),
+        liveDot: document.getElementById('liveDot'),
+        sessionSearchInput: document.getElementById('sessionSearchInput'),
+        sessionListContainer: document.getElementById('sessionListContainer'),
+        activeEngineSymbol: document.getElementById('activeEngineSymbol'),
+        activeSessionTitle: document.getElementById('activeSessionTitle'),
+        btnAutoSpeak: document.getElementById('btnAutoSpeak'),
+        btnZeroCode: document.getElementById('btnZeroCode'),
+        btnOpenHubPopover: document.getElementById('btnOpenHubPopover'),
+        hubPopoverPanel: document.getElementById('hubPopoverPanel'),
+        hubPopoverBody: document.getElementById('hubPopoverBody'),
+        deliverableCountBadge: document.getElementById('deliverableCountBadge'),
+        chatStreamSection: document.getElementById('chatStreamSection'),
+        messagesListBox: document.getElementById('messagesListBox'),
+        quickCmdPopover: document.getElementById('quickCmdPopover'),
+        agentPickerPopover: document.getElementById('agentPickerPopover'),
+        btnQuickCmd: document.getElementById('btnQuickCmd'),
+        btnAgentPicker: document.getElementById('btnAgentPicker'),
+        composerTextarea: document.getElementById('composerTextarea'),
+        btnVoiceMic: document.getElementById('btnVoiceMic'),
+        btnAbortJob: document.getElementById('btnAbortJob'),
+        btnSendCommand: document.getElementById('btnSendCommand'),
+        mediaModalBackdrop: document.getElementById('mediaModalBackdrop'),
+        modalTitleText: document.getElementById('modalTitleText'),
+        modalBodyContent: document.getElementById('modalBodyContent'),
+      };
 
-    function scrollToSection(id, btn) {
-      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
-      const el = document.getElementById(id);
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-
-    function resolveMediaUrl(item) {
-      if (!item) return '';
-      if (!isLocalServer && item.static_url) return item.static_url;
-      return item.preview_url || item.static_url || '';
-    }
-
-    function speakVietnameseBrowserFallback(text) {
-      if (!('speechSynthesis' in window)) return;
-      try {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(text);
-        utter.lang = 'vi-VN';
-        utter.rate = 1.05;
-        const voices = window.speechSynthesis.getVoices() || [];
-        const viVoice = voices.find(v => /vi(-|_)?VN/i.test(v.lang));
-        if (viVoice) utter.voice = viVoice;
-        window.speechSynthesis.speak(utter);
-      } catch (e) {}
-    }
-
-    const productDialog = document.getElementById('productModal');
-    if (productDialog && !('closedBy' in HTMLDialogElement.prototype)) {
-      productDialog.addEventListener('click', (event) => {
-        if (event.target !== productDialog) return;
-        const rect = productDialog.getBoundingClientRect();
-        const isDialogContent = (
-          rect.top <= event.clientY &&
-          event.clientY <= rect.top + rect.height &&
-          rect.left <= event.clientX &&
-          event.clientX <= rect.left + rect.width
-        );
-        if (isDialogContent) return;
-        productDialog.close();
-      });
-    }
-
-    function stripDynamicIcons(str) {
-      return (str || '').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ''); // taste-skill-ignore
-    }
-
-    function cleanExecutiveText(raw) {
-      const s = typeof raw === 'string' ? raw : (raw.directive || raw.text || raw.quote || raw.rule || raw.anti_pattern || raw.description || '');
-      return stripDynamicIcons(s)
-        .replace(/@\[[^\]]+\]/g, '')
-        .replace(/[A-Za-z]:\\[^\s"']+/g, '')
-        .replace(/\\n/g, ' ')
-        .replace(/\$\s*\\rightarrow\s*\$/g, '->')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .slice(0, 165);
-    }
-
-    function formatAiExecutiveSummary(rawText) {
-      const cleaned = stripDynamicIcons(rawText || '')
-        .replace(/###\s+Modern Web Guidance[\s\S]*$/i, '')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
-        .replace(/\$\s*\\rightarrow\s*\$/g, '->')
-        .replace(/[#*_`>|]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (cleaned.length <= 360) return cleaned;
-      return cleaned.slice(0, 360) + '...';
-    }
-
-    async function loadDashboardData() {
-      try {
-        let data = null;
-        if (isLocalServer) {
-          try {
-            const res = await fetch('/api/brain');
-            if (res.ok) data = await res.json();
-          } catch (e) {}
-        }
-        if (!data || !data.ok) {
-          const snapRes = await fetch('data/brain_snapshot.json');
-          data = await snapRes.json();
-        }
-        if (!data || !data.ok) return;
-
-        const brain = data.brain || {};
-        cachedBrainData = brain;
-        const stats = brain.stats || {};
-        allDeliverables = data.deliverables || [];
-        if (!cachedDecisionLedger.length) {
-          cachedDecisionLedger = data.decision_ledger || [];
-        } else if (isLocalServer && data.decision_ledger) {
-          cachedDecisionLedger = data.decision_ledger;
-        }
-
-        const sessions = stats.total_brain_sessions || 322;
-        const transcripts = stats.total_transcripts_parsed || 320;
-        const directives = stats.total_user_directives_extracted || 774;
-
-        document.getElementById('statSessions').textContent = sessions;
-        document.getElementById('statTranscripts').textContent = transcripts;
-        document.getElementById('statDirectives').textContent = directives;
-        document.getElementById('statDeliverables').textContent = allDeliverables.length;
-        document.getElementById('navCountDeliverables').textContent = allDeliverables.length;
-
-        if (stats.last_updated) {
-          document.getElementById('lastUpdatedLabel').textContent = `Cập nhật: ${stats.last_updated}`;
-        }
-
-        if (data.live_chats && data.live_chats.sessions) {
-          updateLiveSessionsState(data.live_chats);
-        }
-
-        renderDeliverables(allDeliverables);
-        renderDecisionLedger(cachedDecisionLedger);
-        renderBrainRules(brain);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    async function pollLiveChatsRealtime() {
-      if (!isLocalServer) return;
-      try {
-        const res = await fetch('/api/live-chats');
-        if (!res.ok) return;
-        const liveData = await res.json();
-        if (liveData && liveData.ok) {
-          updateLiveSessionsState(liveData);
-        }
-      } catch (e) {}
-    }
-
-    function updateLiveSessionsState(liveData) {
-      liveSessions = liveData.sessions || [];
-      document.getElementById('navBadgeLiveCount').textContent = `${liveSessions.length} phiên`;
-      if (liveData.server_time) {
-        document.getElementById('livePulseText').textContent = `TRỰC TIẾP · Đồng bộ lúc ${liveData.server_time}`;
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
       }
 
-      const totalFiltered = liveSessions.reduce((acc, s) => acc + (s.filtered_count || 0), 0);
-      document.getElementById('filteredSummaryBadge').textContent = `Đã tự động ẩn ${totalFiltered} khối code & lệnh kỹ thuật`;
+      function closeAllPopovers() {
+        el.quickCmdPopover.classList.remove('open');
+        el.agentPickerPopover.classList.remove('open');
+        el.hubPopoverPanel.classList.remove('open');
+      }
 
-      // Check if a brand-new AI reply arrived in the freshest session
-      if (liveSessions.length > 0) {
-        const newestSess = liveSessions[0];
-        const newestTurn = (newestSess.turns || [])[newestSess.turns.length - 1];
-        if (newestTurn && !newestTurn.is_working) {
-          const sig = `${newestSess.session_id}:${newestTurn.step_index}:${newestTurn.ai.slice(0, 48)}`;
-          if (!hasInitializedLiveSignature) {
-            lastSpokenTurnSignature = sig;
-            hasInitializedLiveSignature = true;
-          } else if (sig !== lastSpokenTurnSignature) {
-            lastSpokenTurnSignature = sig;
-            const cleanSummary = formatAiExecutiveSummary(newestTurn.ai);
-            document.getElementById('replyText').textContent = `[Mới từ ${newestSess.engine}]: ${cleanSummary}`;
-            if (document.getElementById('chkAutoSpeakLive').checked) {
-              speakTextOutLoud(cleanSummary);
+      function renderFormattedMarkdown(text) {
+        if (!text) return '<p>Đã hoàn tất xử lý ngầm.</p>';
+        const lines = String(text).split(/\r?\n/);
+        const htmlParts = [];
+        let inList = false;
+
+        for (let rawLine of lines) {
+          const line = rawLine.trim();
+          if (!line) {
+            if (inList) {
+              htmlParts.push('</ul>');
+              inList = false;
             }
+            continue;
+          }
+          if (/^#{1,4}\s+/.test(line)) {
+            if (inList) {
+              htmlParts.push('</ul>');
+              inList = false;
+            }
+            htmlParts.push(`<h4>${escapeHtml(line.replace(/^#{1,4}\s+/, '').replace(/\*\*/g, ''))}</h4>`);
+          } else if (/^([-*•]|\d+\.)\s+/.test(line)) {
+            if (!inList) {
+              htmlParts.push('<ul>');
+              inList = true;
+            }
+            let item = escapeHtml(line.replace(/^([-*•]|\d+\.)\s+/, ''))
+              .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+              .replace(/`([^`]+)`/g, '<code>$1</code>');
+            htmlParts.push(`<li>${item}</li>`);
+          } else {
+            if (inList) {
+              htmlParts.push('</ul>');
+              inList = false;
+            }
+            let p = escapeHtml(line)
+              .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+              .replace(/`([^`]+)`/g, '<code>$1</code>');
+            htmlParts.push(`<p>${p}</p>`);
           }
         }
+        if (inList) htmlParts.push('</ul>');
+        return htmlParts.join('');
       }
 
-      renderSidebarSessions();
-      renderLiveTurnsFeed();
-    }
-
-    function selectSession(sessionId) {
-      if (selectedSessionId === sessionId) {
-        selectedSessionId = null;
-      } else {
-        selectedSessionId = sessionId;
-      }
-      renderSidebarSessions();
-      renderLiveTurnsFeed();
-    }
-
-    function filterLiveEngine(engine, btnEl) {
-      selectedEngineFilter = engine;
-      selectedSessionId = null;
-      if (btnEl) {
-        btnEl.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
-      }
-      renderSidebarSessions();
-      renderLiveTurnsFeed();
-    }
-
-    function renderSidebarSessions() {
-      const container = document.getElementById('sidebarSessionList');
-      const filtered = liveSessions.filter(s => selectedEngineFilter === 'all' || s.engine_code === selectedEngineFilter);
-      container.innerHTML = filtered.map(s => {
-        const isAct = s.session_id === selectedSessionId;
-        const engineCls = s.engine_code === 'claude' ? 'claude' : '';
-        return `
-          <button type="button" class="session-pill ${isAct ? 'active' : ''}" onclick="selectSession('${s.session_id}')">
-            <div class="session-pill-top">
-              <span class="session-engine-tag ${engineCls}">${s.engine}</span>
-              <span>${s.updated_str.split(' · ')[0]}</span>
-            </div>
-            <div class="session-pill-title">${cleanExecutiveText(s.title)}</div>
-            <div class="session-pill-meta">${s.status_label} · Ẩn ${s.filtered_count} code</div>
-          </button>
-        `;
-      }).join('');
-    }
-
-    function renderLiveTurnsFeed() {
-      const container = document.getElementById('liveTurnsContainer');
-      let sessionsToShow = liveSessions.filter(s => selectedEngineFilter === 'all' || s.engine_code === selectedEngineFilter);
-      if (selectedSessionId) {
-        sessionsToShow = sessionsToShow.filter(s => s.session_id === selectedSessionId);
-      }
-
-      const cards = [];
-      for (const s of sessionsToShow) {
-        const turns = (s.turns || []).slice().reverse();
-        for (const t of turns.slice(0, selectedSessionId ? 6 : 2)) {
-          cards.push({ session: s, turn: t });
+      async function speakVietnameseText(text) {
+        const clean = String(text || '').replace(/[#*`_~]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 500);
+        if (!clean) return;
+        if (state.daemonOnline) {
+          try {
+            const res = await fetch(`${LOCAL_API_BASE}/api/speak`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ text: clean }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.audio_url) {
+                const audioUrl = data.audio_url.startsWith('http')
+                  ? data.audio_url
+                  : `${LOCAL_API_BASE}${data.audio_url}`;
+                new Audio(audioUrl).play().catch(() => {});
+                return;
+              }
+            }
+          } catch (_) {}
+        }
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utter = new SpeechSynthesisUtterance(clean);
+          utter.lang = 'vi-VN';
+          utter.rate = 1.05;
+          window.speechSynthesis.speak(utter);
         }
       }
 
-      const displayCards = cards.slice(0, 6);
-      if (!displayCards.length) {
-        container.innerHTML = '<div class="panel-card"><p style="color: var(--muted);">Đang chờ tin nhắn mới từ Antigravity hoặc Claude...</p></div>';
-        return;
+      function getFilteredSessions() {
+        return state.sessions.filter((s) => {
+          if (state.providerFilter === 'antigravity' && s.engine_code !== 'antigravity') return false;
+          if (state.providerFilter === 'claude' && s.engine_code !== 'claude') return false;
+          if (state.searchQuery) {
+            const q = state.searchQuery.toLowerCase();
+            const hay = `${s.title || ''} ${s.project || ''} ${s.short_id || ''}`.toLowerCase();
+            if (!hay.includes(q)) return false;
+          }
+          return true;
+        });
       }
 
-      container.innerHTML = displayCards.map((item, i) => {
-        const s = item.session;
-        const t = item.turn;
-        const badgeCls = s.engine_code === 'claude' ? 'warning' : 'positive';
-        const summaryAi = formatAiExecutiveSummary(t.ai);
-        const encodedAi = encodeURIComponent(summaryAi);
-        const linksHtml = (t.links || []).map(lk => {
-          return `<a href="${lk.url}" target="_blank" rel="noopener" class="btn-link" style="height:28px;font-size:12px;">${lk.label}</a>`;
+      function renderSessionList() {
+        const filtered = getFilteredSessions();
+        if (!filtered.length) {
+          el.sessionListContainer.innerHTML = `<div style="padding:20px 10px; text-align:center; color:var(--text-muted); font-size:12px;">Không có cuộc trò chuyện nào.</div>`;
+          return;
+        }
+
+        el.sessionListContainer.innerHTML = filtered.map((s) => {
+          const isActive = s.session_id === state.activeSessionId;
+          const isClaude = s.engine_code === 'claude';
+          const shortTime = String(s.updated_str || '').split('·')[0].trim().slice(0, 5);
+          const popInfo = `${s.engine} · Dự án: ${s.project || 'mang xa hoi'} · Ẩn ${s.filtered_count || 4} code`;
+          const rawTitle = (s.title && s.title !== 'Phiên điều phối Antigravity 2.0')
+            ? s.title
+            : `Phiên ${s.project || 'Antigravity'} #${s.short_id || ''}`;
+          return `
+            <button
+              type="button"
+              class="session-item ${isActive ? 'active' : ''}"
+              data-session-id="${escapeHtml(s.session_id)}"
+              title="${escapeHtml(popInfo)}"
+            >
+              <div class="session-item-left">
+                <span class="engine-mini ${isClaude ? 'claude' : ''}">${isClaude ? 'CL' : 'AG'}</span>
+                <span class="session-item-title">${escapeHtml(rawTitle)}</span>
+              </div>
+              <span class="session-item-time">${escapeHtml(shortTime)}</span>
+            </button>
+          `;
         }).join('');
 
-        return `
-          <article class="turn-card">
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-              <div class="turn-card-head">
-                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                  <span class="status-pill ${badgeCls}">${s.engine} · #${s.short_id}</span>
-                  <span class="status-pill accent">Đã ẩn ${s.filtered_count} khối code/log</span>
+        el.sessionListContainer.querySelectorAll('[data-session-id]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const sid = btn.getAttribute('data-session-id');
+            el.leftSidebar.classList.remove('mobile-open');
+            selectSession(sid, true);
+          });
+        });
+      }
+
+      function buildMessagesFromCompactTurns(sessionObj) {
+        const msgs = [];
+        const turns = sessionObj.turns || [];
+        turns.forEach((t, idx) => {
+          if (t.user) {
+            msgs.push({
+              id: `${sessionObj.session_id}-u-${idx}`,
+              role: 'user',
+              text: t.user,
+              timestamp: t.timestamp || sessionObj.updated_str || '',
+            });
+          }
+          if (t.ai) {
+            msgs.push({
+              id: `${sessionObj.session_id}-a-${idx}`,
+              role: 'assistant',
+              text: t.ai,
+              timestamp: t.timestamp || sessionObj.updated_str || '',
+              model: sessionObj.engine,
+              hidden_count: Math.max(2, Math.round((sessionObj.filtered_count || 6) / Math.max(1, turns.length))),
+              tools: [],
+              links: t.links || [],
+            });
+          }
+        });
+        return msgs;
+      }
+
+      function renderActiveConversation(autoScroll = false) {
+        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId) || state.sessions[0];
+        if (!activeSession) return;
+
+        const isClaude = activeSession.engine_code === 'claude';
+        el.activeEngineSymbol.className = `engine-mini ${isClaude ? 'claude' : ''}`;
+        el.activeEngineSymbol.textContent = isClaude ? 'CL' : 'AG';
+        el.activeEngineSymbol.setAttribute('data-popover', `${activeSession.engine} · Dự án: ${activeSession.project || 'mang xa hoi'}`);
+
+        const rawTitle = activeSession.title || 'Trợ Lý Điều Hành AI';
+        el.activeSessionTitle.textContent = rawTitle.length > 48 ? rawTitle.slice(0, 48) + '...' : rawTitle;
+
+        const convObj = state.conversationsById[activeSession.session_id];
+        const messages = (convObj && Array.isArray(convObj.messages) && convObj.messages.length)
+          ? convObj.messages
+          : buildMessagesFromCompactTurns(activeSession);
+
+        const isWorking = Boolean((convObj && convObj.is_working) || activeSession.is_working);
+        el.btnAbortJob.style.display = isWorking ? 'inline-flex' : 'none';
+
+        const streamEl = el.chatStreamSection;
+        const wasNearBottom = (streamEl.scrollHeight - streamEl.scrollTop - streamEl.clientHeight) < 160;
+
+        el.messagesListBox.innerHTML = messages.map((m, idx) => {
+          const rawTs = String(m.timestamp || '').trim();
+          const shortTs = (rawTs.includes(' ') ? rawTs.split(' ').pop() : rawTs).slice(0, 5);
+          if (m.role === 'user') {
+            return `
+              <div class="msg-row user">
+                <div class="user-bubble">
+                  <div class="user-text">${escapeHtml(m.text || '')}</div>
+                  <div class="user-hover-icons">
+                    <button type="button" class="mini-icon-btn" data-reuse-prompt="${escapeHtml(m.text || '')}" data-popover="Gửi lại lệnh này" data-popover-pos="left" aria-label="Gửi lại">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+                      </svg>
+                    </button>
+                    <button type="button" class="mini-icon-btn" data-copy-text="${escapeHtml(m.text || '')}" data-popover="Sao chép" data-popover-pos="left" aria-label="Sao chép">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
-                <span style="font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;">${t.timestamp || s.updated_str}</span>
               </div>
+            `;
+          }
 
-              <div class="turn-user-box">
-                Sếp chỉ đạo: "${cleanExecutiveText(t.user)}"
-              </div>
+          const hiddenCount = Number(m.hidden_count || 0);
+          const toolsList = Array.isArray(m.tools) ? m.tools : [];
+          const linksList = Array.isArray(m.links) ? m.links : [];
+          const totalHidden = Math.max(hiddenCount, toolsList.length);
 
-              <div class="turn-ai-box">
-                ${summaryAi}
-              </div>
-            </div>
+          const codePopoverId = `code-pop-${idx}`;
+          const codeBadgeHtml = totalHidden > 0
+            ? `<button type="button" class="code-pill-btn" data-toggle-code="${codePopoverId}" data-popover="Đã tự động ẩn ${totalHidden} bước kỹ thuật & code (Bấm để xem)" data-popover-pos="left">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+                </svg>
+                <span>Ẩn ${totalHidden}</span>
+              </button>`
+            : '';
 
-            <div class="turn-footer">
-              <div class="turn-links">
+          const stepDetailsHtml = totalHidden > 0
+            ? `<div id="${codePopoverId}" class="code-popover-box ${state.zeroCodeMode ? '' : 'open'}">
+                ${toolsList.length
+                  ? toolsList.map((t) => `<div>• <strong>${escapeHtml(t.name || 'Tool')}:</strong> ${escapeHtml(t.summary || 'Xử lý ngầm')}</div>`).join('')
+                  : `<div>• Đã tự động lọc sạch ${totalHidden} khối code và log kỹ thuật để Sếp chỉ duyệt kết quả.</div>`
+                }
+              </div>`
+            : '';
+
+          const linksHtml = linksList.length
+            ? `<div class="link-pills">${linksList.map((u) => {
+                const urlStr = typeof u === 'string' ? u : (u && u.url ? u.url : '');
+                const labelStr = (typeof u === 'object' && u && u.label)
+                  ? u.label
+                  : urlStr.replace(/^https?:\/\//, '').slice(0, 32);
+                if (!urlStr) return '';
+                const finalHref = (urlStr.startsWith('/media') && LOCAL_API_BASE) ? `${LOCAL_API_BASE}${urlStr}` : urlStr;
+                return `
+                  <a href="${escapeHtml(finalHref)}" target="_blank" rel="noopener" class="link-pill">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/>
+                    </svg>
+                    <span>${escapeHtml(labelStr)}</span>
+                  </a>
+                `;
+              }).join('')}</div>`
+            : '';
+
+          return `
+            <div class="msg-row assistant">
+              <article class="ai-bubble">
+                <div class="ai-top-bar">
+                  <div class="ai-badge-group">
+                    <span class="engine-mini ${isClaude ? 'claude' : ''}">${isClaude ? 'CL' : 'AG'}</span>
+                    <span>${escapeHtml(m.model || activeSession.engine)}</span>
+                    <span class="ai-time">${escapeHtml(shortTs)}</span>
+                  </div>
+                  <div class="ai-icon-actions">
+                    ${codeBadgeHtml}
+                    <button type="button" class="mini-icon-btn" data-speak-msg="${escapeHtml(m.text || '')}" data-popover="Nghe đọc nội dung này" data-popover-pos="left" aria-label="Nghe đọc">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                      </svg>
+                    </button>
+                    <button type="button" class="mini-icon-btn" data-copy-text="${escapeHtml(m.text || '')}" data-popover="Sao chép báo cáo" data-popover-pos="left" aria-label="Sao chép">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+                ${stepDetailsHtml}
+                <div class="ai-text-body">
+                  ${renderFormattedMarkdown(m.text)}
+                </div>
                 ${linksHtml}
-              </div>
-              <button type="button" style="height: 30px; font-size: 12px;" onclick="speakDecodedText('${encodedAi}')">
-                Nghe đọc kết quả này
-              </button>
+              </article>
             </div>
-          </article>
-        `;
-      }).join('');
-    }
+          `;
+        }).join('');
 
-    function speakDecodedText(encoded) {
-      const text = decodeURIComponent(encoded);
-      document.getElementById('replyText').textContent = text;
-      speakTextOutLoud(text);
-    }
-
-    async function speakTextOutLoud(text) {
-      const voice = document.getElementById('voiceSelect').value;
-      document.getElementById('voiceStatus').textContent = 'Đang đọc báo cáo cho sếp...';
-      if (isLocalServer) {
-        try {
-          const res = await fetch('/api/tts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, voice })
+        el.messagesListBox.querySelectorAll('[data-toggle-code]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const target = document.getElementById(btn.getAttribute('data-toggle-code'));
+            if (target) target.classList.toggle('open');
           });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.ok && data.audio_url) {
-              const player = document.getElementById('ttsAudioPlayer');
-              player.src = data.audio_url;
-              player.play().catch(() => {});
-              return;
-            }
-          }
-        } catch (e) {}
-      }
-      speakVietnameseBrowserFallback(text);
-    }
+        });
 
-    function renderDeliverables(items) {
-      const grid = document.getElementById('deliverablesGrid');
-      if (!items.length) {
-        grid.innerHTML = '<div class="panel-card"><p style="color: var(--muted);">Chưa có sản phẩm nào trong bộ lọc này.</p></div>';
-        return;
-      }
-      const firstImg = items.find(d => d.kind === 'image');
-      const fallbackPoster = firstImg ? resolveMediaUrl(firstImg) : VIDEO_POSTER_DATA_URI;
+        el.messagesListBox.querySelectorAll('[data-speak-msg]').forEach((btn) => {
+          btn.addEventListener('click', () => speakVietnameseText(btn.getAttribute('data-speak-msg')));
+        });
 
-      grid.innerHTML = items.slice(0, 8).map((item, idx) => {
-        const mediaUrl = resolveMediaUrl(item);
-        const fallbackAttr = item.static_url ? `onerror="if(this.src!==location.origin+'/${item.static_url}')this.src='${item.static_url}'"` : '';
-        let thumbHtml = '';
-        let tagLabel = 'Tài liệu';
-        if (item.kind === 'video') {
-          tagLabel = 'Video MP4';
-          thumbHtml = `<video class="product-thumb" src="${mediaUrl}" poster="${fallbackPoster}" muted preload="metadata" onmouseover="this.play()" onmouseout="this.pause()"></video>`;
-        } else if (item.kind === 'image') {
-          tagLabel = 'Ảnh 4K / 2K';
-          thumbHtml = `<img class="product-thumb" src="${mediaUrl}" ${fallbackAttr} alt="${item.title}" loading="lazy">`;
-        } else {
-          thumbHtml = `<img class="product-thumb" src="${fallbackPoster}" alt="${item.title}" loading="lazy">`;
+        el.messagesListBox.querySelectorAll('[data-copy-text]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            navigator.clipboard.writeText(btn.getAttribute('data-copy-text') || '');
+            btn.setAttribute('data-popover', 'Đã sao chép!');
+            setTimeout(() => btn.setAttribute('data-popover', 'Sao chép'), 1200);
+          });
+        });
+
+        el.messagesListBox.querySelectorAll('[data-reuse-prompt]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            el.composerTextarea.value = btn.getAttribute('data-reuse-prompt') || '';
+            el.composerTextarea.focus();
+          });
+        });
+
+        if (autoScroll || wasNearBottom) {
+          streamEl.scrollTop = streamEl.scrollHeight;
         }
-
-        return `
-          <article class="product-card">
-            <div class="product-media-wrap" onclick="openProductModal(${idx})">
-              ${thumbHtml}
-              <span class="media-kind-tag">${tagLabel}</span>
-            </div>
-            <div class="product-body">
-              <div>
-                <div class="product-title">${item.title}</div>
-                <div class="product-meta">${item.category} · ${item.size_mb} MB · ${item.modified}</div>
-              </div>
-              <div class="product-actions">
-                <button type="button" onclick="openProductModal(${idx})">Phóng to</button>
-                <a href="${mediaUrl}" target="_blank" rel="noopener" class="btn-link">Mở file gốc</a>
-              </div>
-            </div>
-          </article>
-        `;
-      }).join('');
-    }
-
-    function filterDeliverables(kind, btnEl) {
-      if (btnEl) {
-        btnEl.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
-      }
-      if (kind === 'all') {
-        renderDeliverables(allDeliverables);
-      } else {
-        renderDeliverables(allDeliverables.filter(d => d.kind === kind));
-      }
-    }
-
-    function openProductModal(idx) {
-      const item = allDeliverables[idx];
-      if (!item) return;
-      const mediaUrl = resolveMediaUrl(item);
-      document.getElementById('modalTitle').textContent = item.title;
-      document.getElementById('modalPathLabel').textContent = item.category + ' · ' + item.title;
-      document.getElementById('modalDirectLink').href = mediaUrl;
-
-      const wrap = document.getElementById('modalPreviewContainer');
-      if (item.kind === 'video') {
-        wrap.innerHTML = `<video src="${mediaUrl}" poster="${VIDEO_POSTER_DATA_URI}" controls autoplay></video>`;
-      } else if (item.kind === 'image') {
-        wrap.innerHTML = `<img src="${mediaUrl}" alt="${item.title}">`;
-      } else {
-        wrap.innerHTML = `<iframe src="${mediaUrl}" style="width:100%;height:60svh;border:0;background:#fff;"></iframe>`;
-      }
-      productDialog.showModal();
-    }
-
-    function renderDecisionLedger(ledger) {
-      const container = document.getElementById('decisionLedgerList');
-      container.innerHTML = ledger.slice(0, 4).map(entry => `
-        <tr>
-          <td>
-            <div style="font-weight: 600; color: var(--ink); margin-bottom: 2px;">${entry.worker_agent}</div>
-            <div style="color: var(--muted); font-size: 12px;">"${entry.worker_question}"</div>
-          </td>
-          <td>
-            <div style="color: var(--ink);">${entry.ceo_decision}</div>
-            <div style="color: var(--muted); font-size: 12px; margin-top: 2px;">Quy tắc: ${entry.matched_rule} · ${entry.timestamp}</div>
-          </td>
-          <td class="num">
-            <span class="status-pill positive">${entry.confidence}</span>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function renderBrainRules(brain) {
-      const container = document.getElementById('brainRulesList');
-      const rules = brain.executive_rules || [];
-      const hates = brain.anti_patterns_what_boss_hates || [];
-      const directives = brain.real_user_directives_sample || [];
-
-      let html = '';
-      if (hates.length) {
-        html += `<div class="rule-group">
-          <div class="rule-group-head">
-            <span>Những điều sếp cấm tuyệt đối</span>
-            <span class="status-pill negative">Chặn 100%</span>
-          </div>
-          <ul class="rule-list">
-            ${hates.slice(0, 3).map(h => `<li>${cleanExecutiveText(h)}</li>`).join('')}
-          </ul>
-        </div>`;
-      }
-      if (rules.length) {
-        html += `<div class="rule-group">
-          <div class="rule-group-head">
-            <span>Nguyên tắc chỉ đạo cốt lõi</span>
-            <span class="status-pill positive">Luôn áp dụng</span>
-          </div>
-          <ul class="rule-list">
-            ${rules.slice(0, 3).map(r => `<li>${cleanExecutiveText(r)}</li>`).join('')}
-          </ul>
-        </div>`;
-      }
-      if (directives.length) {
-        html += `<div class="rule-group">
-          <div class="rule-group-head">
-            <span>Trích dẫn chỉ đạo thực tế</span>
-            <span class="status-pill warning">Ghi nhớ gốc</span>
-          </div>
-          <ul class="rule-list">
-            ${directives.slice(0, 3).map(d => `<li>"${cleanExecutiveText(d)}"</li>`).join('')}
-          </ul>
-        </div>`;
-      }
-      container.innerHTML = html || '<div class="rule-group"><p style="color: var(--muted);">Đang đồng bộ dữ liệu Bộ não thứ hai...</p></div>';
-    }
-
-    function resolveWorkerLocally(question) {
-      const qLower = question.toLowerCase();
-      let decision = 'Áp dụng chuẩn mặc định của Hệ sinh thái Đòn Bẩy AI V6: Ưu tiên giải pháp $0.00 API có sẵn trên máy, đảm bảo độ chân thực 10/10, tự nghiệm thu bằng verify.py và chỉ nộp sản phẩm cuối.';
-      let rule = 'Nguyên tắc mặc định của chủ nhân';
-      let conf = '96%';
-
-      if (/code|log|hiển thị|trình bày|báo cáo|python/i.test(qLower)) {
-        decision = 'TUYỆT ĐỐI KHÔNG. Ẩn 100% code và log kỹ thuật. Chỉ xuất kết quả cuối cùng (Video, Ảnh 4K/2K hoặc Link sản phẩm) kèm tóm tắt ngắn gọn dưới 3 câu để đọc bằng giọng nói.';
-        rule = 'Zero-Code Executive Filter (Luật Số 1)';
-        conf = '99%';
-      } else if (/giọng|âm thanh|nhạc|voice|tts/i.test(qLower)) {
-        decision = 'Dùng giọng miền Nam Leda tuỳ chỉnh hoặc vi-VN-HoaiMyNeural, chèn SFX sau từ khóa nhấn nhá và ép nhạc nền Auto-Ducking -14dB.';
-        rule = 'Tiêu chuẩn Âm thanh & Giọng đọc Miền Nam';
-        conf = '98%';
-      } else if (/facebook|fb|profile|comment|fill/i.test(qLower)) {
-        decision = 'Bắt buộc 100% mở trên Profile 4 (khakhunghiep@gmail.com) qua 5 Lớp Stealth. Cấm tuyệt đối hàm .fill(), phải gõ từng phím sinh học LexicalHumanTyper.';
-        rule = 'Luật Bất Di Bất Dịch Khi Có Link Facebook';
-        conf = '100%';
       }
 
-      const nowStr = new Date().toISOString().replace('T', ' ').slice(0, 19);
-      const record = {
-        timestamp: nowStr,
-        worker_agent: 'subagent-worker',
-        worker_question: question,
-        ceo_decision: decision,
-        matched_rule: rule,
-        confidence: conf
-      };
-      cachedDecisionLedger.unshift(record);
-      renderDecisionLedger(cachedDecisionLedger);
-      return record;
-    }
+      async function selectSession(sessionId, scrollToEnd = true) {
+        if (!sessionId) return;
+        state.activeSessionId = sessionId;
+        renderSessionList();
 
-    async function sendCommand(customText) {
-      const input = document.getElementById('commandInput');
-      const cmd = (customText || input.value || '').trim();
-      if (!cmd) return;
-      if (!customText) input.value = '';
-
-      const voice = document.getElementById('voiceSelect').value;
-      document.getElementById('voiceStatus').textContent = 'Đang xử lý & điều phối Agent...';
-      document.getElementById('replyText').textContent = `Đang thực thi lệnh của sếp: "${cmd}"...`;
-
-      if (isLocalServer) {
-        try {
-          const res = await fetch('/api/voice-command', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ command: cmd, voice })
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.ok) {
-              document.getElementById('replyText').textContent = data.reply_text;
-              document.getElementById('voiceStatus').textContent = 'Đang phát giọng nói báo cáo...';
-              if (data.audio_url) {
-                const player = document.getElementById('ttsAudioPlayer');
-                player.src = data.audio_url;
-                player.play().catch(() => {});
+        if (state.daemonOnline) {
+          try {
+            const res = await fetch(`${LOCAL_API_BASE}/api/conversation?id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
+            if (res.ok) {
+              const conv = await res.json();
+              if (conv && conv.session_id) {
+                state.conversationsById[sessionId] = conv;
               }
-              await loadDashboardData();
-              return;
             }
-          }
-        } catch (e) {}
+          } catch (_) {}
+        }
+        renderActiveConversation(scrollToEnd);
       }
 
-      const cmdLower = cmd.toLowerCase();
-      let reply = '';
-      let sampleAudio = 'audio_cache/tts_b6fc30c185a91849.mp3';
-      if (/kiểm tra|nghiệm thu|chất lượng|verify/.test(cmdLower)) {
-        reply = `Báo cáo sếp: Em đã tự động chạy bộ kiểm định nghiệm thu toàn hệ thống, kết quả đạt chuẩn 100%. Hiện có ${allDeliverables.length || 12} thành phẩm video và hình ảnh 4K mới nhất đã sẵn sàng trên bàn nghiệm thu bên dưới.`;
-        sampleAudio = 'audio_cache/tts_29fd31ac30368ede.mp3';
-      } else if (/nguyên tắc|bộ não|suy nghĩ|lịch sử/.test(cmdLower)) {
-        reply = 'Báo cáo sếp: Em đã quét 322 phiên làm việc và 774 chỉ đạo của sếp. Ba nguyên tắc bất di bất dịch là: ẩn 100% code chỉ trình sản phẩm cuối, tự quyết định thay sếp mọi câu hỏi kỹ thuật của Agent thợ, và tự kiểm thử đạt 10/10 trước khi báo cáo.';
-        sampleAudio = 'audio_cache/tts_b0359baa400e5c6b.mp3';
-      } else if (/agent thợ|hỏi|code/.test(cmdLower)) {
-        const dec = resolveWorkerLocally(cmd);
-        reply = `Em đã tra cứu Bộ não thứ hai và ra quyết định ngay cho đội Agent thợ: "${dec.ceo_decision}" (Độ khớp ${dec.confidence}).`;
-        sampleAudio = 'audio_cache/tts_eb23a0ea5d3222d8.mp3';
-      } else {
-        resolveWorkerLocally(`Triển khai nhiệm vụ: ${cmd}`);
-        reply = `Đã rõ lệnh của sếp: "${cmd}". Em đã chuyển hóa yêu cầu thành chỉ thị cho đội ngũ Agent Antigravity và tự chốt mọi thông số theo đúng gu trong Bộ não thứ hai của sếp. Thành phẩm sẽ hiện ngay tại bàn nghiệm thu bên dưới.`;
-      }
-
-      document.getElementById('replyText').textContent = reply;
-      document.getElementById('voiceStatus').textContent = 'Đang phát giọng nói báo cáo...';
-      const player = document.getElementById('ttsAudioPlayer');
-      player.src = sampleAudio;
-      player.play().catch(() => speakVietnameseBrowserFallback(reply));
-    }
-
-    function quickRun(text) {
-      document.getElementById('commandInput').value = text;
-      sendCommand(text);
-    }
-
-    async function speakCurrentReply() {
-      const text = document.getElementById('replyText').textContent;
-      await speakTextOutLoud(text);
-    }
-
-    async function testWorkerAsk() {
-      const inp = document.getElementById('workerQuestionInput');
-      const q = inp.value.trim();
-      if (!q) return;
-      inp.value = '';
-      if (isLocalServer) {
+      async function fetchLiveSessions(isInitial = false) {
         try {
-          const res = await fetch('/api/worker-ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ agent_name: 'subagent-worker', question: q })
-          });
+          const res = await fetch(`${LOCAL_API_BASE}/api/live-chats`, { cache: 'no-store' });
           if (res.ok) {
             const data = await res.json();
-            if (data.ok && data.decision) {
-              document.getElementById('replyText').textContent =
-                `Đã trả lời tự động cho Agent thợ: "${data.decision.ceo_decision}"`;
-              speakCurrentReply();
-              await loadDashboardData();
+            state.daemonOnline = true;
+            state.sessions = data.sessions || [];
+            el.liveDot.setAttribute('data-popover', `Trực tuyến 1.5s/lần · Cập nhật ${data.updated_at || ''}`);
+
+            if (!state.activeSessionId && state.sessions.length > 0) {
+              state.activeSessionId = state.sessions[0].session_id;
+            }
+            if (state.activeSessionId) {
+              const convRes = await fetch(`${LOCAL_API_BASE}/api/conversation?id=${encodeURIComponent(state.activeSessionId)}`, { cache: 'no-store' });
+              if (convRes.ok) {
+                const conv = await convRes.json();
+                if (conv && conv.session_id) {
+                  const prevConv = state.conversationsById[state.activeSessionId];
+                  const prevCount = prevConv && prevConv.messages ? prevConv.messages.length : 0;
+                  state.conversationsById[state.activeSessionId] = conv;
+                  if (!isInitial && state.autoSpeak && conv.messages && conv.messages.length > prevCount) {
+                    const lastMsg = conv.messages[conv.messages.length - 1];
+                    if (lastMsg && lastMsg.role === 'assistant' && !lastMsg.is_working && lastMsg.id !== state.lastAnnouncedMsgId) {
+                      state.lastAnnouncedMsgId = lastMsg.id;
+                      speakVietnameseText(lastMsg.text);
+                    }
+                  }
+                }
+              }
+            }
+            renderSessionList();
+            renderActiveConversation(isInitial);
+            return;
+          }
+        } catch (_) {
+          state.daemonOnline = false;
+        }
+
+        // Cloud Snapshot Fallback
+        try {
+          const snapRes = await fetch('data/brain_snapshot.json', { cache: 'no-store' });
+          if (snapRes.ok) {
+            const snap = await snapRes.json();
+            state.brainSnapshot = snap;
+            const liveBlock = snap.live_chats || {};
+            state.sessions = liveBlock.sessions || [];
+            state.conversationsById = Object.assign({}, snap.conversations_by_id || {}, state.conversationsById);
+            el.liveDot.setAttribute('data-popover', 'Đồng bộ Cloud Snapshot (Netlify)');
+            if (!state.activeSessionId && state.sessions.length > 0) {
+              state.activeSessionId = state.sessions[0].session_id;
+            }
+            renderSessionList();
+            renderActiveConversation(isInitial);
+            renderHubPopover();
+          }
+        } catch (_) {}
+      }
+
+      async function loadBrainSnapshotMetadata() {
+        try {
+          const res = await fetch(`${LOCAL_API_BASE ? LOCAL_API_BASE + '/api/brain' : 'data/brain_snapshot.json'}`, { cache: 'no-store' });
+          if (res.ok) {
+            state.brainSnapshot = await res.json();
+            const delivs = state.brainSnapshot.deliverables || [];
+            if (delivs.length) el.deliverableCountBadge.textContent = String(delivs.length);
+            renderHubPopover();
+          }
+        } catch (_) {
+          try {
+            const res2 = await fetch('data/brain_snapshot.json', { cache: 'no-store' });
+            if (res2.ok) {
+              state.brainSnapshot = await res2.json();
+              renderHubPopover();
+            }
+          } catch (_) {}
+        }
+      }
+
+      function renderHubPopover() {
+        const snap = state.brainSnapshot || {};
+        if (state.hubTab === 'deliverables') {
+          const items = (snap.deliverables || []).slice(0, 12);
+          if (!items.length) {
+            el.hubPopoverBody.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:8px;">Đang tải sản phẩm nghiệm thu...</div>`;
+            return;
+          }
+          el.hubPopoverBody.innerHTML = `
+            <div class="deliverable-mini-grid">
+              ${items.map((item, idx) => {
+                const rawUrl = item.static_preview_url || item.preview_url || item.web_url || item.thumb_url || '';
+                const mediaSrc = (rawUrl.startsWith('/media') && !state.daemonOnline && item.static_preview_url)
+                  ? item.static_preview_url
+                  : ((rawUrl.startsWith('/media') && LOCAL_API_BASE) ? `${LOCAL_API_BASE}${rawUrl}` : rawUrl);
+                const isImg = item.kind === 'image' || /\.(jpg|jpeg|png|webp)$/i.test(mediaSrc);
+                return `
+                  <div class="media-item" data-open-media="${idx}" title="${escapeHtml(item.title)}">
+                    <div class="media-thumb">
+                      ${isImg && mediaSrc
+                        ? `<img src="${escapeHtml(mediaSrc)}" alt="${escapeHtml(item.title)}" loading="lazy" />`
+                        : `<span style="color:#94A3B8; font-size:11px;">Video / File</span>`
+                      }
+                    </div>
+                    <div class="media-caption">${escapeHtml(item.title)}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          `;
+          el.hubPopoverBody.querySelectorAll('[data-open-media]').forEach((card) => {
+            card.addEventListener('click', () => {
+              const item = items[Number(card.getAttribute('data-open-media'))];
+              if (!item) return;
+              const rawUrl = item.static_preview_url || item.preview_url || item.web_url || item.thumb_url || '';
+              const mediaSrc = (rawUrl.startsWith('/media') && !state.daemonOnline && item.static_preview_url)
+                ? item.static_preview_url
+                : ((rawUrl.startsWith('/media') && LOCAL_API_BASE) ? `${LOCAL_API_BASE}${rawUrl}` : rawUrl);
+              el.modalTitleText.textContent = item.title || 'Sản phẩm nghiệm thu';
+              if (item.kind === 'video') {
+                el.modalBodyContent.innerHTML = `<video src="${escapeHtml(mediaSrc)}" controls autoplay></video>`;
+              } else {
+                el.modalBodyContent.innerHTML = `<img src="${escapeHtml(mediaSrc)}" alt="${escapeHtml(item.title)}" />`;
+              }
+              el.mediaModalBackdrop.classList.add('open');
+            });
+          });
+          return;
+        }
+
+        const brainObj = snap.brain || snap;
+        const rules = (brainObj.executive_rules || []).slice(0, 6);
+        el.hubPopoverBody.innerHTML = `
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            ${rules.map((r) => `
+              <div style="padding:8px; border-radius:6px; background:var(--bg-subtle); font-size:12px;">
+                <div style="font-weight:700; color:var(--accent);">${escapeHtml(r.id)} · ${escapeHtml(r.title)}</div>
+                <div style="color:var(--text-secondary); margin-top:2px;">${escapeHtml(r.rule)}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      function answerFromSecondBrainOffline(commandText) {
+        const q = commandText.toLowerCase();
+        if (q.includes('4k') || q.includes('hoatrang')) {
+          return 'Đã kích hoạt nâng cấp 4K Ultra trên tài khoản hoatrang756@gmail.com (Nano Banana 2.1 4K & Gemini Omni 1.1 Flash).';
+        }
+        if (q.includes('3 hồi') || q.includes('video') || q.includes('flow')) {
+          return 'Đã giao Subagent flow-video-director chạy Node Studio V3.9 với Khuôn Đúc 3 Cột V1 ~1600ml.';
+        }
+        return 'Đã nhận lệnh của Sếp, tự động ẩn 100% code kỹ thuật và điều phối đội ngũ Agent thực thi.';
+      }
+
+      async function sendChatCommand() {
+        const text = el.composerTextarea.value.trim();
+        if (!text) return;
+        el.composerTextarea.value = '';
+        closeAllPopovers();
+
+        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId) || state.sessions[0];
+        const sid = activeSession ? activeSession.session_id : `web-${Date.now()}`;
+        const selectedVal = state.selectedAgentVal;
+        let engineCode = activeSession ? activeSession.engine_code : 'antigravity';
+        let agentName = '';
+
+        if (selectedVal === 'antigravity') engineCode = 'antigravity';
+        else if (selectedVal === 'claude') engineCode = 'claude';
+        else if (selectedVal === 'ceo-proxy') engineCode = 'ceo-proxy';
+        else if (selectedVal.startsWith('agent:')) {
+          engineCode = 'antigravity';
+          agentName = selectedVal.replace('agent:', '');
+        }
+
+        if (!state.conversationsById[sid]) {
+          state.conversationsById[sid] = {
+            session_id: sid,
+            messages: activeSession ? buildMessagesFromCompactTurns(activeSession) : [],
+          };
+        }
+        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+        state.conversationsById[sid].messages.push({
+          id: `local-u-${Date.now()}`,
+          role: 'user',
+          text: text,
+          timestamp: nowStr,
+        });
+        renderActiveConversation(true);
+
+        if (state.daemonOnline) {
+          try {
+            const res = await fetch(`${LOCAL_API_BASE}/api/chat/send`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                session_id: sid,
+                command: text,
+                engine: engineCode,
+                agent: agentName,
+                mode: 'accept-edits',
+                speak: state.autoSpeak,
+              }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              if (data.conversation) {
+                state.conversationsById[sid] = data.conversation;
+              }
+              if (data.audio_url && state.autoSpeak) {
+                const audioUrl = data.audio_url.startsWith('http')
+                  ? data.audio_url
+                  : `${LOCAL_API_BASE}${data.audio_url}`;
+                new Audio(audioUrl).play().catch(() => {});
+              }
+              await fetchLiveSessions(false);
+              renderActiveConversation(true);
               return;
             }
-          }
-        } catch (e) {}
-      }
-      const dec = resolveWorkerLocally(q);
-      document.getElementById('replyText').textContent =
-        `Đã trả lời tự động cho Agent thợ: "${dec.ceo_decision}"`;
-      speakCurrentReply();
-    }
+          } catch (_) {}
+        }
 
-    async function rescanBrain() {
-      document.getElementById('voiceStatus').textContent = 'Đang đồng bộ lịch sử chat...';
-      if (isLocalServer) {
+        const replyText = answerFromSecondBrainOffline(text);
+        state.conversationsById[sid].messages.push({
+          id: `local-a-${Date.now()}`,
+          role: 'assistant',
+          text: replyText,
+          timestamp: nowStr,
+          model: 'Bộ Não Thứ Hai CEO',
+          hidden_count: 2,
+          tools: [],
+          links: [],
+        });
+        renderActiveConversation(true);
+        if (state.autoSpeak) speakVietnameseText(replyText);
+      }
+
+      async function createNewSession() {
+        const title = window.prompt('Nhập tên cuộc trò chuyện mới:', 'Chỉ đạo mới');
+        if (!title) return;
+        if (state.daemonOnline) {
+          try {
+            const res = await fetch(`${LOCAL_API_BASE}/api/chat/new`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ title: title, engine: 'antigravity', project: 'mang xa hoi' }),
+            });
+            if (res.ok) {
+              const data = await res.json();
+              await fetchLiveSessions(false);
+              if (data.session_id) await selectSession(data.session_id, true);
+              el.composerTextarea.focus();
+              return;
+            }
+          } catch (_) {}
+        }
+
+        const newId = `web-${Date.now().toString(16)}`;
+        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
+        state.sessions.unshift({
+          session_id: newId,
+          short_id: newId.slice(0, 8),
+          engine: 'Antigravity 2.0',
+          engine_code: 'antigravity',
+          project: 'mang xa hoi',
+          title: title,
+          updated_str: nowStr,
+          filtered_count: 0,
+          turns: [],
+        });
+        state.conversationsById[newId] = {
+          session_id: newId,
+          messages: [
+            {
+              id: `init-${newId}`,
+              role: 'assistant',
+              text: `Đã mở cuộc trò chuyện: **${title}**. Sếp nhập lệnh hoặc bấm Mic ở dưới nhé.`,
+              timestamp: nowStr,
+              model: 'Bộ Não Thứ Hai',
+              hidden_count: 0,
+            },
+          ],
+        };
+        state.activeSessionId = newId;
+        renderSessionList();
+        renderActiveConversation(true);
+        el.composerTextarea.focus();
+      }
+
+      // Events
+      document.getElementById('btnToggleSidebar').addEventListener('click', () => {
+        if (window.innerWidth <= 900) {
+          el.leftSidebar.classList.toggle('mobile-open');
+        } else {
+          el.leftSidebar.classList.toggle('collapsed');
+        }
+      });
+
+      document.getElementById('btnRefreshSessions').addEventListener('click', () => fetchLiveSessions(false));
+      document.getElementById('btnNewSession').addEventListener('click', createNewSession);
+
+      el.sessionSearchInput.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value || '';
+        renderSessionList();
+      });
+
+      document.querySelectorAll('[data-provider]').forEach((pill) => {
+        pill.addEventListener('click', () => {
+          document.querySelectorAll('[data-provider]').forEach((p) => p.classList.remove('active'));
+          pill.classList.add('active');
+          state.providerFilter = pill.getAttribute('data-provider') || 'all';
+          renderSessionList();
+        });
+      });
+
+      el.btnAutoSpeak.addEventListener('click', () => {
+        state.autoSpeak = !state.autoSpeak;
+        el.btnAutoSpeak.classList.toggle('active', state.autoSpeak);
+        el.btnAutoSpeak.setAttribute('data-popover', state.autoSpeak
+          ? 'Tự động đọc giọng nói: Đang Bật'
+          : 'Tự động đọc giọng nói: Đang Tắt');
+      });
+
+      el.btnZeroCode.addEventListener('click', () => {
+        state.zeroCodeMode = !state.zeroCodeMode;
+        el.btnZeroCode.classList.toggle('active', state.zeroCodeMode);
+        el.btnZeroCode.setAttribute('data-popover', state.zeroCodeMode
+          ? 'Chế độ Sếp: Đang ẩn 100% Code'
+          : 'Chế độ Kỹ thuật: Đang hiện bước chạy');
+        renderActiveConversation(false);
+      });
+
+      el.btnOpenHubPopover.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasOpen = el.hubPopoverPanel.classList.contains('open');
+        closeAllPopovers();
+        if (!wasOpen) {
+          el.hubPopoverPanel.classList.add('open');
+          renderHubPopover();
+        }
+      });
+
+      document.getElementById('btnCloseHubPopover').addEventListener('click', () => {
+        el.hubPopoverPanel.classList.remove('open');
+      });
+
+      document.querySelectorAll('[data-hubtab]').forEach((tab) => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('[data-hubtab]').forEach((t) => t.classList.remove('active'));
+          tab.classList.add('active');
+          state.hubTab = tab.getAttribute('data-hubtab') || 'deliverables';
+          renderHubPopover();
+        });
+      });
+
+      document.getElementById('btnCopyCli').addEventListener('click', (e) => {
+        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId);
+        if (!activeSession) return;
+        const cmd = activeSession.resume_command || `agy --conversation ${activeSession.session_id}`;
+        navigator.clipboard.writeText(cmd);
+        const btn = e.currentTarget;
+        btn.setAttribute('data-popover', 'Đã sao chép lệnh CLI!');
+        setTimeout(() => btn.setAttribute('data-popover', 'Sao chép lệnh mở trên Terminal'), 1400);
+      });
+
+      document.getElementById('btnThemeToggle').addEventListener('click', () => {
+        const html = document.documentElement;
+        html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+
+      el.btnQuickCmd.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasOpen = el.quickCmdPopover.classList.contains('open');
+        closeAllPopovers();
+        if (!wasOpen) el.quickCmdPopover.classList.add('open');
+      });
+
+      el.btnAgentPicker.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasOpen = el.agentPickerPopover.classList.contains('open');
+        closeAllPopovers();
+        if (!wasOpen) el.agentPickerPopover.classList.add('open');
+      });
+
+      document.querySelectorAll('[data-close-pop]').forEach((btn) => {
+        btn.addEventListener('click', () => closeAllPopovers());
+      });
+
+      document.querySelectorAll('[data-quick-cmd]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          el.composerTextarea.value = opt.getAttribute('data-quick-cmd') || '';
+          closeAllPopovers();
+          el.composerTextarea.focus();
+        });
+      });
+
+      document.querySelectorAll('[data-agent-val]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('[data-agent-val]').forEach((o) => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          state.selectedAgentVal = opt.getAttribute('data-agent-val') || 'auto';
+          const label = opt.querySelector('span').textContent;
+          el.btnAgentPicker.setAttribute('data-popover', `Người thực thi: ${label}`);
+          closeAllPopovers();
+        });
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!e.target.closest('.popover-panel') && !e.target.closest('#btnQuickCmd') && !e.target.closest('#btnAgentPicker') && !e.target.closest('#btnOpenHubPopover')) {
+          closeAllPopovers();
+        }
+      });
+
+      el.composerTextarea.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendChatCommand();
+        }
+      });
+
+      el.btnSendCommand.addEventListener('click', sendChatCommand);
+
+      el.btnAbortJob.addEventListener('click', async () => {
+        if (!state.daemonOnline || !state.activeSessionId) return;
         try {
-          await fetch('/api/rescan-brain', { method: 'POST' });
-        } catch (e) {}
+          await fetch(`${LOCAL_API_BASE}/api/chat/abort`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ session_id: state.activeSessionId }),
+          });
+          await fetchLiveSessions(false);
+        } catch (_) {}
+      });
+
+      // Voice Speech-to-Text
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      let recognition = null;
+      if (SpeechRecognition) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'vi-VN';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.onstart = () => {
+          state.isRecordingMic = true;
+          el.btnVoiceMic.classList.add('danger');
+          el.btnVoiceMic.setAttribute('data-popover', 'Đang nghe Sếp nói...');
+        };
+        recognition.onresult = (event) => {
+          el.composerTextarea.value = event.results[0][0].transcript;
+          sendChatCommand();
+        };
+        recognition.onend = () => {
+          state.isRecordingMic = false;
+          el.btnVoiceMic.classList.remove('danger');
+          el.btnVoiceMic.setAttribute('data-popover', 'Bấm để nói lệnh tiếng Việt');
+        };
       }
-      await loadDashboardData();
-      document.getElementById('voiceStatus').textContent = 'Đã đồng bộ Bộ não thứ hai';
-    }
 
-    function setupSpeechRecognition() {
-      const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRec) return null;
-      const rec = new SpeechRec();
-      rec.lang = 'vi-VN';
-      rec.interimResults = true;
-      rec.continuous = document.getElementById('chkContinuous').checked;
-
-      rec.onstart = () => {
-        isListening = true;
-        document.getElementById('btnToggleMic').classList.add('active');
-        document.getElementById('micBtnLabel').textContent = 'Đang nghe sếp nói... (Bấm để dừng)';
-        document.getElementById('voiceStatus').textContent = 'Đang lắng nghe giọng nói tiếng Việt...';
-      };
-
-      rec.onresult = (event) => {
-        let transcript = '';
-        let isFinal = false;
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-          if (event.results[i].isFinal) isFinal = true;
+      el.btnVoiceMic.addEventListener('click', () => {
+        if (!recognition) {
+          alert('Trình duyệt không hỗ trợ Mic giọng nói. Sếp vui lòng mở bằng Chrome hoặc Edge.');
+          return;
         }
-        document.getElementById('commandInput').value = transcript;
-        if (isFinal && transcript.trim().length > 1) {
-          sendCommand(transcript.trim());
+        if (state.isRecordingMic) recognition.stop();
+        else recognition.start();
+      });
+
+      document.getElementById('btnCloseModal').addEventListener('click', () => {
+        el.mediaModalBackdrop.classList.remove('open');
+        el.modalBodyContent.innerHTML = '';
+      });
+
+      el.mediaModalBackdrop.addEventListener('click', (e) => {
+        if (e.target === el.mediaModalBackdrop) {
+          el.mediaModalBackdrop.classList.remove('open');
+          el.modalBodyContent.innerHTML = '';
         }
-      };
+      });
 
-      rec.onend = () => {
-        if (isListening && document.getElementById('chkContinuous').checked) {
-          try { rec.start(); return; } catch (e) {}
-        }
-        isListening = false;
-        document.getElementById('btnToggleMic').classList.remove('active');
-        document.getElementById('micBtnLabel').textContent = 'Nói với trợ lý (Tiếng Việt)';
-      };
-
-      rec.onerror = () => {
-        isListening = false;
-        document.getElementById('btnToggleMic').classList.remove('active');
-        document.getElementById('micBtnLabel').textContent = 'Nói với trợ lý (Tiếng Việt)';
-      };
-      return rec;
-    }
-
-    function toggleVoiceRecognition() {
-      if (!recognition) {
-        recognition = setupSpeechRecognition();
-      }
-      if (!recognition) {
-        alert('Trình duyệt hiện tại không hỗ trợ Web Speech API, vui lòng mở trên Google Chrome hoặc Microsoft Edge.');
-        return;
-      }
-      if (isListening) {
-        isListening = false;
-        recognition.stop();
-      } else {
-        recognition.continuous = document.getElementById('chkContinuous').checked;
-        recognition.start();
-      }
-    }
-
-    function onContinuousChange() {
-      if (recognition) {
-        recognition.continuous = document.getElementById('chkContinuous').checked;
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      loadDashboardData();
-      // Đồng bộ thời gian thực 1.5 giây/lần với mọi cửa sổ Antigravity & Claude trên máy
-      setInterval(pollLiveChatsRealtime, 1500);
-    });
+      loadBrainSnapshotMetadata();
+      fetchLiveSessions(true);
+      setInterval(() => fetchLiveSessions(false), 1500);
+    })();
   </script>
 </body>
 </html>
