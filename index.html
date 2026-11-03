@@ -5,50 +5,58 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- MANDATORY: Declare support for both light and dark themes -->
   <meta name="color-scheme" content="light dark">
-  <title>Đòn Bẩy AI · Trợ lý giọng nói & Bộ não thứ hai CEO</title>
+  <title>Đòn Bẩy AI · Trung Tâm Theo Dõi Trực Tiếp Antigravity & Claude (Zero-Code)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     /* MANDATORY: Apply color-scheme to :root for viewport-wide theming */
     :root {
-      --ground-light: #f4f7f8;
-      --ground-dark: #0c0f12;
+      --ground-light: #eef2f7;
+      --ground-dark: #0b0f17;
       --surface-light: #ffffff;
-      --surface-dark: #13171b;
-      --panel-alt-light: #f8fafb;
-      --panel-alt-dark: #181d22;
-      --ink-light: #131416;
-      --ink-dark: #f1f4f6;
-      --muted-light: #525659;
-      --muted-dark: #9ba1a6;
-      --faint-light: #686c70;
-      --faint-dark: #7d848a;
-      --border-light: #e8ecef;
-      --border-dark: #222930;
-      --border-strong-light: #d5dce0;
-      --border-strong-dark: #2f3840;
+      --surface-dark: #111823;
+      --panel-alt-light: #f6f8fb;
+      --panel-alt-dark: #16202e;
+      --ink-light: #0f172a;
+      --ink-dark: #f1f5f9;
+      --muted-light: #475569;
+      --muted-dark: #94a3b8;
+      --faint-light: #64748b;
+      --faint-dark: #7c8b9e;
+      --border-light: #dce3ec;
+      --border-dark: #233044;
+      --border-strong-light: #c4d0df;
+      --border-strong-dark: #33445e;
+
+      --royal-light: #0a2777;
+      --royal-dark: #2b6cb0;
       --accent-light: #1b6c80;
       --accent-dark: #3898b0;
-      --accent-tint-light: #e6f2f5;
-      --accent-tint-dark: #152c33;
-      --pill-pos-bg-light: #dcfae5;
-      --pill-pos-bg-dark: #0f2e1b;
-      --pill-pos-ink-light: #04250e;
+      --accent-tint-light: #e3f1f5;
+      --accent-tint-dark: #152e38;
+
+      --pill-pos-bg-light: #d8f8e3;
+      --pill-pos-bg-dark: #0d331e;
+      --pill-pos-ink-light: #053316;
       --pill-pos-ink-dark: #8ee6b0;
-      --pill-neg-bg-light: #ffedea;
-      --pill-neg-bg-dark: #361517;
-      --pill-neg-ink-light: #831c1e;
-      --pill-neg-ink-dark: #f9a8a9;
-      --pill-warn-bg-light: #fffbeb;
-      --pill-warn-bg-dark: #332409;
+
+      --pill-warn-bg-light: #fef3c7;
+      --pill-warn-bg-dark: #382607;
       --pill-warn-ink-light: #78350f;
       --pill-warn-ink-dark: #fcd34d;
-      --scroll-thumb-light: #b8c2c8;
-      --scroll-thumb-dark: #38424a;
-      --scroll-track-light: #f4f7f8;
-      --scroll-track-dark: #0c0f12;
 
+      --pill-neg-bg-light: #ffe4e6;
+      --pill-neg-bg-dark: #3b1319;
+      --pill-neg-ink-light: #881337;
+      --pill-neg-ink-dark: #fda4af;
+
+      --scroll-thumb-light: #94a3b8;
+      --scroll-thumb-dark: #334155;
+      --scroll-track-light: #eef2f7;
+      --scroll-track-dark: #0b0f17;
+
+      /* Default to crisp Daylight Studio (#eef2f7 / #ffffff / #0a2777) */
       --ground: var(--ground-light);
       --surface: var(--surface-light);
       --panel-alt: var(--panel-alt-light);
@@ -57,69 +65,49 @@
       --faint: var(--faint-light);
       --border: var(--border-light);
       --border-strong: var(--border-strong-light);
+      --royal: var(--royal-light);
       --accent: var(--accent-light);
       --accent-tint: var(--accent-tint-light);
       --pill-pos-bg: var(--pill-pos-bg-light);
       --pill-pos-ink: var(--pill-pos-ink-light);
-      --pill-neg-bg: var(--pill-neg-bg-light);
-      --pill-neg-ink: var(--pill-neg-ink-light);
       --pill-warn-bg: var(--pill-warn-bg-light);
       --pill-warn-ink: var(--pill-warn-ink-light);
+      --pill-neg-bg: var(--pill-neg-bg-light);
+      --pill-neg-ink: var(--pill-neg-ink-light);
       --scroll-thumb: var(--scroll-thumb-light);
       --scroll-track: var(--scroll-track-light);
 
       --radius-sheet: 16px;
-      --radius-panel: 10px;
-      --radius-control: 6px;
+      --radius-panel: 12px;
+      --radius-control: 8px;
       --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
-
-      /* MANDATORY: Fallback for browsers without light-dark support */
-      @media (prefers-color-scheme: dark) {
-        --ground: var(--ground-dark);
-        --surface: var(--surface-dark);
-        --panel-alt: var(--panel-alt-dark);
-        --ink: var(--ink-dark);
-        --muted: var(--muted-dark);
-        --faint: var(--faint-dark);
-        --border: var(--border-dark);
-        --border-strong: var(--border-strong-dark);
-        --accent: var(--accent-dark);
-        --accent-tint: var(--accent-tint-dark);
-        --pill-pos-bg: var(--pill-pos-bg-dark);
-        --pill-pos-ink: var(--pill-pos-ink-dark);
-        --pill-neg-bg: var(--pill-neg-bg-dark);
-        --pill-neg-ink: var(--pill-neg-ink-dark);
-        --pill-warn-bg: var(--pill-warn-bg-dark);
-        --pill-warn-ink: var(--pill-warn-ink-dark);
-        --scroll-thumb: var(--scroll-thumb-dark);
-        --scroll-track: var(--scroll-track-dark);
-      }
-
-      @supports (color: light-dark(white, black)) {
-        --ground: light-dark(var(--ground-light), var(--ground-dark));
-        --surface: light-dark(var(--surface-light), var(--surface-dark));
-        --panel-alt: light-dark(var(--panel-alt-light), var(--panel-alt-dark));
-        --ink: light-dark(var(--ink-light), var(--ink-dark));
-        --muted: light-dark(var(--muted-light), var(--muted-dark));
-        --faint: light-dark(var(--faint-light), var(--faint-dark));
-        --border: light-dark(var(--border-light), var(--border-dark));
-        --border-strong: light-dark(var(--border-strong-light), var(--border-strong-dark));
-        --accent: light-dark(var(--accent-light), var(--accent-dark));
-        --accent-tint: light-dark(var(--accent-tint-light), var(--accent-tint-dark));
-        --pill-pos-bg: light-dark(var(--pill-pos-bg-light), var(--pill-pos-bg-dark));
-        --pill-pos-ink: light-dark(var(--pill-pos-ink-light), var(--pill-pos-ink-dark));
-        --pill-neg-bg: light-dark(var(--pill-neg-bg-light), var(--pill-neg-bg-dark));
-        --pill-neg-ink: light-dark(var(--pill-neg-ink-light), var(--pill-neg-ink-dark));
-        --pill-warn-bg: light-dark(var(--pill-warn-bg-light), var(--pill-warn-bg-dark));
-        --pill-warn-ink: light-dark(var(--pill-warn-ink-light), var(--pill-warn-ink-dark));
-        --scroll-thumb: light-dark(var(--scroll-thumb-light), var(--scroll-thumb-dark));
-        --scroll-track: light-dark(var(--scroll-track-light), var(--scroll-track-dark));
-      }
 
       color-scheme: light dark;
       accent-color: var(--accent);
       scrollbar-width: thin;
       scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+    }
+
+    html[data-theme="dark"] {
+      --ground: var(--ground-dark);
+      --surface: var(--surface-dark);
+      --panel-alt: var(--panel-alt-dark);
+      --ink: var(--ink-dark);
+      --muted: var(--muted-dark);
+      --faint: var(--faint-dark);
+      --border: var(--border-dark);
+      --border-strong: var(--border-strong-dark);
+      --royal: var(--royal-dark);
+      --accent: var(--accent-dark);
+      --accent-tint: var(--accent-tint-dark);
+      --pill-pos-bg: var(--pill-pos-bg-dark);
+      --pill-pos-ink: var(--pill-pos-ink-dark);
+      --pill-warn-bg: var(--pill-warn-bg-dark);
+      --pill-warn-ink: var(--pill-warn-ink-dark);
+      --pill-neg-bg: var(--pill-neg-bg-dark);
+      --pill-neg-ink: var(--pill-neg-ink-dark);
+      --scroll-thumb: var(--scroll-thumb-dark);
+      --scroll-track: var(--scroll-track-dark);
     }
 
     @supports not (scrollbar-color: auto) {
@@ -141,154 +129,210 @@
       padding: 0;
     }
 
-    html {
+    html, body {
       font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 14px;
       line-height: 1.5;
       color: var(--ink);
       background-color: var(--ground);
+      min-height: 100svh;
+      overflow-x: clip;
       -webkit-font-smoothing: antialiased;
     }
 
-    body {
-      font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      background-color: var(--ground);
-      color: var(--ink);
-      min-height: 100svh;
-      overflow-x: clip;
-    }
-
-    /* Framed-sheet shell: L-frame on --ground holding 228px sidebar + 48px top bar */
+    /* Framed-sheet Studio Architecture */
     .app-shell {
       display: grid;
-      grid-template-columns: 228px minmax(0, 1fr);
+      grid-template-columns: 248px minmax(0, 1fr);
       min-height: 100svh;
       background-color: var(--ground);
     }
 
+    /* Left Navigation Rail */
     aside.sidebar {
-      padding: 12px 12px 16px;
+      padding: 14px 12px 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 16px;
+      gap: 14px;
       background-color: var(--ground);
       user-select: none;
     }
 
-    .brand-block {
+    .brand-card {
+      background-color: var(--royal);
+      color: #ffffff;
+      border-radius: var(--radius-panel);
+      padding: 12px;
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 4px 8px 10px;
     }
 
-    .brand-mark {
-      width: 26px;
-      height: 26px;
+    .brand-monogram {
+      width: 32px;
+      height: 32px;
       border-radius: var(--radius-control);
-      background-color: var(--ink);
-      color: var(--surface);
+      background-color: #ffffff;
+      color: var(--royal);
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-weight: 600;
-      font-size: 12px;
+      font-weight: 700;
+      font-size: 14px;
       flex-shrink: 0;
     }
 
-    .brand-name {
+    .brand-title {
       font-size: 14px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.25;
+    }
+
+    .brand-subtitle {
+      font-size: 12px;
+      color: #dbeafe;
+      line-height: 1.25;
+    }
+
+    .nav-group-head {
+      font-size: 12px;
       font-weight: 600;
-      color: var(--ink);
-      line-height: 1.25;
-    }
-
-    .brand-sub {
-      font-size: 12px;
       color: var(--muted);
-      line-height: 1.25;
-    }
-
-    .nav-group-title {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      padding: 8px 10px 4px;
+      padding: 10px 8px 4px;
     }
 
     .nav-list {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
     }
 
-    .nav-link {
+    button.nav-item {
+      width: 100%;
+      height: 36px;
+      padding: 0 10px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-control);
+      background-color: transparent;
+      color: var(--muted);
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      height: 32px;
-      padding: 0 10px;
-      border-radius: var(--radius-control);
-      color: var(--muted);
-      text-decoration: none;
       font-size: 13px;
       font-weight: 500;
+      cursor: pointer;
+      text-align: left;
       transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
     }
 
-    .nav-link-left {
+    button.nav-item.active {
+      background-color: var(--surface);
+      border-color: var(--border);
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    .nav-item-left {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       min-width: 0;
     }
 
-    .nav-link.active {
+    .nav-badge {
+      font-size: 12px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      padding: 1px 7px;
+      border-radius: 999px;
       background-color: var(--accent-tint);
       color: var(--ink);
-      font-weight: 600;
     }
 
-    .nav-count {
-      font-size: 12px;
-      font-variant-numeric: tabular-nums;
-      color: var(--muted);
-    }
-
-    .sidebar-foot {
-      padding: 10px;
-      border-radius: var(--radius-panel);
-      background-color: var(--surface);
-      border: 1px solid var(--border);
+    /* Live Sessions List inside Sidebar */
+    .session-list {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 2px;
     }
 
-    .status-line {
+    button.session-pill {
+      width: 100%;
+      height: auto;
+      padding: 9px 10px;
+      border-radius: var(--radius-control);
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+      text-align: left;
+      white-space: normal;
+    }
+
+    button.session-pill.active {
+      border-color: var(--accent);
+      background-color: var(--accent-tint);
+    }
+
+    .session-pill-top {
+      width: 100%;
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 6px;
       font-size: 12px;
-      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .session-engine-tag {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .session-engine-tag.claude {
+      color: var(--pill-warn-ink);
+    }
+
+    .session-pill-title {
+      font-size: 13px;
+      font-weight: 600;
       color: var(--ink);
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      overflow-wrap: anywhere;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background-color: var(--accent);
-      flex-shrink: 0;
+    .session-pill-meta {
+      font-size: 12px;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
     }
 
-    .status-dot.listening {
-      background-color: var(--pill-neg-ink);
+    .sidebar-footer {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-panel);
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
     }
 
+    /* Main Right Column: Topbar + Sheet */
     .frame-main {
       display: flex;
       flex-direction: column;
@@ -296,29 +340,30 @@
       background-color: var(--ground);
     }
 
-    /* 48px top bar on the same --ground with no border between sidebar and topbar */
     header.topbar {
-      height: 48px;
-      padding: 0 16px 0 8px;
+      min-height: 52px;
+      padding: 6px 16px 6px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      flex-wrap: wrap;
       background-color: var(--ground);
     }
 
-    .topbar-left {
+    .live-indicator-bar {
       display: flex;
       align-items: center;
       gap: 8px;
-      min-width: 0;
-      font-size: 13px;
-      color: var(--muted);
+      flex-wrap: wrap;
     }
 
-    .topbar-left strong {
-      color: var(--ink);
-      font-weight: 600;
+    .live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background-color: #059669;
+      display: inline-block;
     }
 
     .topbar-controls {
@@ -328,7 +373,7 @@
       flex-wrap: wrap;
     }
 
-    /* Inset white workspace sheet */
+    /* Main White Sheet */
     main.workspace-sheet {
       flex: 1;
       background-color: var(--surface);
@@ -338,11 +383,11 @@
       padding: 20px 24px 28px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 18px;
       min-width: 0;
     }
 
-    /* Sheet title bar */
+    /* Sheet Header */
     .sheet-header {
       display: flex;
       align-items: flex-start;
@@ -353,7 +398,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .sheet-title-group {
+    .sheet-title-wrap {
       display: flex;
       flex-direction: column;
       gap: 4px;
@@ -362,10 +407,10 @@
 
     h1.sheet-title {
       font-size: 22px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: -0.02em;
-      line-height: 1.25;
       color: var(--ink);
+      line-height: 1.25;
     }
 
     .sheet-subtitle {
@@ -374,20 +419,20 @@
       line-height: 1.45;
     }
 
-    .sheet-actions {
+    .sheet-cta-group {
       display: flex;
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
     }
 
-    /* Controls: buttons, inputs, selects */
+    /* Controls */
     button, .btn-link {
       font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 13px;
       font-weight: 500;
       line-height: 1;
-      height: 34px;
+      height: 36px;
       padding: 0 12px;
       border-radius: var(--radius-control);
       border: 1px solid var(--border-strong);
@@ -408,32 +453,32 @@
     }
 
     button.btn-primary {
-      background-color: var(--ink);
-      border-color: var(--ink);
-      color: var(--surface);
+      background-color: var(--royal);
+      border-color: var(--royal);
+      color: #ffffff;
       font-weight: 600;
     }
 
     button.btn-mic {
-      background-color: var(--ink);
-      border-color: var(--ink);
-      color: var(--surface);
+      background-color: var(--royal);
+      border-color: var(--royal);
+      color: #ffffff;
       font-weight: 600;
-      height: 36px;
-      padding: 0 14px;
+      height: 38px;
+      padding: 0 16px;
     }
 
     button.btn-mic.active {
       background-color: var(--pill-neg-ink);
       border-color: var(--pill-neg-ink);
-      color: var(--surface);
+      color: #ffffff;
     }
 
     select, input[type="text"] {
       font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 13px;
-      height: 34px;
-      padding: 0 10px;
+      height: 36px;
+      padding: 0 12px;
       border-radius: var(--radius-control);
       border: 1px solid var(--border-strong);
       background-color: var(--surface);
@@ -450,26 +495,27 @@
       color: var(--faint);
     }
 
-    .checkbox-label {
+    .toggle-label {
       display: inline-flex;
       align-items: center;
       gap: 6px;
       font-size: 13px;
-      color: var(--muted);
+      font-weight: 500;
+      color: var(--ink);
       cursor: pointer;
       user-select: none;
     }
 
-    /* Status pills */
+    /* Status Pills */
     .status-pill {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      height: 22px;
-      padding: 0 8px;
+      height: 24px;
+      padding: 0 10px;
       border-radius: 999px;
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       font-variant-numeric: tabular-nums;
       white-space: nowrap;
     }
@@ -489,8 +535,13 @@
       color: var(--pill-neg-ink);
     }
 
-    /* Top workspace grid: Voice console (left) + Second Brain KPI & Worker Q&A (right) */
-    .workspace-top-grid {
+    .status-pill.accent {
+      background-color: var(--accent-tint);
+      color: var(--ink);
+    }
+
+    /* Top Row: Live Voice Studio (left) + KPI & Activity Chart (right) */
+    .top-studio-grid {
       display: grid;
       grid-template-columns: 1.25fr 1fr;
       gap: 16px;
@@ -520,7 +571,6 @@
     h2.panel-title {
       font-size: 16px;
       font-weight: 600;
-      letter-spacing: -0.01em;
       color: var(--ink);
       line-height: 1.3;
     }
@@ -542,7 +592,7 @@
     }
 
     button.quick-chip {
-      height: 28px;
+      height: 30px;
       padding: 0 10px;
       font-size: 12px;
       font-weight: 500;
@@ -551,31 +601,33 @@
       color: var(--muted);
     }
 
-    .reply-surface {
+    .voice-Console-box {
       background-color: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-control);
       padding: 12px 14px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .reply-meta {
+    .voice-console-meta {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 8px;
       font-size: 12px;
+      font-weight: 500;
       color: var(--muted);
     }
 
     .reply-body {
       font-size: 14px;
-      font-weight: 400;
+      font-weight: 500;
       color: var(--ink);
       line-height: 1.55;
       max-width: 68ch;
+      overflow-wrap: anywhere;
     }
 
     .audio-row {
@@ -586,10 +638,10 @@
 
     .audio-row audio {
       flex: 1;
-      height: 32px;
+      height: 34px;
     }
 
-    /* Right column: Divided KPI strip + SVG chart + Worker Q&A */
+    /* Right Card: KPI Strip + SVG Chart + Worker Gate */
     .kpi-strip {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -622,10 +674,9 @@
 
     .kpi-value {
       font-size: 24px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--ink);
       font-variant-numeric: tabular-nums;
-      letter-spacing: -0.02em;
       line-height: 1.2;
     }
 
@@ -648,73 +699,120 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .worker-gate-box {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-control);
-      padding: 10px 12px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .worker-gate-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--ink);
-    }
-
-    .worker-gate-desc {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.4;
-    }
-
-    /* Section 2: Deliverables showcase */
-    .section-block {
+    /* Real-Time Antigravity & Claude Zero-Code Stream */
+    .live-stream-section {
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .tab-bar {
+    .stream-toolbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 12px;
       flex-wrap: wrap;
-      border-bottom: 1px solid var(--border);
       padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
 
     .filter-tabs {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     button.tab-btn {
-      height: 30px;
-      padding: 0 10px;
-      border: 0;
-      border-bottom: 2px solid transparent;
-      border-radius: 0;
-      background: transparent;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: var(--radius-control);
+      border: 1px solid var(--border);
+      background-color: var(--panel-alt);
       color: var(--muted);
       font-size: 13px;
       font-weight: 500;
     }
 
     button.tab-btn.active {
-      color: var(--ink);
+      background-color: var(--royal);
+      border-color: var(--royal);
+      color: #ffffff;
       font-weight: 600;
-      border-bottom-color: var(--accent);
     }
 
+    .live-turns-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    .turn-card {
+      background-color: var(--panel-alt);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-panel);
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .turn-card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .turn-user-box {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-control);
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      overflow-wrap: anywhere;
+    }
+
+    .turn-ai-box {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-control);
+      padding: 12px;
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.55;
+      flex: 1;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .turn-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .turn-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    /* Deliverables Showcase with Uncropped Preview Frame */
     .deliverables-grid {
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 12px;
+      gap: 14px;
       align-items: stretch;
     }
 
@@ -731,30 +829,37 @@
     .product-media-wrap {
       position: relative;
       width: 100%;
-      height: 168px;
-      background-color: #101316;
+      height: 196px;
+      background-color: #0f172a;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       overflow: hidden;
+      padding: 6px;
     }
 
     .product-thumb {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
       display: block;
+      border-radius: 4px;
     }
 
     .media-kind-tag {
       position: absolute;
       top: 8px;
       left: 8px;
-      height: 20px;
-      padding: 0 7px;
+      height: 22px;
+      padding: 0 8px;
       border-radius: var(--radius-control);
       background-color: var(--surface);
       color: var(--ink);
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       border: 1px solid var(--border);
@@ -774,10 +879,7 @@
       font-weight: 600;
       color: var(--ink);
       line-height: 1.35;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      overflow-wrap: anywhere;
     }
 
     .product-meta {
@@ -793,12 +895,12 @@
 
     .product-actions button,
     .product-actions .btn-link {
-      height: 30px;
+      height: 32px;
       font-size: 12px;
       flex: 1;
     }
 
-    /* Section 3: Autonomous Decision Ledger Table + Brain Rules */
+    /* Bottom Split: Autonomous Decision Table + Brain Rules */
     .bottom-split {
       display: grid;
       grid-template-columns: 1.3fr 1fr;
@@ -822,9 +924,9 @@
 
     table.data-table th {
       font-size: 12px;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--muted);
-      padding: 9px 12px;
+      padding: 10px 12px;
       border-bottom: 1px solid var(--border);
       background-color: var(--panel-alt);
       white-space: nowrap;
@@ -835,7 +937,7 @@
       border-bottom: 1px solid var(--border);
       vertical-align: top;
       color: var(--ink);
-      line-height: 1.4;
+      line-height: 1.45;
       overflow-wrap: anywhere;
       word-break: break-word;
     }
@@ -911,10 +1013,10 @@
       background-color: var(--accent);
     }
 
-    /* Native modal dialog */
+    /* Native Modal Dialog */
     dialog#productModal {
       margin: auto;
-      width: min(92vw, 880px);
+      width: min(92vw, 900px);
       max-height: 88svh;
       border: 1px solid var(--border-strong);
       border-radius: var(--radius-sheet);
@@ -924,7 +1026,7 @@
     }
 
     dialog#productModal::backdrop {
-      background-color: rgba(12, 15, 18, 0.62);
+      background-color: rgba(15, 23, 42, 0.65);
     }
 
     .modal-preview-wrap {
@@ -932,7 +1034,7 @@
       justify-content: center;
       align-items: center;
       margin: 12px 0;
-      background-color: #0c0f12;
+      background-color: #0b0f17;
       border-radius: var(--radius-panel);
       overflow: hidden;
       max-height: 64svh;
@@ -949,7 +1051,7 @@
       width: 15px;
       height: 15px;
       stroke: currentColor;
-      stroke-width: 1.6;
+      stroke-width: 1.7;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
@@ -957,23 +1059,18 @@
     }
 
     @media (hover: hover) and (pointer: fine) {
-      .nav-link:hover {
+      button.nav-item:hover {
         background-color: var(--surface);
         color: var(--ink);
       }
       button:hover, .btn-link:hover {
-        border-color: var(--ink);
+        border-color: var(--royal);
       }
       button.btn-primary:hover, button.btn-mic:hover {
-        opacity: 0.92;
-      }
-      button.quick-chip:hover {
-        border-color: var(--accent);
-        color: var(--ink);
+        opacity: 0.93;
       }
     }
 
-    /* Responsive collapse for tablet (768px) and phone (390px) */
     @media (max-width: 960px) {
       .app-shell {
         grid-template-columns: minmax(0, 1fr);
@@ -982,18 +1079,14 @@
         display: none;
       }
       header.topbar {
-        padding: 0 16px;
-        height: auto;
-        min-height: 48px;
-        padding-top: 8px;
-        padding-bottom: 8px;
-        flex-wrap: wrap;
+        padding: 10px 16px;
       }
       main.workspace-sheet {
         margin: 0 8px 8px 8px;
         padding: 16px;
       }
-      .workspace-top-grid,
+      .top-studio-grid,
+      .live-turns-grid,
       .bottom-split {
         grid-template-columns: minmax(0, 1fr);
       }
@@ -1045,111 +1138,112 @@
 </head>
 <body>
   <div class="app-shell">
-    <!-- Left Navigation on Tinted L-Frame -->
-    <aside class="sidebar" aria-label="Điều hướng trung tâm">
+    <!-- Left Navigation & Real-Time Active Sessions Sidebar -->
+    <aside class="sidebar" aria-label="Điều hướng và danh sách phiên chat thời gian thực">
       <div>
-        <div class="brand-block">
-          <span class="brand-mark">ĐB</span>
+        <div class="brand-card">
+          <span class="brand-monogram">ĐB</span>
           <div>
-            <div class="brand-name">Đòn Bẩy AI · CEO</div>
-            <div class="brand-sub">Bộ não thứ hai · V6</div>
+            <div class="brand-title">Đòn Bẩy AI · CEO Hub</div>
+            <div class="brand-subtitle">Đồng bộ Antigravity & Claude</div>
           </div>
         </div>
 
-        <div class="nav-group-title">Không gian điều hành</div>
+        <div class="nav-group-head">Chế độ màn hình</div>
         <ul class="nav-list">
           <li>
-            <a href="#sec-voice" class="nav-link active">
-              <span class="nav-link-left">
-                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
-                <span>Chỉ đạo giọng nói</span>
+            <button type="button" class="nav-item active" onclick="scrollToSection('sec-live-stream', this)">
+              <span class="nav-item-left">
+                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h4l3-9 4 18 3-9h6"/></svg>
+                <span>Luồng Chat trực tiếp</span>
               </span>
-              <span class="nav-count">2 chiều</span>
-            </a>
+              <span class="nav-badge" id="navBadgeLiveCount">7 phiên</span>
+            </button>
           </li>
           <li>
-            <a href="#sec-deliverables" class="nav-link">
-              <span class="nav-link-left">
+            <button type="button" class="nav-item" onclick="scrollToSection('sec-deliverables', this)">
+              <span class="nav-item-left">
                 <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>
                 <span>Bàn nghiệm thu</span>
               </span>
-              <span class="nav-count" id="navCountDeliverables">24</span>
-            </a>
+              <span class="nav-badge" id="navCountDeliverables">12</span>
+            </button>
           </li>
           <li>
-            <a href="#sec-ledger" class="nav-link">
-              <span class="nav-link-left">
+            <button type="button" class="nav-item" onclick="scrollToSection('sec-ledger', this)">
+              <span class="nav-item-left">
                 <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 <span>Nhật ký tự quyết</span>
               </span>
-              <span class="nav-count" id="navCountDecisions">100%</span>
-            </a>
-          </li>
-          <li>
-            <a href="#sec-rules" class="nav-link">
-              <span class="nav-link-left">
-                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                <span>Luật chủ nhân</span>
-              </span>
-              <span class="nav-count" id="navCountSessions">320</span>
-            </a>
+              <span class="nav-badge">100%</span>
+            </button>
           </li>
         </ul>
+
+        <div class="nav-group-head">Cửa sổ đang chạy trên máy</div>
+        <div id="sidebarSessionList" class="session-list"></div>
       </div>
 
-      <div class="sidebar-foot">
-        <div class="status-line">
-          <span id="micOrb" class="status-dot" aria-hidden="true"></span>
-          <span id="voiceStatus">Sẵn sàng nghe lệnh sếp</span>
+      <div class="sidebar-footer">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600;">
+          <span class="live-dot" id="micOrb"></span>
+          <span id="voiceStatus">Đang đồng bộ trực tiếp (1.5s)</span>
         </div>
         <div style="font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;" id="lastUpdatedLabel">
-          Đã đồng bộ 320 phiên chat
+          Đã học 320 phiên chat trên máy
         </div>
-        <button type="button" onclick="rescanBrain()" style="width: 100%;">
-          <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg>
-          <span>Quét lại lịch sử chat</span>
+        <button type="button" onclick="rescanBrain()" style="width: 100%; height: 32px;">
+          <span>Cập nhật lại Bộ não</span>
         </button>
       </div>
     </aside>
 
-    <!-- Main Column: Top Bar + Inset White Sheet -->
+    <!-- Main Studio Frame -->
     <div class="frame-main">
       <header class="topbar">
-        <div class="topbar-left">
-          <strong>Trung tâm điều hành Không Code</strong>
-          <span>·</span>
-          <span id="badgeSessions">320 lịch sử chat đã học</span>
+        <div class="live-indicator-bar">
+          <span class="status-pill positive">
+            <span class="live-dot"></span>
+            <span id="livePulseText">TRỰC TIẾP 1.5s · Antigravity & Claude</span>
+          </span>
+          <span style="font-size: 13px; color: var(--muted);" id="badgeSessions">
+            Tự động ẩn 100% code · Chỉ hiện câu trả lời cuối & thành phẩm
+          </span>
         </div>
 
         <div class="topbar-controls">
-          <label class="checkbox-label" for="voiceSelect">
-            <span>Giọng đọc:</span>
-            <select id="voiceSelect">
-              <option value="vi-VN-HoaiMyNeural">Nữ trợ lý Hoài My</option>
-              <option value="vi-VN-NamMinhNeural">Nam trợ lý Nam Minh</option>
+          <label class="toggle-label">
+            <input type="checkbox" id="chkAutoSpeakLive" checked>
+            <span>Tự đọc khi AI trả lời xong</span>
+          </label>
+
+          <label class="toggle-label" for="voiceSelect">
+            <select id="voiceSelect" aria-label="Chọn giọng đọc">
+              <option value="vi-VN-HoaiMyNeural">Giọng Nữ: Hoài My Neural</option>
+              <option value="vi-VN-NamMinhNeural">Giọng Nam: Nam Minh Neural</option>
             </select>
           </label>
 
-          <label class="checkbox-label">
+          <label class="toggle-label">
             <input type="checkbox" id="chkContinuous" onchange="onContinuousChange()">
-            <span>Nghe rảnh tay</span>
+            <span>Mic rảnh tay</span>
           </label>
 
-          <span class="status-pill positive">Chế độ: Chỉ duyệt thành phẩm</span>
+          <button type="button" onclick="toggleThemeMode()" id="btnThemeToggle">Giao diện Tối</button>
         </div>
       </header>
 
       <main class="workspace-sheet">
-        <!-- Title Bar inside Sheet -->
+        <!-- Sheet Header -->
         <div class="sheet-header">
-          <div class="sheet-title-group">
+          <div class="sheet-title-wrap">
             <h1 class="sheet-title">Trợ lý giọng nói & Bộ não CEO</h1>
             <p class="sheet-subtitle">
-              Nghe và nói tiếng Việt hai chiều, tự động trả lời câu hỏi kỹ thuật cho đội ngũ Agent thợ và ẩn 100% mã nguồn để chỉ trình sản phẩm cuối cùng.
+              Theo dõi trực tiếp mọi cuộc trò chuyện trên Antigravity và Claude theo thời gian thực mà không cần mở cửa sổ chat kỹ thuật. Tự động lọc sạch 100% code, phát giọng nói báo cáo và hiển thị thành phẩm ngay lập tức.
             </p>
           </div>
 
-          <div class="sheet-actions">
+          <div class="sheet-cta-group">
             <button type="button" id="btnToggleMic" class="btn-mic" onclick="toggleVoiceRecognition()">
               <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
               <span id="micBtnLabel">Nói với trợ lý (Tiếng Việt)</span>
@@ -1162,17 +1256,34 @@
           </div>
         </div>
 
-        <!-- Top Workspace Grid: Voice Console + Second Brain Metrics -->
-        <section class="workspace-top-grid" aria-label="Điều phối giọng nói và chỉ số Bộ não thứ hai">
-          <!-- Left Card: Voice Command & Executive Reply -->
+        <!-- Section 1: Real-Time Antigravity & Claude Chat Monitor (Zero-Code) -->
+        <section class="live-stream-section" id="sec-live-stream" aria-label="Luồng cập nhật thời gian thực từ Antigravity và Claude">
+          <div class="stream-toolbar">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+              <h2 class="panel-title">Luồng kết quả trực tiếp từ Antigravity & Claude</h2>
+              <span class="status-pill accent" id="filteredSummaryBadge">Đã tự động lọc bỏ 374 khối code & lệnh kỹ thuật</span>
+            </div>
+
+            <div class="filter-tabs" role="tablist">
+              <button type="button" class="tab-btn active" onclick="filterLiveEngine('all', this)">Tất cả cửa sổ (Hợp nhất)</button>
+              <button type="button" class="tab-btn" onclick="filterLiveEngine('antigravity', this)">Chỉ Antigravity 2.0</button>
+              <button type="button" class="tab-btn" onclick="filterLiveEngine('claude', this)">Chỉ Claude Code</button>
+            </div>
+          </div>
+
+          <div id="liveTurnsContainer" class="live-turns-grid"></div>
+        </section>
+
+        <!-- Section 2: Voice Command Console + Second Brain Metrics -->
+        <section class="top-studio-grid" aria-label="Bàn giao việc giọng nói và chỉ số Bộ não thứ hai">
           <div class="panel-card" id="sec-voice">
             <div class="panel-head">
-              <h2 class="panel-title">Đàm thoại giọng nói hai chiều</h2>
-              <span class="status-pill positive">Đã lọc bỏ 100% code</span>
+              <h2 class="panel-title">Đàm thoại & Ra lệnh trực tiếp</h2>
+              <span class="status-pill positive">Phản hồi giọng nói tức thì</span>
             </div>
 
             <div class="command-bar">
-              <input type="text" id="commandInput" placeholder="Nhập hoặc nói yêu cầu chỉ đạo, trợ lý sẽ tự điều phối đội Agent..." onkeydown="if(event.key==='Enter') sendCommand()">
+              <input type="text" id="commandInput" placeholder="Nói hoặc gõ yêu cầu chỉ đạo tại đây, trợ lý sẽ tự điều phối Agent..." onkeydown="if(event.key==='Enter') sendCommand()">
               <button type="button" class="btn-primary" onclick="sendCommand()">Giao việc ngay</button>
             </div>
 
@@ -1183,13 +1294,13 @@
               <button type="button" class="quick-chip" onclick="quickRun('Nếu đám Agent thợ hỏi có cần gửi code Python và thông số kỹ thuật cho tao xem không thì mày trả lời sao?')">Thử nghiệm tự trả lời Agent thợ</button>
             </div>
 
-            <div class="reply-surface">
-              <div class="reply-meta">
-                <span>Báo cáo điều hành từ Trợ lý CEO</span>
-                <span>Giọng đọc: Hoài My / Nam Minh Neural</span>
+            <div class="voice-Console-box">
+              <div class="voice-console-meta">
+                <span>Bản tin giọng nói từ Trợ lý CEO (Zero-Code)</span>
+                <span id="activeSpeakerLabel">Hoài My Neural</span>
               </div>
               <div id="replyText" class="reply-body">
-                Chào sếp. Em là Trợ lý Tổng quản lý kiêm Bộ não thứ hai của sếp. Em đã nạp toàn bộ 320 lịch sử trò chuyện và 774 chỉ đạo trên máy. Sếp chỉ cần ra lệnh bằng giọng nói và duyệt sản phẩm cuối bên dưới, mọi câu hỏi kỹ thuật của đội Agent thợ đã có em tự quyết định.
+                Chào sếp. Em đang kết nối trực tiếp với toàn bộ cửa sổ Antigravity và Claude trên máy tính của sếp. Bất kỳ khi nào AI làm xong hoặc trả lời ở cửa sổ nào, em sẽ tự động lọc bỏ sạch code, đưa kết quả và sản phẩm lên màn hình này đồng thời đọc báo cáo cho sếp nghe.
               </div>
               <div class="audio-row">
                 <audio id="ttsAudioPlayer" src="audio_cache/tts_b6fc30c185a91849.mp3" controls></audio>
@@ -1197,16 +1308,15 @@
             </div>
           </div>
 
-          <!-- Right Card: KPI Strip + Activity Chart + Worker Q&A Gate -->
           <div class="panel-card" id="sec-brain-metrics">
             <div class="panel-head">
               <h2 class="panel-title">Chỉ số Bộ não thứ hai</h2>
-              <span class="status-pill positive">Tự động hóa 100%</span>
+              <span class="status-pill positive">Tự quyết định 100%</span>
             </div>
 
             <div class="kpi-strip">
               <div class="kpi-cell">
-                <span class="kpi-label">Phiên làm việc</span>
+                <span class="kpi-label">Phiên đã học</span>
                 <span class="kpi-value" id="statSessions">322</span>
               </div>
               <div class="kpi-cell">
@@ -1218,61 +1328,59 @@
                 <span class="kpi-value" id="statDirectives">774</span>
               </div>
               <div class="kpi-cell">
-                <span class="kpi-label">Sản phẩm cuối</span>
-                <span class="kpi-value" id="statDeliverables">24</span>
+                <span class="kpi-label">Thành phẩm</span>
+                <span class="kpi-value" id="statDeliverables">12</span>
               </div>
             </div>
 
             <div class="chart-box">
               <div class="chart-header">
-                <span>Mật độ chỉ đạo theo chu kỳ</span>
-                <span>Đỉnh: 774 chỉ đạo</span>
+                <span>Tốc độ tích lũy chỉ đạo & lọc code thời gian thực</span>
+                <span>774 chỉ đạo · 0 lần làm phiền sếp</span>
               </div>
-              <svg viewBox="0 0 460 88" width="100%" height="84" role="img" aria-label="Biểu đồ chỉ đạo đã học trong Bộ não thứ hai">
-                <line x1="0" y1="14" x2="460" y2="14" stroke="#e5e5e5" stroke-width="1"/>
-                <line x1="0" y1="36" x2="460" y2="36" stroke="#e5e5e5" stroke-width="1"/>
-                <line x1="0" y1="58" x2="460" y2="58" stroke="#e5e5e5" stroke-width="1"/>
-                <line x1="0" y1="80" x2="460" y2="80" stroke="#d4d8dc" stroke-width="1"/>
-                <polygon points="12,80 12,64 84,54 156,47 228,39 300,28 372,21 444,12 444,80" fill="#1b6c80" fill-opacity="0.12"/>
-                <polyline points="12,64 84,54 156,47 228,39 300,28 372,21 444,12" fill="none" stroke="#1b6c80" stroke-width="2"/>
-                <circle cx="444" cy="12" r="3.5" fill="#1b6c80"/>
+              <svg viewBox="0 0 460 84" width="100%" height="80" role="img" aria-label="Biểu đồ tăng trưởng dữ liệu Bộ não thứ hai">
+                <line x1="0" y1="12" x2="460" y2="12" stroke="#dce3ec" stroke-width="1"/>
+                <line x1="0" y1="34" x2="460" y2="34" stroke="#dce3ec" stroke-width="1"/>
+                <line x1="0" y1="56" x2="460" y2="56" stroke="#dce3ec" stroke-width="1"/>
+                <line x1="0" y1="76" x2="460" y2="76" stroke="#c4d0df" stroke-width="1"/>
+                <polygon points="12,76 12,62 88,52 164,44 240,35 316,25 388,18 448,10 448,76" fill="#1b6c80" fill-opacity="0.14"/>
+                <polyline points="12,62 88,52 164,44 240,35 316,25 388,18 448,10" fill="none" stroke="#1b6c80" stroke-width="2.2"/>
+                <circle cx="448" cy="10" r="4" fill="#1b6c80"/>
               </svg>
             </div>
 
-            <div class="worker-gate-box">
-              <div class="worker-gate-title">Cổng tiếp nhận câu hỏi của đội Agent thợ</div>
-              <p class="worker-gate-desc">
-                Khi Flow Director, Video Editor hoặc FB Scout cần hỏi ý kiến, Bộ não thứ hai tự tra cứu luật của sếp để chốt ngay:
-              </p>
+            <div class="voice-Console-box">
+              <div style="font-size: 13px; font-weight: 600; color: var(--ink);">
+                Cổng tiếp nhận câu hỏi của đội Agent thợ (Tự chốt thay sếp)
+              </div>
               <div class="command-bar">
-                <input type="text" id="workerQuestionInput" placeholder="Đóng vai Agent thợ hỏi: Nên dùng giọng gì và có gửi code ra không?" onkeydown="if(event.key==='Enter') testWorkerAsk()">
+                <input type="text" id="workerQuestionInput" placeholder="Thử đóng vai Agent thợ hỏi: Có cần in code ra cho sếp xem không?" onkeydown="if(event.key==='Enter') testWorkerAsk()">
                 <button type="button" onclick="testWorkerAsk()">Tự quyết định</button>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Section 2: Zero-Code Deliverable Showcase -->
-        <section class="section-block" id="sec-deliverables" aria-label="Bàn nghiệm thu sản phẩm cuối">
-          <div class="tab-bar">
-            <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+        <!-- Section 3: Deliverables Showcase (Uncropped Full Aspect Ratio) -->
+        <section class="live-stream-section" id="sec-deliverables" aria-label="Bàn nghiệm thu thành phẩm cuối cùng">
+          <div class="stream-toolbar">
+            <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
               <h2 class="panel-title">Bàn nghiệm thu sản phẩm cuối</h2>
-              <span style="font-size: 13px; color: var(--muted);">Chỉ hiển thị hình ảnh 4K/2K, video MP4 hoàn chỉnh và đường dẫn trực tiếp</span>
+              <span style="font-size: 13px; color: var(--muted);">Hiển thị nguyên vẹn khung hình gốc · Bấm vào ảnh hoặc video để phóng to</span>
             </div>
 
             <div class="filter-tabs" role="tablist">
-              <button type="button" class="tab-btn active" data-filter="all" onclick="filterDeliverables('all', this)">Tất cả sản phẩm</button>
-              <button type="button" class="tab-btn" data-filter="video" onclick="filterDeliverables('video', this)">Video MP4</button>
-              <button type="button" class="tab-btn" data-filter="image" onclick="filterDeliverables('image', this)">Ảnh 4K / 2K</button>
+              <button type="button" class="tab-btn active" onclick="filterDeliverables('all', this)">Tất cả thành phẩm</button>
+              <button type="button" class="tab-btn" onclick="filterDeliverables('video', this)">Video MP4</button>
+              <button type="button" class="tab-btn" onclick="filterDeliverables('image', this)">Ảnh 4K / 2K</button>
             </div>
           </div>
 
           <div id="deliverablesGrid" class="deliverables-grid"></div>
         </section>
 
-        <!-- Section 3: Decision Ledger & Second Brain Rules -->
-        <section class="bottom-split" id="sec-ledger" aria-label="Nhật ký tự quyết định và nguyên tắc chủ nhân">
-          <!-- Left: Autonomous Decision Table -->
+        <!-- Section 4: Decision Ledger & Boss Rules -->
+        <section class="bottom-split" id="sec-ledger" aria-label="Nhật ký tự quyết định và luật cốt lõi của sếp">
           <div class="panel-card" style="justify-content: flex-start;">
             <div class="panel-head">
               <h2 class="panel-title">Nhật ký tự quyết định</h2>
@@ -1293,7 +1401,6 @@
             </div>
           </div>
 
-          <!-- Right: Executive Rules & Anti-patterns -->
           <div class="panel-card" id="sec-rules" style="justify-content: flex-start;">
             <div class="panel-head">
               <h2 class="panel-title">Nguyên tắc cốt lõi của sếp</h2>
@@ -1326,17 +1433,41 @@
     let allDeliverables = [];
     let cachedBrainData = null;
     let cachedDecisionLedger = [];
+    let liveSessions = [];
+    let selectedEngineFilter = 'all';
+    let selectedSessionId = null;
+    let lastSpokenTurnSignature = '';
+    let hasInitializedLiveSignature = false;
     let recognition = null;
     let isListening = false;
     const isLocalServer = (location.hostname === '127.0.0.1' || location.hostname === 'localhost');
 
     const VIDEO_POSTER_DATA_URI = "data:image/svg+xml;utf8," + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="480" height="270" viewBox="0 0 480 270">' +
-      '<rect width="480" height="270" fill="#13171b"/>' +
+      '<rect width="480" height="270" fill="#0f172a"/>' +
       '<circle cx="240" cy="135" r="28" fill="#1b6c80"/>' +
       '<polygon points="233,121 233,149 255,135" fill="#ffffff"/>' +
       '</svg>'
     );
+
+    function toggleThemeMode() {
+      const root = document.documentElement;
+      const isDark = root.getAttribute('data-theme') === 'dark';
+      if (isDark) {
+        root.removeAttribute('data-theme');
+        document.getElementById('btnThemeToggle').textContent = 'Giao diện Tối';
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        document.getElementById('btnThemeToggle').textContent = 'Giao diện Sáng';
+      }
+    }
+
+    function scrollToSection(id, btn) {
+      document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 
     function resolveMediaUrl(item) {
       if (!item) return '';
@@ -1358,7 +1489,6 @@
       } catch (e) {}
     }
 
-    // Fallback for browsers without closedby support on <dialog>
     const productDialog = document.getElementById('productModal');
     if (productDialog && !('closedBy' in HTMLDialogElement.prototype)) {
       productDialog.addEventListener('click', (event) => {
@@ -1373,6 +1503,34 @@
         if (isDialogContent) return;
         productDialog.close();
       });
+    }
+
+    function stripDynamicIcons(str) {
+      return (str || '').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, ''); // taste-skill-ignore
+    }
+
+    function cleanExecutiveText(raw) {
+      const s = typeof raw === 'string' ? raw : (raw.directive || raw.text || raw.quote || raw.rule || raw.anti_pattern || raw.description || '');
+      return stripDynamicIcons(s)
+        .replace(/@\[[^\]]+\]/g, '')
+        .replace(/[A-Za-z]:\\[^\s"']+/g, '')
+        .replace(/\\n/g, ' ')
+        .replace(/\$\s*\\rightarrow\s*\$/g, '->')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 165);
+    }
+
+    function formatAiExecutiveSummary(rawText) {
+      const cleaned = stripDynamicIcons(rawText || '')
+        .replace(/###\s+Modern Web Guidance[\s\S]*$/i, '')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '$1')
+        .replace(/\$\s*\\rightarrow\s*\$/g, '->')
+        .replace(/[#*_`>|]+/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (cleaned.length <= 360) return cleaned;
+      return cleaned.slice(0, 360) + '...';
     }
 
     async function loadDashboardData() {
@@ -1408,13 +1566,14 @@
         document.getElementById('statTranscripts').textContent = transcripts;
         document.getElementById('statDirectives').textContent = directives;
         document.getElementById('statDeliverables').textContent = allDeliverables.length;
-
         document.getElementById('navCountDeliverables').textContent = allDeliverables.length;
-        document.getElementById('navCountSessions').textContent = transcripts;
-        document.getElementById('badgeSessions').textContent = `${transcripts} lịch sử chat · ${directives} chỉ đạo đã học`;
 
         if (stats.last_updated) {
           document.getElementById('lastUpdatedLabel').textContent = `Cập nhật: ${stats.last_updated}`;
+        }
+
+        if (data.live_chats && data.live_chats.sessions) {
+          updateLiveSessionsState(data.live_chats);
         }
 
         renderDeliverables(allDeliverables);
@@ -1423,6 +1582,186 @@
       } catch (err) {
         console.error(err);
       }
+    }
+
+    async function pollLiveChatsRealtime() {
+      if (!isLocalServer) return;
+      try {
+        const res = await fetch('/api/live-chats');
+        if (!res.ok) return;
+        const liveData = await res.json();
+        if (liveData && liveData.ok) {
+          updateLiveSessionsState(liveData);
+        }
+      } catch (e) {}
+    }
+
+    function updateLiveSessionsState(liveData) {
+      liveSessions = liveData.sessions || [];
+      document.getElementById('navBadgeLiveCount').textContent = `${liveSessions.length} phiên`;
+      if (liveData.server_time) {
+        document.getElementById('livePulseText').textContent = `TRỰC TIẾP · Đồng bộ lúc ${liveData.server_time}`;
+      }
+
+      const totalFiltered = liveSessions.reduce((acc, s) => acc + (s.filtered_count || 0), 0);
+      document.getElementById('filteredSummaryBadge').textContent = `Đã tự động ẩn ${totalFiltered} khối code & lệnh kỹ thuật`;
+
+      // Check if a brand-new AI reply arrived in the freshest session
+      if (liveSessions.length > 0) {
+        const newestSess = liveSessions[0];
+        const newestTurn = (newestSess.turns || [])[newestSess.turns.length - 1];
+        if (newestTurn && !newestTurn.is_working) {
+          const sig = `${newestSess.session_id}:${newestTurn.step_index}:${newestTurn.ai.slice(0, 48)}`;
+          if (!hasInitializedLiveSignature) {
+            lastSpokenTurnSignature = sig;
+            hasInitializedLiveSignature = true;
+          } else if (sig !== lastSpokenTurnSignature) {
+            lastSpokenTurnSignature = sig;
+            const cleanSummary = formatAiExecutiveSummary(newestTurn.ai);
+            document.getElementById('replyText').textContent = `[Mới từ ${newestSess.engine}]: ${cleanSummary}`;
+            if (document.getElementById('chkAutoSpeakLive').checked) {
+              speakTextOutLoud(cleanSummary);
+            }
+          }
+        }
+      }
+
+      renderSidebarSessions();
+      renderLiveTurnsFeed();
+    }
+
+    function selectSession(sessionId) {
+      if (selectedSessionId === sessionId) {
+        selectedSessionId = null;
+      } else {
+        selectedSessionId = sessionId;
+      }
+      renderSidebarSessions();
+      renderLiveTurnsFeed();
+    }
+
+    function filterLiveEngine(engine, btnEl) {
+      selectedEngineFilter = engine;
+      selectedSessionId = null;
+      if (btnEl) {
+        btnEl.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
+      renderSidebarSessions();
+      renderLiveTurnsFeed();
+    }
+
+    function renderSidebarSessions() {
+      const container = document.getElementById('sidebarSessionList');
+      const filtered = liveSessions.filter(s => selectedEngineFilter === 'all' || s.engine_code === selectedEngineFilter);
+      container.innerHTML = filtered.map(s => {
+        const isAct = s.session_id === selectedSessionId;
+        const engineCls = s.engine_code === 'claude' ? 'claude' : '';
+        return `
+          <button type="button" class="session-pill ${isAct ? 'active' : ''}" onclick="selectSession('${s.session_id}')">
+            <div class="session-pill-top">
+              <span class="session-engine-tag ${engineCls}">${s.engine}</span>
+              <span>${s.updated_str.split(' · ')[0]}</span>
+            </div>
+            <div class="session-pill-title">${cleanExecutiveText(s.title)}</div>
+            <div class="session-pill-meta">${s.status_label} · Ẩn ${s.filtered_count} code</div>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function renderLiveTurnsFeed() {
+      const container = document.getElementById('liveTurnsContainer');
+      let sessionsToShow = liveSessions.filter(s => selectedEngineFilter === 'all' || s.engine_code === selectedEngineFilter);
+      if (selectedSessionId) {
+        sessionsToShow = sessionsToShow.filter(s => s.session_id === selectedSessionId);
+      }
+
+      const cards = [];
+      for (const s of sessionsToShow) {
+        const turns = (s.turns || []).slice().reverse();
+        for (const t of turns.slice(0, selectedSessionId ? 6 : 2)) {
+          cards.push({ session: s, turn: t });
+        }
+      }
+
+      const displayCards = cards.slice(0, 6);
+      if (!displayCards.length) {
+        container.innerHTML = '<div class="panel-card"><p style="color: var(--muted);">Đang chờ tin nhắn mới từ Antigravity hoặc Claude...</p></div>';
+        return;
+      }
+
+      container.innerHTML = displayCards.map((item, i) => {
+        const s = item.session;
+        const t = item.turn;
+        const badgeCls = s.engine_code === 'claude' ? 'warning' : 'positive';
+        const summaryAi = formatAiExecutiveSummary(t.ai);
+        const encodedAi = encodeURIComponent(summaryAi);
+        const linksHtml = (t.links || []).map(lk => {
+          return `<a href="${lk.url}" target="_blank" rel="noopener" class="btn-link" style="height:28px;font-size:12px;">${lk.label}</a>`;
+        }).join('');
+
+        return `
+          <article class="turn-card">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+              <div class="turn-card-head">
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span class="status-pill ${badgeCls}">${s.engine} · #${s.short_id}</span>
+                  <span class="status-pill accent">Đã ẩn ${s.filtered_count} khối code/log</span>
+                </div>
+                <span style="font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums;">${t.timestamp || s.updated_str}</span>
+              </div>
+
+              <div class="turn-user-box">
+                Sếp chỉ đạo: "${cleanExecutiveText(t.user)}"
+              </div>
+
+              <div class="turn-ai-box">
+                ${summaryAi}
+              </div>
+            </div>
+
+            <div class="turn-footer">
+              <div class="turn-links">
+                ${linksHtml}
+              </div>
+              <button type="button" style="height: 30px; font-size: 12px;" onclick="speakDecodedText('${encodedAi}')">
+                Nghe đọc kết quả này
+              </button>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function speakDecodedText(encoded) {
+      const text = decodeURIComponent(encoded);
+      document.getElementById('replyText').textContent = text;
+      speakTextOutLoud(text);
+    }
+
+    async function speakTextOutLoud(text) {
+      const voice = document.getElementById('voiceSelect').value;
+      document.getElementById('voiceStatus').textContent = 'Đang đọc báo cáo cho sếp...';
+      if (isLocalServer) {
+        try {
+          const res = await fetch('/api/tts', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, voice })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.ok && data.audio_url) {
+              const player = document.getElementById('ttsAudioPlayer');
+              player.src = data.audio_url;
+              player.play().catch(() => {});
+              return;
+            }
+          }
+        } catch (e) {}
+      }
+      speakVietnameseBrowserFallback(text);
     }
 
     function renderDeliverables(items) {
@@ -1461,7 +1800,7 @@
                 <div class="product-meta">${item.category} · ${item.size_mb} MB · ${item.modified}</div>
               </div>
               <div class="product-actions">
-                <button type="button" onclick="openProductModal(${idx})">Xem sản phẩm</button>
+                <button type="button" onclick="openProductModal(${idx})">Phóng to</button>
                 <a href="${mediaUrl}" target="_blank" rel="noopener" class="btn-link">Mở file gốc</a>
               </div>
             </div>
@@ -1471,8 +1810,10 @@
     }
 
     function filterDeliverables(kind, btnEl) {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
+      if (btnEl) {
+        btnEl.parentElement.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btnEl.classList.add('active');
+      }
       if (kind === 'all') {
         renderDeliverables(allDeliverables);
       } else {
@@ -1497,16 +1838,6 @@
         wrap.innerHTML = `<iframe src="${mediaUrl}" style="width:100%;height:60svh;border:0;background:#fff;"></iframe>`;
       }
       productDialog.showModal();
-    }
-
-    function cleanExecutiveText(raw) {
-      const s = typeof raw === 'string' ? raw : (raw.directive || raw.text || raw.quote || raw.rule || raw.anti_pattern || raw.description || '');
-      return s
-        .replace(/@\[[^\]]+\]/g, '')
-        .replace(/[A-Za-z]:\\[^\s"']+/g, '')
-        .replace(/\s+/g, ' ')
-        .trim()
-        .slice(0, 155);
     }
 
     function renderDecisionLedger(ledger) {
@@ -1639,7 +1970,6 @@
         } catch (e) {}
       }
 
-      // Netlify / Cloud standalone execution
       const cmdLower = cmd.toLowerCase();
       let reply = '';
       let sampleAudio = 'audio_cache/tts_b6fc30c185a91849.mp3';
@@ -1672,32 +2002,7 @@
 
     async function speakCurrentReply() {
       const text = document.getElementById('replyText').textContent;
-      const voice = document.getElementById('voiceSelect').value;
-      document.getElementById('voiceStatus').textContent = 'Đang đọc báo cáo cho sếp...';
-      if (isLocalServer) {
-        try {
-          const res = await fetch('/api/tts', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text, voice })
-          });
-          if (res.ok) {
-            const data = await res.json();
-            if (data.ok && data.audio_url) {
-              const player = document.getElementById('ttsAudioPlayer');
-              player.src = data.audio_url;
-              player.play().catch(() => {});
-              return;
-            }
-          }
-        } catch (e) {}
-      }
-      const player = document.getElementById('ttsAudioPlayer');
-      if (player.src) {
-        player.play().catch(() => speakVietnameseBrowserFallback(text));
-      } else {
-        speakVietnameseBrowserFallback(text);
-      }
+      await speakTextOutLoud(text);
     }
 
     async function testWorkerAsk() {
@@ -1751,7 +2056,6 @@
 
       rec.onstart = () => {
         isListening = true;
-        document.getElementById('micOrb').classList.add('listening');
         document.getElementById('btnToggleMic').classList.add('active');
         document.getElementById('micBtnLabel').textContent = 'Đang nghe sếp nói... (Bấm để dừng)';
         document.getElementById('voiceStatus').textContent = 'Đang lắng nghe giọng nói tiếng Việt...';
@@ -1775,14 +2079,12 @@
           try { rec.start(); return; } catch (e) {}
         }
         isListening = false;
-        document.getElementById('micOrb').classList.remove('listening');
         document.getElementById('btnToggleMic').classList.remove('active');
         document.getElementById('micBtnLabel').textContent = 'Nói với trợ lý (Tiếng Việt)';
       };
 
       rec.onerror = () => {
         isListening = false;
-        document.getElementById('micOrb').classList.remove('listening');
         document.getElementById('btnToggleMic').classList.remove('active');
         document.getElementById('micBtnLabel').textContent = 'Nói với trợ lý (Tiếng Việt)';
       };
@@ -1814,6 +2116,8 @@
 
     window.addEventListener('DOMContentLoaded', () => {
       loadDashboardData();
+      // Đồng bộ thời gian thực 1.5 giây/lần với mọi cửa sổ Antigravity & Claude trên máy
+      setInterval(pollLiveChatsRealtime, 1500);
     });
   </script>
 </body>

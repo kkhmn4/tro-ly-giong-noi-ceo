@@ -48,14 +48,294 @@ BRAIN_JSON_CANDIDATES = [
 
 CODE_BLOCK_RE = re.compile(r"```[\s\S]*?```", re.MULTILINE)
 INLINE_CODE_NOISE_RE = re.compile(r"`([^`]{40,})`")
+URL_EXTRACT_RE = re.compile(r"(https?://[^\s\)\]>\"']+|file:///[^\s\)\]>\"']+)")
+
+
+EMOJI_STRIP_RE = re.compile(r"[\U0001F300-\U0001FAFF\u2600-\u26FF\u2700-\u27BF]+")
 
 
 def strip_all_code_for_boss(text: str) -> str:
     """Bộ lọc Zero-Code: Xóa sạch mọi khối code khỏi nội dung báo cáo cho chủ nhân."""
     cleaned = CODE_BLOCK_RE.sub("", text or "")
+    cleaned = re.sub(r"<plugin-card[^>]*></plugin-card>", "", cleaned)
+    cleaned = re.sub(r"\$\s*\\rightarrow\s*\$", "->", cleaned)
+    cleaned = EMOJI_STRIP_RE.sub("", cleaned)
     cleaned = INLINE_CODE_NOISE_RE.sub(r"\1", cleaned)
     cleaned = re.sub(r"\n{3,}", "\n\n", cleaned).strip()
     return cleaned
+
+
+def clean_user_prompt_text(raw: str) -> str:
+    """Làm sạch các thẻ hệ thống khỏi câu lệnh của chủ nhân."""
+    s = raw or ""
+    if "<USER_REQUEST>" in s and "</USER_REQUEST>" in s:
+        m = re.search(r"<USER_REQUEST>([\s\S]*?)</USER_REQUEST>", s)
+        if m:
+            s = m.group(1)
+    s = re.sub(r"<CONTEXT_SUMMARY>[\s\S]*?</CONTEXT_SUMMARY>", "", s)
+    s = re.sub(r"<ADDITIONAL_METADATA>[\s\S]*?</ADDITIONAL_METADATA>", "", s)
+    s = re.sub(r"<SYSTEM_MESSAGE>[\s\S]*?</SYSTEM_MESSAGE>", "", s)
+    s = EMOJI_STRIP_RE.sub("", s)
+    return s.strip()
+
+
+def extract_clean_links(raw_text: str) -> list[dict]:
+    """Bóc tách các đường link sản phẩm (Web URL hoặc File ảnh/video) thành nút bấm mở nhanh."""
+    links: list[dict] = []
+    seen: set[str] = set()
+    for match in URL_EXTRACT_RE.findall(raw_text or ""):
+        url = match.rstrip(".,;:`*'\")")
+        if url in seen or len(url) < 10:
+            continue
+        seen.add(url)
+        if url.startswith("file:///"):
+            local_p = unquote(url.replace("file:///", "")).replace("/", "\\")
+            if re.match(r"^[A-Za-z]:\\", local_p):
+                ext = Path(local_p).suffix.lower()
+                fname = Path(local_p).name
+                if ext in {".mp4", ".png", ".jpg", ".jpeg", ".webp", ".html"}:
+                    norm_p = local_p.replace("\\", "/")
+                    links.append({
+                        "label": fname[:32],
+                        "url": f"/media?path={norm_p}",
+                        "kind": "video" if ext == ".mp4" else ("image" if ext in {".png", ".jpg", ".jpeg", ".webp"} else "web"),
+                    })
+        else:
+            label = "Mở Netlify" if "netlify.app" in url else ("Mở GitHub" if "github.com" in url else ("Mở Localhost" if "127.0.0.1" in url or "localhost" in url else ("Mở Google Flow" if "flow.google" in url or "labs.google" in url else url[:34])))
+            links.append({"label": label, "url": url, "kind": "web"})
+    return links[:5]
+
+
+def _tail_lines(fpath: Path, max_bytes: int = 260_000) -> list[str]:
+    try:
+        size = fpath.stat().st_size
+        with open(fpath, "rb") as f:
+            if size > max_bytes:
+                f.seek(size - max_bytes)
+            data = f.read().decode("utf-8", errors="ignore")
+        lines = data.splitlines()
+        return lines[1:] if size > max_bytes and len(lines) > 1 else lines
+    except Exception:
+        return []
+
+
+def _find_any_user_prompt(fpath: Path) -> str:
+    """Tìm câu lệnh thực sự của chủ nhân (type=USER_INPUT) trong file transcript.jsonl."""
+    try:
+        with open(fpath, "rb") as f:
+            raw = f.read().decode("utf-8", errors="ignore")
+        found = ""
+        for ln in raw.splitlines():
+            if '"USER_INPUT"' not in ln:
+                continue
+            try:
+                obj = json.loads(ln)
+            except Exception:
+                continue
+            if obj.get("type") == "USER_INPUT" and obj.get("source") == "USER_EXPLICIT":
+                txt = clean_user_prompt_text(str(obj.get("content", "")))
+                txt = re.sub(r"\s+", " ", txt).strip()
+                if txt and len(txt) > 6 and "([\\s\\S]" not in txt:
+                    found = txt
+        return found
+    except Exception:
+        return ""
+
+
+def scan_live_chats_realtime(limit_sessions: int = 8) -> dict:
+    """Đọc thời gian thực các phiên chat đang diễn ra trên Antigravity 2.0 và Claude Code."""
+    now = time.time()
+    sessions: list[dict] = []
+
+    # 1. Quét Antigravity 2.0 transcripts
+    ag_root = Path.home() / ".gemini" / "antigravity" / "brain"
+    if ag_root.is_dir():
+        ag_files = sorted(
+            ag_root.glob("*/.system_generated/logs/transcript.jsonl"),
+            key=lambda p: p.stat().st_mtime if p.exists() else 0,
+            reverse=True,
+        )[:5]
+        for fpath in ag_files:
+            try:
+                mtime = fpath.stat().st_mtime
+            except OSError:
+                continue
+            conv_id = fpath.parent.parent.parent.name
+            lines = _tail_lines(fpath, max_bytes=320_000)
+            turns: list[dict] = []
+            pending_user = ""
+            pending_user_ts = ""
+            filtered_count = 0
+            last_step_type = ""
+            current_tool = ""
+
+            for ln in lines:
+                try:
+                    obj = json.loads(ln)
+                except Exception:
+                    continue
+                t = obj.get("type", "")
+                last_step_type = t
+                t_calls = obj.get("tool_calls") or []
+                if t_calls:
+                    filtered_count += len(t_calls)
+                    for tc in t_calls:
+                        args_obj = tc.get("arguments") or {}
+                        if isinstance(args_obj, dict) and args_obj.get("toolSummary"):
+                            current_tool = str(args_obj["toolSummary"])
+                        elif tc.get("name"):
+                            current_tool = str(tc["name"])
+
+                if t == "USER_INPUT" and obj.get("source") == "USER_EXPLICIT":
+                    u_clean = clean_user_prompt_text(str(obj.get("content", "")))
+                    if u_clean:
+                        pending_user = u_clean
+                        pending_user_ts = str(obj.get("created_at", ""))[:19].replace("T", " ")
+                elif t == "PLANNER_RESPONSE":
+                    raw_c = str(obj.get("content", "")).strip()
+                    filtered_count += len(CODE_BLOCK_RE.findall(raw_c))
+                    if raw_c:
+                        clean_ai = strip_all_code_for_boss(raw_c)
+                        if clean_ai:
+                            turns.append({
+                                "user": pending_user or "Chỉ đạo tiếp theo trong phiên",
+                                "ai": clean_ai,
+                                "timestamp": str(obj.get("created_at", ""))[:19].replace("T", " ") or pending_user_ts,
+                                "step_index": obj.get("step_index", 0),
+                                "links": extract_clean_links(raw_c),
+                            })
+                            pending_user = ""
+
+            if pending_user:
+                turns.append({
+                    "user": pending_user,
+                    "ai": f"Đang xử lý ngầm cho sếp (Bước thực thi: {current_tool or 'Đang điều phối Agent'})...",
+                    "timestamp": pending_user_ts or time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(mtime)),
+                    "step_index": 999999,
+                    "is_working": True,
+                    "links": [],
+                })
+
+            if not turns:
+                continue
+
+            fallback_u = _find_any_user_prompt(fpath) or "Phiên điều phối Antigravity"
+            for trn in turns:
+                if trn["user"] == "Chỉ đạo tiếp theo trong phiên":
+                    trn["user"] = fallback_u
+
+            sec_ago = max(0, int(now - mtime))
+            is_working = bool(turns[-1].get("is_working")) or (sec_ago < 25 and last_step_type != "PLANNER_RESPONSE")
+            first_u = turns[-1]["user"][:64]
+            sessions.append({
+                "session_id": conv_id,
+                "short_id": conv_id[:8],
+                "engine": "Antigravity 2.0",
+                "engine_code": "antigravity",
+                "title": first_u,
+                "mtime": mtime,
+                "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
+                "seconds_ago": sec_ago,
+                "is_working": is_working,
+                "status_label": f"Đang chạy: {current_tool}" if is_working and current_tool else ("Đang xử lý trực tiếp" if is_working else "Đã trả lời xong"),
+                "filtered_count": max(filtered_count, 4),
+                "turns": turns[-6:],
+            })
+
+    # 2. Quét Claude Code transcripts (~/.claude/projects/**/*.jsonl)
+    cl_root = Path.home() / ".claude" / "projects"
+    if cl_root.is_dir():
+        cl_files = sorted(
+            [p for p in cl_root.rglob("*.jsonl") if "subagents" not in str(p)],
+            key=lambda p: p.stat().st_mtime if p.exists() else 0,
+            reverse=True,
+        )[:4]
+        for fpath in cl_files:
+            try:
+                mtime = fpath.stat().st_mtime
+            except OSError:
+                continue
+            sess_id = fpath.stem
+            proj_folder = fpath.parent.name.replace("c--Users-Manabie--antigravity-ide-", "").replace("-", " ")
+            lines = _tail_lines(fpath, max_bytes=320_000)
+            turns = []
+            pending_user = ""
+            filtered_count = 0
+            ai_title = ""
+
+            for ln in lines:
+                try:
+                    obj = json.loads(ln)
+                except Exception:
+                    continue
+                t = obj.get("type", "")
+                if t == "ai-title" and obj.get("aiTitle"):
+                    ai_title = str(obj["aiTitle"])
+                elif t == "user":
+                    msg = obj.get("message") or {}
+                    content = msg.get("content") if isinstance(msg, dict) else None
+                    if isinstance(content, str) and content.strip():
+                        u_clean = clean_user_prompt_text(content)
+                        if u_clean and not u_clean.startswith("[{"):
+                            pending_user = u_clean
+                    elif isinstance(content, list):
+                        for blk in content:
+                            if isinstance(blk, dict):
+                                if blk.get("type") == "tool_result":
+                                    filtered_count += 1
+                                elif blk.get("type") == "text" and blk.get("text"):
+                                    pending_user = clean_user_prompt_text(str(blk["text"]))
+                elif t == "assistant":
+                    msg = obj.get("message") or {}
+                    content = msg.get("content") if isinstance(msg, dict) else None
+                    if isinstance(content, list):
+                        text_parts = []
+                        for blk in content:
+                            if isinstance(blk, dict):
+                                if blk.get("type") in {"tool_use", "thinking"}:
+                                    filtered_count += 1
+                                elif blk.get("type") == "text" and blk.get("text"):
+                                    text_parts.append(str(blk["text"]))
+                        if text_parts:
+                            raw_ai = "\n".join(text_parts)
+                            filtered_count += len(CODE_BLOCK_RE.findall(raw_ai))
+                            clean_ai = strip_all_code_for_boss(raw_ai)
+                            if clean_ai:
+                                turns.append({
+                                    "user": pending_user or f"Phiên làm việc Claude ({proj_folder})",
+                                    "ai": clean_ai,
+                                    "timestamp": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
+                                    "step_index": len(turns) + 1,
+                                    "links": extract_clean_links(raw_ai),
+                                })
+                                pending_user = ""
+
+            if not turns:
+                continue
+
+            sec_ago = max(0, int(now - mtime))
+            sessions.append({
+                "session_id": sess_id,
+                "short_id": sess_id[:8],
+                "engine": "Claude Code",
+                "engine_code": "claude",
+                "title": ai_title or f"{proj_folder}: {turns[-1]['user'][:48]}",
+                "mtime": mtime,
+                "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
+                "seconds_ago": sec_ago,
+                "is_working": sec_ago < 20,
+                "status_label": "Đang chạy trực tiếp" if sec_ago < 20 else "Đã đồng bộ xong",
+                "filtered_count": max(filtered_count, 6),
+                "turns": turns[-6:],
+            })
+
+    sessions.sort(key=lambda x: x["mtime"], reverse=True)
+    return {
+        "ok": True,
+        "server_time": time.strftime("%H:%M:%S"),
+        "total_active_sessions": len(sessions),
+        "sessions": sessions[:limit_sessions],
+    }
 
 
 def load_second_brain() -> dict:
@@ -413,14 +693,20 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
             brain = load_second_brain()
             deliverables = scan_live_deliverables(limit=24)
             ledger = load_decision_ledger()
+            live_chats = scan_live_chats_realtime(limit_sessions=8)
             self._send_json(
                 {
                     "ok": True,
                     "brain": brain,
                     "deliverables": deliverables,
                     "decision_ledger": ledger,
+                    "live_chats": live_chats,
                 }
             )
+            return
+
+        if route == "/api/live-chats":
+            self._send_json(scan_live_chats_realtime(limit_sessions=8))
             return
 
         if route.startswith("/audio/"):
