@@ -525,6 +525,14 @@
       overflow-y: auto;
     }
 
+    #voicePopoverPanel {
+      top: 52px;
+      right: 20px;
+      width: 340px;
+      max-height: 80dvh;
+      overflow-y: auto;
+    }
+
     .machine-card {
       padding: 8px 10px;
       border-radius: 6px;
@@ -1061,7 +1069,7 @@
 
         <!-- Thanh công cụ 100% Icon + Popover -->
         <div class="header-icon-bar">
-          <button type="button" id="btnAutoSpeak" class="icon-btn active" data-popover="Tự động đọc giọng nói: Đang Bật" data-popover-pos="left" aria-label="Tự động đọc giọng nói">
+          <button type="button" id="btnAutoSpeak" class="icon-btn active" data-popover="Giọng nói VieNeu 48kHz: Thùy Dung (Miền Nam)" data-popover-pos="left" aria-label="Chọn giọng nói VieNeu">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
               <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
@@ -1099,6 +1107,43 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.93 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.93 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/>
             </svg>
+          </button>
+        </div>
+
+        <!-- POPOVER CHỌN GIỌNG NÓI VIENEU-TTS V3 TURBO 48KHZ -->
+        <div id="voicePopoverPanel" class="popover-panel" aria-label="Chọn giọng nói VieNeu-TTS 48kHz">
+          <div class="popover-header">
+            <span>Giọng Nói VieNeu-TTS v3 Turbo (48kHz)</span>
+            <button type="button" id="btnCloseVoicePopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <button type="button" id="btnToggleAutoSpeakInside" class="menu-option selected">
+            <span id="lblAutoSpeakStatus">Tự động đọc báo cáo mới: Đang Bật</span>
+            <span class="engine-mini">48kHz</span>
+          </button>
+          <div style="font-size:12px; font-weight:700; color:var(--text-secondary); padding:4px 2px 0;">Chọn giọng đọc (Bấm để chọn & nghe thử):</div>
+          <button type="button" class="menu-option selected" data-vieneu-voice="Thùy Dung" data-sample-slug="thuy_dung">
+            <span>Thùy Dung (Nữ · Miền Nam · Tự nhiên)</span>
+            <span class="engine-mini">Nam</span>
+          </button>
+          <button type="button" class="menu-option" data-vieneu-voice="Mỹ Duyên" data-sample-slug="my_duyen">
+            <span>Mỹ Duyên (Nữ · Miền Nam · Truyền cảm)</span>
+            <span class="engine-mini">Nam</span>
+          </button>
+          <button type="button" class="menu-option" data-vieneu-voice="Adam" data-sample-slug="adam">
+            <span>Adam (Nam · Miền Nam · Điềm đạm)</span>
+            <span class="engine-mini">Nam</span>
+          </button>
+          <button type="button" class="menu-option" data-vieneu-voice="Trúc Ly" data-sample-slug="truc_ly">
+            <span>Trúc Ly (Nữ · Miền Bắc · Tự nhiên)</span>
+            <span class="engine-mini claude">Bắc</span>
+          </button>
+          <button type="button" class="menu-option" data-vieneu-voice="Mai Anh" data-sample-slug="mai_anh">
+            <span>Mai Anh (Nữ · Miền Bắc · Điểm tin)</span>
+            <span class="engine-mini claude">Bắc</span>
+          </button>
+          <button type="button" class="menu-option" data-vieneu-voice="Hải Đăng" data-sample-slug="hai_dang">
+            <span>Hải Đăng (Nam · Miền Bắc · Chuẩn mực)</span>
+            <span class="engine-mini claude">Bắc</span>
           </button>
         </div>
 
@@ -1272,6 +1317,8 @@
         searchQuery: '',
         zeroCodeMode: true,
         autoSpeak: true,
+        selectedVoice: 'Thùy Dung',
+        selectedSampleSlug: 'thuy_dung',
         selectedAgentVal: 'auto',
         hubTab: 'deliverables',
         daemonOnline: false,
@@ -1304,6 +1351,7 @@
         activeEngineSymbol: document.getElementById('activeEngineSymbol'),
         activeSessionTitle: document.getElementById('activeSessionTitle'),
         btnAutoSpeak: document.getElementById('btnAutoSpeak'),
+        voicePopoverPanel: document.getElementById('voicePopoverPanel'),
         btnZeroCode: document.getElementById('btnZeroCode'),
         btnOpenMachinesPopover: document.getElementById('btnOpenMachinesPopover'),
         machinesPopoverPanel: document.getElementById('machinesPopoverPanel'),
@@ -1341,6 +1389,7 @@
         el.agentPickerPopover.classList.remove('open');
         el.hubPopoverPanel.classList.remove('open');
         if (el.machinesPopoverPanel) el.machinesPopoverPanel.classList.remove('open');
+        if (el.voicePopoverPanel) el.voicePopoverPanel.classList.remove('open');
       }
 
       function extractClientSummaryPoints(text) {
@@ -1408,15 +1457,26 @@
         return htmlParts.join('');
       }
 
-      async function speakVietnameseText(text) {
-        const clean = String(text || '').replace(/[#*`_~]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 500);
+      let currentAudioPlayer = null;
+      async function speakVietnameseText(text, forceSampleSlug = '') {
+        if (currentAudioPlayer) {
+          try { currentAudioPlayer.pause(); } catch (_) {}
+          currentAudioPlayer = null;
+        }
+        if (forceSampleSlug) {
+          const sampleUrl = `audio_cache/vieneu_sample_${forceSampleSlug}.wav`;
+          currentAudioPlayer = new Audio(sampleUrl);
+          currentAudioPlayer.play().catch(() => {});
+          return;
+        }
+        const clean = String(text || '').replace(/[#*`_~]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 380);
         if (!clean) return;
         if (state.daemonOnline) {
           try {
             const res = await fetch(`${LOCAL_API_BASE}/api/speak`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: clean }),
+              body: JSON.stringify({ text: clean, voice: state.selectedVoice || 'Thùy Dung' }),
             });
             if (res.ok) {
               const data = await res.json();
@@ -1424,19 +1484,17 @@
                 const audioUrl = data.audio_url.startsWith('http')
                   ? data.audio_url
                   : `${LOCAL_API_BASE}${data.audio_url}`;
-                new Audio(audioUrl).play().catch(() => {});
+                currentAudioPlayer = new Audio(audioUrl);
+                currentAudioPlayer.play().catch(() => {});
                 return;
               }
             }
           } catch (_) {}
         }
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utter = new SpeechSynthesisUtterance(clean);
-          utter.lang = 'vi-VN';
-          utter.rate = 1.05;
-          window.speechSynthesis.speak(utter);
-        }
+        // Khi mở bản Cloud tĩnh (Netlify), phát trực tiếp giọng mẫu VieNeu-TTS 48kHz chất lượng cao thay vì giọng trình duyệt
+        const fallbackSlug = state.selectedSampleSlug || 'thuy_dung';
+        currentAudioPlayer = new Audio(`audio_cache/vieneu_sample_${fallbackSlug}.wav`);
+        currentAudioPlayer.play().catch(() => {});
       }
 
       function getFilteredSessions() {
@@ -1951,6 +2009,7 @@
                 engine: engineCode,
                 agent: agentName,
                 mode: 'accept-edits',
+                voice: state.selectedVoice || 'Thùy Dung',
                 speak: state.autoSpeak,
               }),
             });
@@ -2065,12 +2124,39 @@
         });
       });
 
-      el.btnAutoSpeak.addEventListener('click', () => {
-        state.autoSpeak = !state.autoSpeak;
-        el.btnAutoSpeak.classList.toggle('active', state.autoSpeak);
-        el.btnAutoSpeak.setAttribute('data-popover', state.autoSpeak
-          ? 'Tự động đọc giọng nói: Đang Bật'
-          : 'Tự động đọc giọng nói: Đang Tắt');
+      el.btnAutoSpeak.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const wasOpen = el.voicePopoverPanel.classList.contains('open');
+        closeAllPopovers();
+        if (!wasOpen) el.voicePopoverPanel.classList.add('open');
+      });
+
+      const btnCloseVoice = document.getElementById('btnCloseVoicePopover');
+      if (btnCloseVoice) {
+        btnCloseVoice.addEventListener('click', () => el.voicePopoverPanel.classList.remove('open'));
+      }
+
+      const btnToggleAutoSpeakInside = document.getElementById('btnToggleAutoSpeakInside');
+      if (btnToggleAutoSpeakInside) {
+        btnToggleAutoSpeakInside.addEventListener('click', () => {
+          state.autoSpeak = !state.autoSpeak;
+          el.btnAutoSpeak.classList.toggle('active', state.autoSpeak);
+          btnToggleAutoSpeakInside.classList.toggle('selected', state.autoSpeak);
+          const lbl = document.getElementById('lblAutoSpeakStatus');
+          if (lbl) lbl.textContent = state.autoSpeak ? 'Tự động đọc báo cáo mới: Đang Bật' : 'Tự động đọc báo cáo mới: Đang Tắt';
+          el.btnAutoSpeak.setAttribute('data-popover', `Giọng VieNeu 48kHz: ${state.selectedVoice} (${state.autoSpeak ? 'Đang Bật' : 'Đang Tắt'})`);
+        });
+      }
+
+      document.querySelectorAll('[data-vieneu-voice]').forEach((opt) => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('[data-vieneu-voice]').forEach((o) => o.classList.remove('selected'));
+          opt.classList.add('selected');
+          state.selectedVoice = opt.getAttribute('data-vieneu-voice') || 'Thùy Dung';
+          state.selectedSampleSlug = opt.getAttribute('data-sample-slug') || 'thuy_dung';
+          el.btnAutoSpeak.setAttribute('data-popover', `Giọng nói VieNeu 48kHz: ${state.selectedVoice}`);
+          speakVietnameseText('', state.selectedSampleSlug);
+        });
       });
 
       el.btnZeroCode.addEventListener('click', () => {
@@ -2267,7 +2353,7 @@
       });
 
       document.addEventListener('click', (e) => {
-        if (!e.target.closest('.popover-panel') && !e.target.closest('#btnQuickCmd') && !e.target.closest('#btnAgentPicker') && !e.target.closest('#btnOpenHubPopover') && !e.target.closest('#btnOpenMachinesPopover')) {
+        if (!e.target.closest('.popover-panel') && !e.target.closest('#btnQuickCmd') && !e.target.closest('#btnAgentPicker') && !e.target.closest('#btnOpenHubPopover') && !e.target.closest('#btnOpenMachinesPopover') && !e.target.closest('#btnAutoSpeak')) {
           closeAllPopovers();
         }
       });

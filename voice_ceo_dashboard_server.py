@@ -32,9 +32,50 @@ import uuid
 from urllib.parse import parse_qs, unquote, urlparse
 
 try:
+    from vieneu import Vieneu
+except ImportError:
+    Vieneu = None
+
+try:
     import edge_tts
 except ImportError:
     edge_tts = None
+
+_VIENEU_INSTANCE = None
+_VIENEU_LOCK = threading.Lock()
+
+VIENEU_PRESET_VOICES = [
+    {"id": "Thùy Dung", "label": "Thùy Dung — Nữ · Miền Nam · Tự nhiên (Khuyên dùng)", "region": "Miền Nam", "gender": "Nữ"},
+    {"id": "Mỹ Duyên", "label": "Mỹ Duyên — Nữ · Miền Nam · Truyền cảm, ấm áp", "region": "Miền Nam", "gender": "Nữ"},
+    {"id": "Thục Đoan", "label": "Thục Đoan — Nữ · Miền Nam · Kể chuyện tự nhiên", "region": "Miền Nam", "gender": "Nữ"},
+    {"id": "Kim Thanh", "label": "Kim Thanh — Nữ · Miền Nam · Nhẹ nhàng, dịu dàng", "region": "Miền Nam", "gender": "Nữ"},
+    {"id": "Adam", "label": "Adam — Nam · Miền Nam · Điềm đạm, tự nhiên", "region": "Miền Nam", "gender": "Nam"},
+    {"id": "Minh Triết", "label": "Minh Triết — Nam · Miền Nam · Báo cáo dứt khoát", "region": "Miền Nam", "gender": "Nam"},
+    {"id": "Thái Sơn", "label": "Thái Sơn — Nam · Miền Nam · Trầm ấm, kể chuyện", "region": "Miền Nam", "gender": "Nam"},
+    {"id": "Trúc Ly", "label": "Trúc Ly — Nữ · Miền Bắc · Tự nhiên, trẻ trung", "region": "Miền Bắc", "gender": "Nữ"},
+    {"id": "Mai Anh", "label": "Mai Anh — Nữ · Miền Bắc · Báo cáo sắc nét", "region": "Miền Bắc", "gender": "Nữ"},
+    {"id": "Ngọc Huyền", "label": "Ngọc Huyền — Nữ · Miền Bắc · Truyền cảm", "region": "Miền Bắc", "gender": "Nữ"},
+    {"id": "Hải Đăng", "label": "Hải Đăng — Nam · Miền Bắc · Chuẩn mực, rõ ràng", "region": "Miền Bắc", "gender": "Nam"},
+    {"id": "Ngọc Trân", "label": "Ngọc Trân — Nữ · Miền Trung · Ngọt ngào, tự nhiên", "region": "Miền Trung", "gender": "Nữ"},
+]
+
+
+def get_vieneu_engine():
+    global _VIENEU_INSTANCE
+    if Vieneu is None:
+        return None
+    if _VIENEU_INSTANCE is not None:
+        return _VIENEU_INSTANCE
+    with _VIENEU_LOCK:
+        if _VIENEU_INSTANCE is None:
+            try:
+                _VIENEU_INSTANCE = Vieneu(mode="v3turbo", precision="int8")
+            except Exception:
+                try:
+                    _VIENEU_INSTANCE = Vieneu(mode="v3nano")
+                except Exception:
+                    _VIENEU_INSTANCE = None
+    return _VIENEU_INSTANCE
 
 _DELIVERABLES_CACHE: dict = {"timestamp": 0.0, "items": []}
 _SESSIONS_INDEX_CACHE: dict = {"timestamp": 0.0, "sessions": [], "file_map": {}}
@@ -1078,54 +1119,60 @@ def save_decision_ledger(entries: list[dict]) -> None:
     )
 
 
-def synthesize_vietnamese_tts(text: str, voice: str = "vi-VN-HoaiMyNeural") -> str | None:
-    """Chuyển văn bản tiếng Việt của Trợ Lý CEO thành file âm thanh MP3 trực tiếp tốc độ cao (<0.8s)."""
+def synthesize_vietnamese_tts(text: str, voice: str = "Thùy Dung") -> str | None:
+    """Chuyển văn bản tiếng Việt của Trợ Lý CEO thành file âm thanh 48kHz chất lượng cao bằng VieNeu-TTS v3 Turbo."""
     AUDIO_CACHE_DIR.mkdir(parents=True, exist_ok=True)
     clean_speech = strip_all_code_for_boss(text)
+    clean_speech = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", clean_speech)
     clean_speech = re.sub(r"[#*`_~>|•\-]+", " ", clean_speech)
     clean_speech = re.sub(r"https?://\S+", " đường link đính kèm ", clean_speech)
     clean_speech = re.sub(r"\s+", " ", clean_speech).strip()
     if not clean_speech:
         return None
-    if len(clean_speech) > 800:
-        clean_speech = clean_speech[:800] + "."
+    if len(clean_speech) > 360:
+        clean_speech = clean_speech[:360] + "."
 
-    digest = hashlib.sha256(f"{voice}:{clean_speech}".encode("utf-8")).hexdigest()[:16]
+    # Chuẩn hóa tên giọng sang VieNeu-TTS v3 Turbo
+    voice_clean = (voice or "Thùy Dung").strip()
+    if voice_clean in {"", "default", "vi-VN-HoaiMyNeural"}:
+        voice_clean = "Thùy Dung"
+    elif voice_clean == "vi-VN-NamMinhNeural":
+        voice_clean = "Adam"
+
+    digest = hashlib.sha256(f"vieneu_v3turbo:{voice_clean}:{clean_speech}".encode("utf-8")).hexdigest()[:16]
+    wav_name = f"vieneu_{digest}.wav"
+    wav_path = AUDIO_CACHE_DIR / wav_name
+
+    if wav_path.is_file() and wav_path.stat().st_size > 1000:
+        return f"/audio/{wav_name}"
+
+    tts_engine = get_vieneu_engine()
+    if tts_engine is not None:
+        try:
+            with _VIENEU_LOCK:
+                audio_arr = tts_engine.infer(clean_speech, voice=voice_clean)
+                tts_engine.save(audio_arr, str(wav_path))
+            if wav_path.is_file() and wav_path.stat().st_size > 1000:
+                return f"/audio/{wav_name}"
+        except Exception:
+            pass
+
+    # Fallback dự phòng nếu môi trường chưa nạp xong VieNeu
     out_name = f"tts_{digest}.mp3"
     out_path = AUDIO_CACHE_DIR / out_name
-
     if out_path.is_file() and out_path.stat().st_size > 1000:
         return f"/audio/{out_name}"
 
+    fallback_edge_voice = "vi-VN-NamMinhNeural" if voice_clean in {"Adam", "Minh Triết", "Thái Sơn", "Hải Đăng"} else "vi-VN-HoaiMyNeural"
     if edge_tts is not None:
         try:
-            comm = edge_tts.Communicate(clean_speech, voice, rate="+8%")
+            comm = edge_tts.Communicate(clean_speech, fallback_edge_voice, rate="+8%")
             asyncio.run(comm.save(str(out_path)))
             if out_path.is_file() and out_path.stat().st_size > 500:
                 return f"/audio/{out_name}"
         except Exception:
             pass
 
-    cmd = [
-        "uv",
-        "run",
-        "--with",
-        "edge-tts",
-        "edge-tts",
-        "--voice",
-        voice,
-        "--rate=+8%",
-        "--text",
-        clean_speech,
-        "--write-media",
-        str(out_path),
-    ]
-    try:
-        subprocess.run(cmd, cwd=str(WORKSPACE_ROOT), capture_output=True, text=True, timeout=15, check=False)
-        if out_path.is_file() and out_path.stat().st_size > 500:
-            return f"/audio/{out_name}"
-    except Exception:
-        pass
     return None
 
 
@@ -1543,6 +1590,15 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
             self._send_json({"ok": True, "machines": load_linked_machines(), "hostname": HOSTNAME_LABEL})
             return
 
+        if route == "/api/voices":
+            self._send_json({
+                "ok": True,
+                "engine": "VieNeu-TTS v3 Turbo (48kHz)",
+                "default_voice": "Thùy Dung",
+                "voices": VIENEU_PRESET_VOICES,
+            })
+            return
+
         if route in {"/api/live-chats", "/api/sessions"}:
             limit_val = int(qs.get("limit", ["36"])[0])
             res_payload = scan_live_chats_realtime(limit_sessions=limit_val)
@@ -1565,7 +1621,8 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
                 data = fpath.read_bytes()
                 self.send_response(HTTPStatus.OK)
                 self._send_cors_headers()
-                self.send_header("Content-Type", "audio/mpeg")
+                ctype = "audio/wav" if fname.lower().endswith(".wav") else "audio/mpeg"
+                self.send_header("Content-Type", ctype)
                 self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 self.wfile.write(data)
@@ -1647,9 +1704,9 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
 
         if route in {"/api/tts", "/api/speak"}:
             text = str(data.get("text", "")).strip()
-            voice = str(data.get("voice", "vi-VN-HoaiMyNeural")).strip()
+            voice = str(data.get("voice", "Thùy Dung")).strip()
             audio_url = synthesize_vietnamese_tts(text, voice=voice)
-            self._send_json({"ok": bool(audio_url), "audio_url": audio_url})
+            self._send_json({"ok": bool(audio_url), "audio_url": audio_url, "engine": "VieNeu-TTS v3 Turbo 48kHz", "voice": voice})
             return
 
         if route in {"/api/chat/send", "/api/voice-command"}:
@@ -1658,7 +1715,7 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
             engine_code = str(data.get("engine", "auto")).strip()
             agent_name = str(data.get("agent", "auto")).strip()
             permission_mode = str(data.get("permission_mode") or data.get("mode") or "accept-edits").strip()
-            voice = str(data.get("voice", "vi-VN-HoaiMyNeural")).strip()
+            voice = str(data.get("voice", "Thùy Dung")).strip()
             result = execute_chat_command(
                 session_id=session_id,
                 user_command=command,
@@ -1822,8 +1879,9 @@ def main() -> int:
         )
         return 0
 
+    threading.Thread(target=get_vieneu_engine, daemon=True).start()
     server = ThreadingHTTPServer(("127.0.0.1", args.port), VoiceCEORequestHandler)
-    print(f"[VOICE-CEO-PROXY] Server đang chạy tại: http://127.0.0.1:{args.port}")
+    print(f"[VOICE-CEO-PROXY] Server (VieNeu-TTS v3 Turbo 48kHz) đang chạy tại: http://127.0.0.1:{args.port}")
     try:
         server.serve_forever()
     except KeyboardInterrupt:
