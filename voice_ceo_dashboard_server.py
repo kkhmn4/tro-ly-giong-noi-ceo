@@ -187,10 +187,107 @@ def _tail_lines(fpath: Path, max_bytes: int = 380_000) -> list[str]:
 
 
 _PROMPT_FALLBACK_CACHE: dict[str, str] = {}
+HOSTNAME_LABEL = os.environ.get("COMPUTERNAME") or "PC-Chinh"
+LINKED_MACHINES_PATH = DASHBOARD_DIR / "data" / "linked_machines.json"
+
+
+def load_linked_machines() -> list[dict]:
+    default_local = {
+        "id": "local-primary",
+        "name": f"Máy Chính ({HOSTNAME_LABEL})",
+        "url": "http://127.0.0.1:8765",
+        "accounts": ["khakhunghiep@gmail.com", "hoatrang756@gmail.com", "aichampionhk1@gmail.com"],
+        "engines": ["Antigravity 2.0", "Claude Code"],
+        "is_local": True,
+        "status": "online",
+    }
+    if LINKED_MACHINES_PATH.is_file():
+        try:
+            items = json.loads(LINKED_MACHINES_PATH.read_text(encoding="utf-8"))
+            if isinstance(items, list) and items:
+                return items
+        except Exception:
+            pass
+    return [default_local]
+
+
+def save_linked_machines(machines: list[dict]) -> None:
+    LINKED_MACHINES_PATH.parent.mkdir(parents=True, exist_ok=True)
+    LINKED_MACHINES_PATH.write_text(
+        json.dumps(machines, indent=2, ensure_ascii=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def extract_executive_summary_points(text: str, max_points: int = 3) -> list[str]:
+    """Rút trích 2-3 ý tóm tắt báo cáo quan trọng nhất từ câu trả lời của AI."""
+    if not text:
+        return []
+    points: list[str] = []
+    for raw_ln in text.splitlines():
+        ln = raw_ln.strip()
+        if not ln:
+            continue
+        clean_ln = re.sub(r"^([#*\-•]+|\d+\.)\s*", "", ln)
+        clean_ln = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", clean_ln)
+        clean_ln = re.sub(r"\*\*([^*]+)\*\*", r"\1", clean_ln)
+        clean_ln = re.sub(r"`([^`]+)`", r"\1", clean_ln).strip()
+        if len(clean_ln) < 12 or clean_ln.endswith(":"):
+            continue
+        if any(clean_ln[:36].lower() == p[:36].lower() for p in points):
+            continue
+        if any(
+            k in clean_ln.lower()
+            for k in [
+                "báo cáo",
+                "hoàn tất",
+                "thành công",
+                "kết quả",
+                "link",
+                "https://",
+                "http://",
+                "đạt chuẩn",
+                "nâng cấp",
+                "xuất bản",
+                "đồng bộ",
+                "4k",
+                "2k",
+                "netlify",
+                "github",
+            ]
+        ):
+            points.append(clean_ln[:140])
+            if len(points) >= max_points:
+                return points
+    for raw_ln in text.splitlines():
+        clean_ln = re.sub(r"^([#*\-•]+|\d+\.)\s*", "", raw_ln.strip())
+        clean_ln = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", clean_ln)
+        clean_ln = re.sub(r"\*\*([^*]+)\*\*", r"\1", clean_ln)
+        clean_ln = re.sub(r"`([^`]+)`", r"\1", clean_ln).strip()
+        if len(clean_ln) >= 18 and not any(clean_ln[:36].lower() == p[:36].lower() for p in points):
+            points.append(clean_ln[:140])
+            if len(points) >= max_points:
+                break
+    return points
+
+
+def classify_session_topic(title: str, summary: str = "") -> str:
+    combined = f"{title} {summary}".lower()
+    if any(k in combined for k in ["4k", "hoatrang", "upscale", "nano banana", "omni"]):
+        return "4K Ultra Studio"
+    if any(k in combined for k in ["flow", "3 hồi", "video", "remotion", "capcut", "kịch bản"]):
+        return "Video & Flow"
+    if any(k in combined for k in ["shopee", "fanpage", "facebook", "2k", "affiliate", "kol"]):
+        return "Shopee & Fanpage"
+    if any(k in combined for k in ["gws", "drive", "đồng bộ"]):
+        return "Đồng bộ Drive"
+    if any(k in combined for k in ["web", "giao diện", "netlify", "github", "ui", "chat", "trợ lý", "bộ não"]):
+        return "Web & Bộ Não CEO"
+    return "Điều phối AI"
 
 
 def _find_any_user_prompt(fpath: Path) -> str:
-    """Tìm câu lệnh thực sự của chủ nhân (type=USER_INPUT) trong file transcript.jsonl (có cache & giới hạn byte)."""
+    """Tìm câu lệnh thực sự hoặc tiêu đề nhiệm vụ đặc trưng của phiên Antigravity 2.0."""
     key = str(fpath)
     if key in _PROMPT_FALLBACK_CACHE:
         return _PROMPT_FALLBACK_CACHE[key]
@@ -204,20 +301,49 @@ def _find_any_user_prompt(fpath: Path) -> str:
                 tail = f.read(450_000).decode("utf-8", errors="ignore")
         raw = head + "\n" + tail
         found = ""
+        fallback_any_input = ""
+        fallback_heading = ""
         for ln in raw.splitlines():
-            if '"USER_INPUT"' not in ln:
-                continue
             try:
                 obj = json.loads(ln)
             except Exception:
                 continue
-            if obj.get("type") == "USER_INPUT" and obj.get("source") == "USER_EXPLICIT":
+            t = obj.get("type", "")
+            if t == "USER_INPUT":
                 txt = clean_user_prompt_text(str(obj.get("content", "")))
                 txt = re.sub(r"\s+", " ", txt).strip()
                 if txt and len(txt) > 4 and "([\\s\\S]" not in txt:
-                    found = txt
-        _PROMPT_FALLBACK_CACHE[key] = found
-        return found
+                    if obj.get("source") == "USER_EXPLICIT":
+                        found = txt
+                    elif not fallback_any_input:
+                        fallback_any_input = txt
+            elif t == "PLANNER_RESPONSE" and not fallback_heading:
+                c = strip_all_code_for_boss(str(obj.get("content", ""))).strip()
+                if c:
+                    first_ln = c.splitlines()[0].lstrip("#*-• ").strip()
+                    if len(first_ln) > 8:
+                        fallback_heading = first_ln[:80]
+
+        if not found:
+            # Kiểm tra các file artifact (.md) trong thư mục brain của phiên
+            conv_dir = fpath.parent.parent.parent
+            for md_file in sorted(conv_dir.glob("*.md")):
+                try:
+                    md_txt = md_file.read_text(encoding="utf-8", errors="ignore")
+                    for mln in md_txt.splitlines():
+                        if mln.startswith("# "):
+                            cand = mln.lstrip("# ").strip()
+                            if len(cand) > 5:
+                                found = cand
+                                break
+                    if found:
+                        break
+                except Exception:
+                    pass
+
+        final_title = found or fallback_any_input or fallback_heading
+        _PROMPT_FALLBACK_CACHE[key] = final_title
+        return final_title
     except Exception:
         return ""
 
@@ -301,6 +427,7 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
                     "id": f"ag-a-{step_idx}",
                     "role": "assistant",
                     "text": clean_ai,
+                    "summary_points": extract_executive_summary_points(clean_ai),
                     "timestamp": ts_raw or time.strftime("%H:%M:%S", time.localtime(mtime)),
                     "engine": "Antigravity 2.0",
                     "model": "Antigravity 2.0 · Gemini Argon",
@@ -312,6 +439,7 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
                 turns_compact.append({
                     "user": pending_user_text or "Chỉ đạo trong phiên",
                     "ai": clean_ai,
+                    "summary_points": extract_executive_summary_points(clean_ai),
                     "timestamp": ts_raw or time.strftime("%H:%M:%S", time.localtime(mtime)),
                     "step_index": step_idx,
                     "links": links,
@@ -385,7 +513,28 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
         })
 
     user_msgs = [m["text"] for m in messages if m["role"] == "user" and m.get("text")]
-    title = (user_msgs[-1] if user_msgs else fallback_prompt)[:68]
+    ai_msgs = [m["text"] for m in messages if m["role"] == "assistant" and m.get("text") and not m.get("is_working")]
+    substantive_user_msgs = [
+        u.strip()
+        for u in user_msgs
+        if len(u.strip()) > 10
+        and u.strip().lower() not in {"rồi", "xong", "ok", "tiếp", "chạy đi", "làm đi"}
+        and "kiểm tra nghiệm thu toàn bộ sản phẩm mới nhất cho anh" not in u.strip().lower()
+    ]
+    raw_title = (
+        substantive_user_msgs[0]
+        if substantive_user_msgs
+        else (_find_any_user_prompt(fpath) or (user_msgs[0] if user_msgs else ""))
+    ).strip()
+    if not raw_title or len(raw_title) <= 6 or raw_title == "Phiên điều phối Antigravity 2.0":
+        first_ai = ai_msgs[-1] if ai_msgs else ""
+        pts = extract_executive_summary_points(first_ai, max_points=1)
+        raw_title = pts[0][:68] if pts else f"Điều phối Tác vụ AI #{session_id[:6]}"
+    title = raw_title[:72]
+    latest_ai_text = ai_msgs[-1] if ai_msgs else ""
+    summary_pts = extract_executive_summary_points(latest_ai_text, max_points=2)
+    summary_line = summary_pts[0] if summary_pts else (latest_ai_text.splitlines()[0][:110] if latest_ai_text else "Sẵn sàng nhận lệnh trực tiếp")
+    topic_badge = classify_session_topic(title, summary_line)
 
     return {
         "session_id": session_id,
@@ -393,6 +542,12 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
         "engine": "Antigravity 2.0",
         "engine_code": "antigravity",
         "project": "mang xa hoi",
+        "topic_badge": topic_badge,
+        "summary_line": summary_line,
+        "summary_points": summary_pts,
+        "machine_id": "local-primary",
+        "machine_name": f"Máy Chính ({HOSTNAME_LABEL})",
+        "account_tag": "hoatrang756@gmail.com" if "4K" in topic_badge else "khakhunghiep@gmail.com",
         "title": title,
         "mtime": mtime,
         "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
@@ -514,6 +669,7 @@ def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_5
                             "id": obj.get("uuid") or f"cl-a-{idx}",
                             "role": "assistant",
                             "text": clean_ai,
+                            "summary_points": extract_executive_summary_points(clean_ai),
                             "timestamp": ts_raw or time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
                             "engine": "Claude Code",
                             "model": f"Claude Code · {model_name}",
@@ -525,6 +681,7 @@ def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_5
                         turns_compact.append({
                             "user": last_user_text or ai_title or f"Dự án {proj_folder}",
                             "ai": clean_ai,
+                            "summary_points": extract_executive_summary_points(clean_ai),
                             "timestamp": ts_raw or time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
                             "step_index": len(turns_compact) + 1,
                             "links": links,
@@ -564,13 +721,24 @@ def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_5
             "links": [],
         })
 
+    ai_msgs = [m["text"] for m in messages if m["role"] == "assistant" and m.get("text") and not m.get("is_working")]
+    latest_ai_text = ai_msgs[-1] if ai_msgs else ""
+    summary_pts = extract_executive_summary_points(latest_ai_text, max_points=2)
+    summary_line = summary_pts[0] if summary_pts else (latest_ai_text.splitlines()[0][:110] if latest_ai_text else f"Dự án {proj_folder}")
     title = ai_title or (last_user_text[:64] if last_user_text else f"{proj_folder} ({session_id[:8]})")
+    topic_badge = classify_session_topic(title, summary_line)
     return {
         "session_id": session_id,
         "short_id": session_id[:8],
         "engine": "Claude Code",
         "engine_code": "claude",
         "project": proj_folder,
+        "topic_badge": topic_badge,
+        "summary_line": summary_line,
+        "summary_points": summary_pts,
+        "machine_id": "local-primary",
+        "machine_name": f"Máy Chính ({HOSTNAME_LABEL})",
+        "account_tag": "Claude Extension",
         "title": title,
         "mtime": mtime,
         "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
@@ -613,13 +781,23 @@ def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
                     "links": m.get("links", []),
                 })
         mtime = float(cs.get("mtime", time.time()))
+        last_ai = next((m.get("text", "") for m in reversed(msgs) if m.get("role") == "assistant"), "")
+        s_pts = extract_executive_summary_points(last_ai, max_points=2)
+        s_line = s_pts[0] if s_pts else (last_ai[:100] if last_ai else "Phiên chỉ đạo trực tiếp trên Web")
+        c_title = cs.get("title", last_u[:64])
         sessions.append({
             "session_id": sid,
             "short_id": sid[:8],
             "engine": cs.get("engine", "Antigravity 2.0"),
             "engine_code": cs.get("engine_code", "antigravity"),
             "project": cs.get("project", "mang xa hoi"),
-            "title": cs.get("title", last_u[:64]),
+            "topic_badge": classify_session_topic(c_title, s_line),
+            "summary_line": s_line,
+            "summary_points": s_pts,
+            "machine_id": "local-primary",
+            "machine_name": f"Máy Chính ({HOSTNAME_LABEL})",
+            "account_tag": "khakhunghiep@gmail.com",
+            "title": c_title,
             "mtime": mtime,
             "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
             "seconds_ago": max(0, int(time.time() - mtime)),
@@ -643,7 +821,7 @@ def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
             conv_id = fpath.parent.parent.parent.name
             file_map[conv_id] = ("antigravity", fpath)
             parsed = parse_antigravity_conversation(fpath, conv_id, max_bytes=360_000)
-            if parsed["message_count"] > 0:
+            if len(parsed.get("turns", [])) > 0 and not str(parsed.get("title", "")).startswith("Điều phối Tác vụ AI #"):
                 sessions.append({k: v for k, v in parsed.items() if k != "messages"})
 
     # 3. Quét Claude Code transcripts (~/.claude/projects/**/*.jsonl)
@@ -662,6 +840,17 @@ def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
                 sessions.append({k: v for k, v in parsed.items() if k != "messages"})
 
     sessions.sort(key=lambda x: x["mtime"], reverse=True)
+    seen_titles: set[str] = set()
+    for s in sessions:
+        base_t = str(s.get("title") or "").strip()
+        if base_t in seen_titles:
+            s_line = str(s.get("summary_line") or "").strip()
+            if s_line and s_line[:45] != base_t[:45] and len(s_line) > 12:
+                s["title"] = f"{s_line[:54]} · #{s.get('short_id', '')[:4]}"
+            else:
+                s["title"] = f"{base_t[:54]} · #{s.get('short_id', '')[:6]}"
+        seen_titles.add(str(s.get("title") or ""))
+
     _SESSIONS_INDEX_CACHE["timestamp"] = time.time()
     _SESSIONS_INDEX_CACHE["sessions"] = sessions
     _SESSIONS_INDEX_CACHE["file_map"] = file_map
@@ -670,8 +859,10 @@ def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
     return {
         "ok": True,
         "server_time": time.strftime("%H:%M:%S"),
+        "updated_at": time.strftime("%H:%M:%S"),
         "total_active_sessions": len(sessions),
         "projects": projects,
+        "linked_machines": load_linked_machines(),
         "sessions": sessions[:limit_sessions],
     }
 
@@ -1050,6 +1241,8 @@ def _run_background_cli_agent(
     else:
         if AGY_BIN.is_file():
             cmd = [str(AGY_BIN), "-p", zero_code_directive, "--dangerously-skip-permissions"]
+            if len(session_id) == 36 and not session_id.startswith("web-"):
+                cmd.extend(["--conversation", session_id])
             if agent_name and agent_name not in {"auto", "antigravity", "claude", "ceo-proxy"}:
                 cmd.extend(["--agent", agent_name])
             if permission_mode == "plan":
@@ -1086,6 +1279,7 @@ def _run_background_cli_agent(
                         "role": "assistant",
                         "reply_to": user_prompt,
                         "text": clean_out,
+                        "summary_points": extract_executive_summary_points(clean_out),
                         "audio_url": audio_url,
                         "timestamp": time.strftime("%H:%M:%S"),
                         "engine": "Claude Code" if engine_code == "claude" else "Antigravity 2.0",
@@ -1120,8 +1314,14 @@ def execute_chat_command(
     if is_new_session:
         session_id = f"web-{uuid.uuid4().hex[:8]}"
 
-    resolved_engine = "Claude Code" if engine_code == "claude" else "Antigravity 2.0"
-    resolved_engine_code = "claude" if engine_code == "claude" else "antigravity"
+    # Tự động nhận diện phiên thuộc Claude Code hay Antigravity 2.0 khi để chế độ "auto"
+    if engine_code == "auto":
+        cl_root = Path.home() / ".claude" / "projects"
+        is_claude_sess = any(cl_root.rglob(f"{session_id}.jsonl")) if cl_root.is_dir() else False
+        resolved_engine_code = "claude" if is_claude_sess else "antigravity"
+    else:
+        resolved_engine_code = "claude" if engine_code == "claude" else "antigravity"
+    resolved_engine = "Claude Code" if resolved_engine_code == "claude" else "Antigravity 2.0"
 
     session_meta = (
         {
@@ -1238,8 +1438,8 @@ def execute_chat_command(
             f"đồng thời áp đặt quyết định từ Bộ Não Thứ Hai: {dec['ceo_decision']}"
         )
 
-        # Nếu người dùng chọn chạy CLI thực tế (`antigravity` / `claude` / subagent), khởi chạy luồng nền
-        if engine_code in {"antigravity", "claude"} or agent_name not in {"auto", "ceo-proxy", ""}:
+        # Đẩy lệnh trực tiếp xuống CLI thực tế (`agy.exe` hoặc `claude.exe`) ở luồng nền
+        if engine_code != "ceo-proxy":
             t = threading.Thread(
                 target=_run_background_cli_agent,
                 args=(session_id, resolved_engine_code, target_agent, permission_mode, cmd_clean, voice),
@@ -1247,12 +1447,14 @@ def execute_chat_command(
             )
             t.start()
 
-    audio_url = synthesize_vietnamese_tts(reply_text, voice=voice)
+    clean_reply = strip_all_code_for_boss(reply_text)
+    audio_url = synthesize_vietnamese_tts(clean_reply, voice=voice)
     assistant_msg = {
         "id": f"web-a-{int(time.time()*1000)}",
         "role": "assistant",
         "reply_to": cmd_clean,
-        "text": strip_all_code_for_boss(reply_text),
+        "text": clean_reply,
+        "summary_points": extract_executive_summary_points(clean_reply),
         "audio_url": audio_url,
         "timestamp": time.strftime("%H:%M:%S"),
         "engine": resolved_engine,
@@ -1337,9 +1539,15 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
             )
             return
 
+        if route == "/api/machines":
+            self._send_json({"ok": True, "machines": load_linked_machines(), "hostname": HOSTNAME_LABEL})
+            return
+
         if route in {"/api/live-chats", "/api/sessions"}:
             limit_val = int(qs.get("limit", ["36"])[0])
-            self._send_json(scan_live_chats_realtime(limit_sessions=limit_val))
+            res_payload = scan_live_chats_realtime(limit_sessions=limit_val)
+            res_payload["machines"] = load_linked_machines()
+            self._send_json(res_payload)
             return
 
         if route == "/api/conversation":
@@ -1411,6 +1619,31 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
             data = json.loads(raw_body)
         except Exception:
             data = {}
+
+        if route == "/api/machines":
+            action = str(data.get("action") or "add").strip()
+            machines = load_linked_machines()
+            if action == "add":
+                m_name = str(data.get("name") or "Máy Trạm AI Mới").strip()
+                m_url = str(data.get("url") or "").strip().rstrip("/")
+                m_acc = str(data.get("accounts") or "khakhunghiep@gmail.com").strip()
+                new_m = {
+                    "id": f"node-{uuid.uuid4().hex[:6]}",
+                    "name": m_name,
+                    "url": m_url or "gws://00_DONG_BO_ANTIGRAVITY_GIUA_CAC_MAY",
+                    "accounts": [a.strip() for a in m_acc.split(",") if a.strip()],
+                    "engines": ["Antigravity 2.0", "Claude Code"],
+                    "is_local": False,
+                    "status": "linked",
+                }
+                machines.append(new_m)
+                save_linked_machines(machines)
+            elif action == "remove":
+                rm_id = str(data.get("id") or "").strip()
+                machines = [m for m in machines if m.get("id") != rm_id or m.get("is_local")]
+                save_linked_machines(machines)
+            self._send_json({"ok": True, "machines": machines})
+            return
 
         if route in {"/api/tts", "/api/speak"}:
             text = str(data.get("text", "")).strip()

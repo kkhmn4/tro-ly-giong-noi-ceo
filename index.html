@@ -291,7 +291,7 @@
       border-radius: 6px;
       border: 1px solid var(--border-strong); /* taste-skill-ignore */
       background-color: var(--bg-surface);
-      font-size: 12.5px;
+      font-size: 13px;
       outline: none;
     }
 
@@ -312,7 +312,7 @@
     .filter-pill {
       padding: 4px 6px;
       border-radius: 6px;
-      font-size: 11.5px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-muted);
       text-align: center;
@@ -326,22 +326,21 @@
     .session-list {
       flex: 1;
       overflow-y: auto;
-      padding: 8px 16px;
+      padding: 8px 14px;
       display: flex;
       flex-direction: column;
-      gap: 3px;
+      gap: 6px;
     }
 
     .session-item {
       width: 100%;
       text-align: left;
-      padding: 9px 10px;
+      padding: 10px 12px;
       border-radius: 8px;
       border: 1px solid transparent; /* taste-skill-ignore */
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
+      flex-direction: column;
+      gap: 5px;
       transition: background-color 140ms ease-out;
     }
 
@@ -351,13 +350,21 @@
 
     .session-item.active {
       background-color: var(--bg-surface);
-      border-color: var(--border-strong);
+      border-color: var(--accent);
     }
 
-    .session-item-left {
+    .session-item-top {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .session-badges {
+      display: flex;
+      align-items: center;
+      gap: 5px;
       min-width: 0;
       flex: 1;
     }
@@ -365,7 +372,7 @@
     .engine-mini {
       padding: 1px 6px;
       border-radius: 6px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
@@ -380,21 +387,44 @@
       color: var(--claude-text);
     }
 
-    .session-item-title {
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--text-main);
+    .topic-pill {
+      padding: 1px 6px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      background-color: var(--bg-subtle);
+      color: var(--text-secondary);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    .session-item-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
     .session-item.active .session-item-title {
       font-weight: 700;
+      color: var(--accent);
+    }
+
+    .session-item-summary {
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
     }
 
     .session-item-time {
-      font-size: 11px;
+      font-size: 12px;
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
       flex-shrink: 0;
@@ -485,6 +515,75 @@
       width: 360px;
       max-height: 76dvh;
       overflow-y: auto;
+    }
+
+    #machinesPopoverPanel {
+      top: 52px;
+      right: 20px;
+      width: 380px;
+      max-height: 80dvh;
+      overflow-y: auto;
+    }
+
+    .machine-card {
+      padding: 8px 10px;
+      border-radius: 6px;
+      background-color: var(--bg-subtle);
+      border: 1px solid var(--border-color); /* taste-skill-ignore */
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .machine-form-input {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid var(--border-strong); /* taste-skill-ignore */
+      background-color: var(--bg-surface);
+      font-size: 12px;
+      outline: none;
+    }
+
+    .machine-btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      background-color: var(--accent);
+      color: #FFFFFF;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Executive Summary Highlight Box inside Chat Replies */
+    .exec-summary-box {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background-color: var(--bg-subtle);
+      border-left: 3px solid var(--accent); /* taste-skill-ignore */
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .exec-summary-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .exec-summary-list {
+      padding-left: 16px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-main);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
     }
 
     .hub-tabs {
@@ -650,13 +749,13 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 700;
       color: var(--text-secondary);
     }
 
     .ai-time {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 500;
       color: var(--text-muted);
       font-variant-numeric: tabular-nums;
@@ -673,7 +772,7 @@
       border-radius: 6px;
       background-color: var(--bg-subtle);
       color: var(--text-muted);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
@@ -975,6 +1074,13 @@
             </svg>
           </button>
 
+          <button type="button" id="btnOpenMachinesPopover" class="icon-btn" data-popover="Liên kết Máy khác & Tài khoản (Antigravity / Claude)" data-popover-pos="left" aria-label="Liên kết máy khác và tài khoản">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+            <span id="machinesCountBadge" class="icon-badge">2</span>
+          </button>
+
           <button type="button" id="btnOpenHubPopover" class="icon-btn" data-popover="Xem Sản phẩm nghiệm thu & Bộ não" data-popover-pos="left" aria-label="Kho sản phẩm và Bộ não">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
@@ -994,6 +1100,25 @@
               <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.93 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.93 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/>
             </svg>
           </button>
+        </div>
+
+        <!-- POPOVER LIÊN KẾT ĐA MÁY & TÀI KHOẢN ANTIGRAVITY / CLAUDE -->
+        <div id="machinesPopoverPanel" class="popover-panel" aria-label="Liên kết máy khác và tài khoản">
+          <div class="popover-header">
+            <span>Liên Kết Máy Khác & Tài Khoản AI</span>
+            <button type="button" id="btnCloseMachinesPopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+          </div>
+          <div id="machinesListBody" style="display:flex; flex-direction:column; gap:6px;"></div>
+          <div style="display:flex; flex-direction:column; gap:6px; padding-top:6px;">
+            <div style="font-size:11.5px; font-weight:700; color:var(--text-main);">Thêm Máy Khác (PC Phụ / Laptop)</div>
+            <input type="text" id="inputMachineName" class="machine-form-input" placeholder="Tên máy (VD: Máy 2 - Laptop)" />
+            <input type="text" id="inputMachineUrl" class="machine-form-input" placeholder="URL Node (VD: http://192.168.1.25:8765 hoặc gws-drive)" />
+            <input type="text" id="inputMachineAccounts" class="machine-form-input" placeholder="Tài khoản (VD: hoatrang756, Claude Extension)" />
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+              <button type="button" id="btnAddMachineNode" class="machine-btn">+ Liên kết Máy</button>
+              <button type="button" id="btnCopyMachineSetup" class="machine-btn" style="background-color:var(--bg-subtle); color:var(--text-main);">Chép lệnh cài Máy 2</button>
+            </div>
+          </div>
         </div>
 
         <!-- POPOVER KHO SẢN PHẨM & BỘ NÃO THỨ HAI (Chỉ mở khi bấm icon Hộp sản phẩm) -->
@@ -1153,6 +1278,22 @@
         brainSnapshot: null,
         lastAnnouncedMsgId: '',
         isRecordingMic: false,
+        linkedMachines: [
+          {
+            id: 'local-primary',
+            name: 'Máy Chính (PC-Manabie)',
+            url: 'http://127.0.0.1:8765',
+            accounts: ['khakhunghiep@gmail.com', 'hoatrang756@gmail.com', 'aichampionhk1@gmail.com', 'Claude Code Extension'],
+            status: 'online',
+          },
+          {
+            id: 'gws-drive-bridge',
+            name: 'Máy 2 / Laptop (Cầu nối Drive & LAN)',
+            url: 'gws://00_DONG_BO_ANTIGRAVITY_GIUA_CAC_MAY',
+            accounts: ['Đồng bộ 2 chiều gws + Antigravity + Claude Code'],
+            status: 'ready',
+          },
+        ],
       };
 
       const el = {
@@ -1164,6 +1305,10 @@
         activeSessionTitle: document.getElementById('activeSessionTitle'),
         btnAutoSpeak: document.getElementById('btnAutoSpeak'),
         btnZeroCode: document.getElementById('btnZeroCode'),
+        btnOpenMachinesPopover: document.getElementById('btnOpenMachinesPopover'),
+        machinesPopoverPanel: document.getElementById('machinesPopoverPanel'),
+        machinesListBody: document.getElementById('machinesListBody'),
+        machinesCountBadge: document.getElementById('machinesCountBadge'),
         btnOpenHubPopover: document.getElementById('btnOpenHubPopover'),
         hubPopoverPanel: document.getElementById('hubPopoverPanel'),
         hubPopoverBody: document.getElementById('hubPopoverBody'),
@@ -1195,11 +1340,32 @@
         el.quickCmdPopover.classList.remove('open');
         el.agentPickerPopover.classList.remove('open');
         el.hubPopoverPanel.classList.remove('open');
+        if (el.machinesPopoverPanel) el.machinesPopoverPanel.classList.remove('open');
+      }
+
+      function extractClientSummaryPoints(text) {
+        if (!text) return [];
+        const lines = String(text).split(/\r?\n/);
+        const pts = [];
+        for (const raw of lines) {
+          const clean = raw
+            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+            .replace(/^([#*\-•]+|\d+\.)\s*/, '')
+            .replace(/\*\*/g, '')
+            .replace(/`/g, '')
+            .trim();
+          if (clean.length >= 16 && !clean.endsWith(':') && !pts.some((p) => p.slice(0, 32) === clean.slice(0, 32))) {
+            pts.push(clean.slice(0, 135));
+            if (pts.length >= 3) break;
+          }
+        }
+        return pts;
       }
 
       function renderFormattedMarkdown(text) {
         if (!text) return '<p>Đã hoàn tất xử lý ngầm.</p>';
-        const lines = String(text).split(/\r?\n/);
+        const cleanedText = String(text).replace(/\[([^\]]+)\]\((?:file:\/\/\/|https?:\/\/)[^)]+\)/g, '**$1**');
+        const lines = cleanedText.split(/\r?\n/);
         const htmlParts = [];
         let inList = false;
 
@@ -1297,10 +1463,17 @@
           const isActive = s.session_id === state.activeSessionId;
           const isClaude = s.engine_code === 'claude';
           const shortTime = String(s.updated_str || '').split('·')[0].trim().slice(0, 5);
-          const popInfo = `${s.engine} · Dự án: ${s.project || 'mang xa hoi'} · Ẩn ${s.filtered_count || 4} code`;
+          const topicBadge = s.topic_badge || (isClaude ? 'Claude Project' : 'Điều phối AI');
+          const machineLabel = s.machine_name || 'Máy Chính';
+          const accountLabel = s.account_tag || (isClaude ? 'Claude Extension' : 'khakhunghiep');
+          const popInfo = `${s.engine} · ${machineLabel} (${accountLabel}) · Mã: #${s.short_id || ''} · Ẩn ${s.filtered_count || 4} bước code`;
           const rawTitle = (s.title && s.title !== 'Phiên điều phối Antigravity 2.0')
             ? s.title
             : `Phiên ${s.project || 'Antigravity'} #${s.short_id || ''}`;
+          const lastTurn = Array.isArray(s.turns) && s.turns.length ? s.turns[s.turns.length - 1] : null;
+          const summaryPreview = s.summary_line
+            || (lastTurn && lastTurn.ai ? String(lastTurn.ai).replace(/\s+/g, ' ').slice(0, 90) : '')
+            || `Dự án ${s.project || 'mang xa hoi'} · Sẵn sàng nhận lệnh`;
           return `
             <button
               type="button"
@@ -1308,11 +1481,16 @@
               data-session-id="${escapeHtml(s.session_id)}"
               title="${escapeHtml(popInfo)}"
             >
-              <div class="session-item-left">
-                <span class="engine-mini ${isClaude ? 'claude' : ''}">${isClaude ? 'CL' : 'AG'}</span>
-                <span class="session-item-title">${escapeHtml(rawTitle)}</span>
+              <div class="session-item-top">
+                <div class="session-badges">
+                  <span class="engine-mini ${isClaude ? 'claude' : ''}">${isClaude ? 'CL' : 'AG'}</span>
+                  <span class="topic-pill">${escapeHtml(topicBadge)}</span>
+                  <span class="session-item-time">#${escapeHtml((s.short_id || '').slice(0, 4))}</span>
+                </div>
+                <span class="session-item-time">${escapeHtml(shortTime)}</span>
               </div>
-              <span class="session-item-time">${escapeHtml(shortTime)}</span>
+              <div class="session-item-title">${escapeHtml(rawTitle)}</div>
+              <div class="session-item-summary">${escapeHtml(summaryPreview)}</div>
             </button>
           `;
         }).join('');
@@ -1343,6 +1521,7 @@
               id: `${sessionObj.session_id}-a-${idx}`,
               role: 'assistant',
               text: t.ai,
+              summary_points: t.summary_points || extractClientSummaryPoints(t.ai),
               timestamp: t.timestamp || sessionObj.updated_str || '',
               model: sessionObj.engine,
               hidden_count: Math.max(2, Math.round((sessionObj.filtered_count || 6) / Math.max(1, turns.length))),
@@ -1445,6 +1624,23 @@
               }).join('')}</div>`
             : '';
 
+          const rawSummaryPts = Array.isArray(m.summary_points) && m.summary_points.length
+            ? m.summary_points
+            : extractClientSummaryPoints(m.text);
+          const execSummaryHtml = (rawSummaryPts.length > 0 && String(m.text || '').length > 140)
+            ? `<div class="exec-summary-box">
+                <div class="exec-summary-title">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                    <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                  </svg>
+                  <span>Tóm tắt báo cáo quan trọng</span>
+                </div>
+                <ul class="exec-summary-list">
+                  ${rawSummaryPts.slice(0, 3).map((pt) => `<li>${escapeHtml(pt)}</li>`).join('')}
+                </ul>
+              </div>`
+            : '';
+
           return `
             <div class="msg-row assistant">
               <article class="ai-bubble">
@@ -1468,6 +1664,7 @@
                     </button>
                   </div>
                 </div>
+                ${execSummaryHtml}
                 ${stepDetailsHtml}
                 <div class="ai-text-body">
                   ${renderFormattedMarkdown(m.text)}
@@ -1514,9 +1711,12 @@
         state.activeSessionId = sessionId;
         renderSessionList();
 
-        if (state.daemonOnline) {
+        const targetSess = state.sessions.find((s) => s.session_id === sessionId);
+        const apiBase = (targetSess && targetSess.remote_url) ? targetSess.remote_url : LOCAL_API_BASE;
+
+        if (state.daemonOnline || (targetSess && targetSess.remote_url)) {
           try {
-            const res = await fetch(`${LOCAL_API_BASE}/api/conversation?id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
+            const res = await fetch(`${apiBase}/api/conversation?id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
             if (res.ok) {
               const conv = await res.json();
               if (conv && conv.session_id) {
@@ -1534,14 +1734,37 @@
           if (res.ok) {
             const data = await res.json();
             state.daemonOnline = true;
-            state.sessions = data.sessions || [];
+            let mergedSessions = data.sessions || [];
+            if (Array.isArray(data.linked_machines) && data.linked_machines.length) {
+              state.linkedMachines = data.linked_machines;
+            }
+            const remoteNodes = (state.linkedMachines || []).filter(
+              (m) => m.id !== 'local-primary' && String(m.url || '').startsWith('http') && !String(m.url).includes('127.0.0.1')
+            );
+            for (const rm of remoteNodes) {
+              try {
+                const rBase = String(rm.url).replace(/\/+$/, '');
+                const rRes = await fetch(`${rBase}/api/live-chats`, { cache: 'no-store' });
+                if (rRes.ok) {
+                  const rData = await rRes.json();
+                  const rList = (rData.sessions || []).map((rs) => Object.assign({}, rs, {
+                    machine_name: rm.name,
+                    remote_url: rBase,
+                  }));
+                  mergedSessions = mergedSessions.concat(rList);
+                }
+              } catch (_) {}
+            }
+            state.sessions = mergedSessions;
             el.liveDot.setAttribute('data-popover', `Trực tuyến 1.5s/lần · Cập nhật ${data.updated_at || ''}`);
 
             if (!state.activeSessionId && state.sessions.length > 0) {
               state.activeSessionId = state.sessions[0].session_id;
             }
             if (state.activeSessionId) {
-              const convRes = await fetch(`${LOCAL_API_BASE}/api/conversation?id=${encodeURIComponent(state.activeSessionId)}`, { cache: 'no-store' });
+              const activeObj = state.sessions.find((s) => s.session_id === state.activeSessionId);
+              const apiBase = (activeObj && activeObj.remote_url) ? activeObj.remote_url : LOCAL_API_BASE;
+              const convRes = await fetch(`${apiBase}/api/conversation?id=${encodeURIComponent(state.activeSessionId)}`, { cache: 'no-store' });
               if (convRes.ok) {
                 const conv = await convRes.json();
                 if (conv && conv.session_id) {
@@ -1716,9 +1939,10 @@
         });
         renderActiveConversation(true);
 
-        if (state.daemonOnline) {
+        const targetApiBase = (activeSession && activeSession.remote_url) ? activeSession.remote_url : LOCAL_API_BASE;
+        if (state.daemonOnline || (activeSession && activeSession.remote_url)) {
           try {
-            const res = await fetch(`${LOCAL_API_BASE}/api/chat/send`, {
+            const res = await fetch(`${targetApiBase}/api/chat/send`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
@@ -1858,6 +2082,115 @@
         renderActiveConversation(false);
       });
 
+      function renderMachinesPopover() {
+        if (!el.machinesListBody) return;
+        const machines = state.linkedMachines || [];
+        if (el.machinesCountBadge) el.machinesCountBadge.textContent = String(machines.length);
+        el.machinesListBody.innerHTML = machines.map((m) => {
+          const isOnline = m.status === 'online';
+          const accText = Array.isArray(m.accounts) ? m.accounts.join(' · ') : String(m.accounts || '');
+          return `
+            <div class="machine-card">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                <span style="font-weight:700; color:var(--text-main);">${escapeHtml(m.name)}</span>
+                <span class="engine-mini ${isOnline ? '' : 'claude'}">${isOnline ? 'Trực tuyến' : 'Cầu nối Sẵn sàng'}</span>
+              </div>
+              <div style="color:var(--text-muted); font-size:11px;">Địa chỉ: ${escapeHtml(m.url)}</div>
+              <div style="color:var(--text-secondary); font-size:11.5px;">Tài khoản: ${escapeHtml(accText)}</div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      async function loadLinkedMachines() {
+        try {
+          const saved = localStorage.getItem('ceo_linked_machines');
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed) && parsed.length) state.linkedMachines = parsed;
+          }
+        } catch (_) {}
+        if (state.daemonOnline) {
+          try {
+            const res = await fetch(`${LOCAL_API_BASE}/api/machines`, { cache: 'no-store' });
+            if (res.ok) {
+              const data = await res.json();
+              if (Array.isArray(data.machines) && data.machines.length) {
+                state.linkedMachines = data.machines;
+              }
+            }
+          } catch (_) {}
+        }
+        renderMachinesPopover();
+      }
+
+      if (el.btnOpenMachinesPopover) {
+        el.btnOpenMachinesPopover.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const wasOpen = el.machinesPopoverPanel.classList.contains('open');
+          closeAllPopovers();
+          if (!wasOpen) {
+            el.machinesPopoverPanel.classList.add('open');
+            loadLinkedMachines();
+          }
+        });
+      }
+
+      const btnCloseMachines = document.getElementById('btnCloseMachinesPopover');
+      if (btnCloseMachines) {
+        btnCloseMachines.addEventListener('click', () => {
+          el.machinesPopoverPanel.classList.remove('open');
+        });
+      }
+
+      const btnAddMachineNode = document.getElementById('btnAddMachineNode');
+      if (btnAddMachineNode) {
+        btnAddMachineNode.addEventListener('click', async () => {
+          const nameEl = document.getElementById('inputMachineName');
+          const urlEl = document.getElementById('inputMachineUrl');
+          const accEl = document.getElementById('inputMachineAccounts');
+          const nameVal = (nameEl.value || '').trim() || `Máy Liên Kết #${state.linkedMachines.length + 1}`;
+          const urlVal = (urlEl.value || '').trim() || 'http://192.168.1.25:8765';
+          const accVal = (accEl.value || '').trim() || 'Antigravity 2.0, Claude Code';
+          const newNode = {
+            id: `node-${Date.now()}`,
+            name: nameVal,
+            url: urlVal,
+            accounts: accVal.split(',').map((x) => x.trim()).filter(Boolean),
+            status: 'ready',
+          };
+          state.linkedMachines.push(newNode);
+          try {
+            localStorage.setItem('ceo_linked_machines', JSON.stringify(state.linkedMachines));
+          } catch (_) {}
+          if (state.daemonOnline) {
+            try {
+              await fetch(`${LOCAL_API_BASE}/api/machines`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'add', name: nameVal, url: urlVal, accounts: newNode.accounts }),
+              });
+            } catch (_) {}
+          }
+          nameEl.value = '';
+          urlEl.value = '';
+          accEl.value = '';
+          renderMachinesPopover();
+        });
+      }
+
+      const btnCopyMachineSetup = document.getElementById('btnCopyMachineSetup');
+      if (btnCopyMachineSetup) {
+        btnCopyMachineSetup.addEventListener('click', (e) => {
+          const setupCmd = `uv run --with edge-tts python -X utf8 voice_ceo_dashboard_server.py --port 8765`;
+          navigator.clipboard.writeText(setupCmd);
+          const b = e.currentTarget;
+          const old = b.textContent;
+          b.textContent = 'Đã chép lệnh!';
+          setTimeout(() => { b.textContent = old; }, 1400);
+        });
+      }
+
       el.btnOpenHubPopover.addEventListener('click', (e) => {
         e.stopPropagation();
         const wasOpen = el.hubPopoverPanel.classList.contains('open');
@@ -1934,7 +2267,7 @@
       });
 
       document.addEventListener('click', (e) => {
-        if (!e.target.closest('.popover-panel') && !e.target.closest('#btnQuickCmd') && !e.target.closest('#btnAgentPicker') && !e.target.closest('#btnOpenHubPopover')) {
+        if (!e.target.closest('.popover-panel') && !e.target.closest('#btnQuickCmd') && !e.target.closest('#btnAgentPicker') && !e.target.closest('#btnOpenHubPopover') && !e.target.closest('#btnOpenMachinesPopover')) {
           closeAllPopovers();
         }
       });
@@ -2005,6 +2338,7 @@
         }
       });
 
+      loadLinkedMachines();
       loadBrainSnapshotMetadata();
       fetchLiveSessions(true);
       setInterval(() => fetchLiveSessions(false), 1500);
