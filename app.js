@@ -2389,16 +2389,27 @@
       cmdTag.onclick = () => switchMode("2d");
     }
 
-    // Ghép danh sách 10 Task thật đang chạy trên máy (ưu tiên cả AG, Claude, Task ngầm & Chrome CDP) cho 10 bàn xung quanh
+    // Ghép danh sách 10 Task thật đang chạy trên máy (không trùng lặp, ưu tiên cả AG, Claude, Task ngầm & Chrome CDP) cho 10 bàn xung quanh
     const agLive = sessionTasks.filter((t) => t.engine_code !== "claude");
     const clLive = sessionTasks.filter((t) => t.engine_code === "claude");
-    const combinedDeskTasks = [
-      ...agLive.slice(0, 6),
+    const rawCandidates = [
+      ...agLive.slice(0, 5),
       ...clLive.slice(0, 2),
-      ...bgTasks.slice(0, 1),
-      ...sysServices.slice(0, 1),
-      ...sessionTasks,
-    ].slice(0, 10);
+      ...bgTasks.slice(0, 2),
+      ...sysServices.slice(0, 2),
+      ...agLive.slice(5),
+      ...clLive.slice(2),
+      ...bgTasks.slice(2),
+      ...sysServices.slice(2),
+    ];
+    const seenDeskIds = new Set();
+    const combinedDeskTasks = [];
+    for (const item of rawCandidates) {
+      if (!item || seenDeskIds.has(item.task_id)) continue;
+      seenDeskIds.add(item.task_id);
+      combinedDeskTasks.push(item);
+      if (combinedDeskTasks.length >= 10) break;
+    }
 
     const otherDesks = OFFICE_DESKS.filter((d) => d.id !== "desk-commander");
     otherDesks.forEach((d, idx) => {
@@ -2680,15 +2691,15 @@
             <div class="status-agent-row" style="cursor:pointer;" onclick="jumpToLiveTaskSession('${escapeHtml(
               t.session_id || ""
             )}')">
-              <div class="status-agent-name">
-                <span class="color-dot-sq" style="background:${col}"></span>
-                <span>[${escapeHtml(t.engine_badge)} #${escapeHtml(
+              <div class="status-agent-name" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                <span class="color-dot-sq" style="background:${col};flex-shrink:0;"></span>
+                <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">[${escapeHtml(t.engine_badge)} #${escapeHtml(
             t.short_id
-          )}] ${escapeHtml(t.title.slice(0, 22))}</span>
+          )}] ${escapeHtml(t.title.slice(0, 18))}</span>
               </div>
               <div class="status-agent-action" style="color:${
                 t.is_working ? "#fde047" : "#86efac"
-              }">${escapeHtml(t.status_label)}</div>
+              };white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(t.status_label)}</div>
               <div class="status-agent-step">${i + 1}</div>
               <div style="text-align:right;color:#7dd3fc">↗</div>
             </div>
