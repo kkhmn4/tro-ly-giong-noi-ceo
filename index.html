@@ -1,2716 +1,785 @@
 <!DOCTYPE html>
-<html lang="vi" data-theme="light">
+<html lang="vi">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Trợ Lý Điều Hành AI · Antigravity & Claude</title>
+  <title>Đòn Bẩy AI V6 × Antigravity 2.0 · Trung Tâm Điều Hành 12 Agent, Chat Trực Tiếp &amp; Cánh Tay Máy Tính</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --bg-app: #F8FAFC;
-      --bg-sidebar: #F1F5F9;
-      --bg-surface: #FFFFFF;
-      --bg-subtle: #F1F5F9;
-      --bg-hover: #E2E8F0;
-      --text-main: #0F172A;
-      --text-secondary: #334155;
-      --text-muted: #475569;
-      --border-color: #E2E8F0;
-      --border-strong: #CBD5E1;
-      --accent: #1849C6;
-      --accent-hover: #133A9E;
-      --accent-soft: #E0E7FF;
-      --claude-bg: #CCFBF1;
-      --claude-text: #0F766E;
-      --ok-bg: #DCFCE7;
-      --ok-text: #15803D;
-      --warn-text: #B45309;
-      --danger-bg: #FEE2E2;
-      --danger-text: #B91C1C;
-      --user-bubble: #EEF2FF;
-      --popover-bg: #0F172A;
-      --popover-text: #F8FAFC;
-      --font-sans: 'IBM Plex Sans', 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    html[data-theme="dark"] {
-      --bg-app: #0B1120;
-      --bg-sidebar: #0F172A;
-      --bg-surface: #1E293B;
-      --bg-subtle: #162032;
-      --bg-hover: #334155;
-      --text-main: #F8FAFC;
-      --text-secondary: #CBD5E1;
-      --text-muted: #94A3B8;
-      --border-color: #1E293B;
-      --border-strong: #334155;
-      --accent: #2B6CB0;
-      --accent-hover: #1849C6;
-      --accent-soft: #1E3A8A;
-      --claude-bg: #134E4A;
-      --claude-text: #5EEAD4;
-      --ok-bg: #14532D;
-      --ok-text: #86EFAC;
-      --warn-text: #FCD34D;
-      --danger-bg: #7F1D1D;
-      --danger-text: #FCA5A5;
-      --user-bubble: #1E3A8A;
-      --popover-bg: #F8FAFC;
-      --popover-text: #0F172A;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-      background-color: var(--bg-app);
-      color: var(--text-main);
-      font-family: var(--font-sans);
-      font-size: 14px;
-      line-height: 1.55;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    code, pre {
-      font-family: var(--font-sans);
-      font-weight: 600;
-    }
-
-    button, input, textarea {
-      font-family: inherit;
-      font-size: inherit;
-      color: inherit;
-    }
-
-    button {
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    /* Main Minimal Layout */
-    .app-layout {
-      display: flex;
-      width: 100%;
-      height: 100dvh;
-      overflow: hidden;
-    }
-
-    /* Icon Button + Instant Hover Popover Tooltip */
-    .icon-btn {
-      position: relative;
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      border: 1px solid transparent; /* taste-skill-ignore */
-      background-color: transparent;
-      color: var(--text-secondary);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: background-color 140ms ease-out, color 140ms ease-out;
-    }
-
-    .icon-btn:hover {
-      background-color: var(--bg-hover);
-      color: var(--text-main);
-    }
-
-    .icon-btn.active {
-      background-color: transparent;
-      color: var(--accent);
-    }
-
-    .icon-btn.primary {
-      background-color: transparent;
-      color: var(--accent);
-    }
-
-    .icon-btn.primary:hover {
-      background-color: var(--bg-hover);
-    }
-
-    .icon-btn.danger {
-      background-color: transparent;
-      color: var(--danger-text);
-    }
-
-    .icon-badge {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      min-width: 16px;
-      height: 16px;
-      padding: 0 4px;
-      border-radius: 8px;
-      background-color: var(--accent);
-      color: #FFFFFF;
-      font-size: 11px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-    }
-
-    /* Instant Hover Tooltip Popover */
-    [data-popover] {
-      position: relative;
-    }
-
-    [data-popover]::after {
-      content: attr(data-popover);
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%) translateY(4px);
-      background-color: var(--popover-bg);
-      color: var(--popover-text);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 11.5px;
-      font-weight: 600;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 140ms ease-out, transform 140ms ease-out;
-      z-index: 90;
-    }
-
-    [data-popover][data-popover-pos="bottom"]::after {
-      bottom: auto;
-      top: calc(100% + 8px);
-    }
-
-    [data-popover][data-popover-pos="left"]::after {
-      left: auto;
-      right: 0;
-      transform: translateY(4px);
-    }
-
-    [data-popover]:hover::after,
-    [data-popover]:focus-visible::after {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    [data-popover][data-popover-pos="left"]:hover::after,
-    [data-popover][data-popover-pos="left"]:focus-visible::after {
-      transform: translateY(0);
-    }
-
-    /* Left Sidebar: Clean Session History */
-    .sidebar {
-      width: 280px;
-      min-width: 280px;
-      height: 100dvh;
-      background-color: var(--bg-sidebar);
-      border-right: 1px solid var(--border-color); /* taste-skill-ignore */
-      display: flex;
-      flex-direction: column;
-      transition: margin-left 180ms ease-out;
-      z-index: 30;
-    }
-
-    .sidebar.collapsed {
-      margin-left: -280px;
-    }
-
-    .sidebar-top {
-      height: 56px;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
-      background-color: var(--bg-surface);
-    }
-
-    .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 700;
-      font-size: 14px;
-      color: var(--text-main);
-    }
-
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background-color: var(--ok-text);
-      display: inline-block;
-      flex-shrink: 0;
-    }
-
-    .status-dot.working {
-      background-color: var(--warn-text);
-    }
-
-    .sidebar-controls {
-      padding: 10px 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
-    }
-
-    .search-wrap {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .search-wrap svg {
-      position: absolute;
-      left: 10px;
-      width: 14px;
-      height: 14px;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 6px 10px 6px 30px;
-      border-radius: 6px;
-      border: 1px solid var(--border-strong); /* taste-skill-ignore */
-      background-color: var(--bg-surface);
-      font-size: 13px;
-      outline: none;
-    }
-
-    .search-input:focus {
-      border-color: var(--accent);
-    }
-
-    .filter-pills {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 4px;
-      background-color: var(--bg-surface);
-      padding: 3px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color); /* taste-skill-ignore */
-    }
-
-    .filter-pill {
-      padding: 4px 6px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .filter-pill.active {
-      background-color: var(--accent-soft);
-      color: var(--accent);
-    }
-
-    .session-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 8px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .session-item {
-      width: 100%;
-      text-align: left;
-      padding: 10px 12px;
-      border-radius: 8px;
-      border: 1px solid transparent; /* taste-skill-ignore */
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      transition: background-color 140ms ease-out;
-    }
-
-    .session-item:hover {
-      background-color: var(--bg-surface);
-    }
-
-    .session-item.active {
-      background-color: var(--bg-surface);
-      border-color: var(--accent);
-    }
-
-    .session-item-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      width: 100%;
-    }
-
-    .session-badges {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .engine-mini {
-      padding: 1px 6px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 700;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      background-color: var(--accent-soft);
-      color: var(--accent);
-    }
-
-    .engine-mini.claude {
-      background-color: var(--claude-bg);
-      color: var(--claude-text);
-    }
-
-    .topic-pill {
-      padding: 1px 6px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      background-color: var(--bg-subtle);
-      color: var(--text-secondary);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .session-item-title {
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-    }
-
-    .session-item.active .session-item-title {
-      font-weight: 700;
-      color: var(--accent);
-    }
-
-    .session-item-summary {
-      font-size: 13px;
-      color: var(--text-muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      width: 100%;
-    }
-
-    .session-item-time {
-      font-size: 12px;
-      color: var(--text-muted);
-      font-variant-numeric: tabular-nums;
-      flex-shrink: 0;
-    }
-
-    /* Center Chat Area */
-    .chat-main {
-      flex: 1;
-      min-width: 0;
-      height: 100dvh;
-      display: flex;
-      flex-direction: column;
-      background-color: var(--bg-app);
-      position: relative;
-    }
-
-    .chat-header {
-      height: 56px;
-      padding: 0 20px;
-      background-color: var(--bg-surface);
-      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-shrink: 0;
-    }
-
-    .header-title-group {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      min-width: 0;
-      flex: 1;
-    }
-
-    .chat-h1 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-main);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.25;
-    }
-
-    .header-icon-bar {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    /* Clickable Popover Card (Deliverables, Second Brain, Quick Actions, Agent Picker) */
-    .popover-panel {
-      position: absolute;
-      z-index: 80;
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-strong); /* taste-skill-ignore */
-      border-radius: 8px;
-      padding: 12px;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .popover-panel.open {
-      display: flex;
-    }
-
-    .popover-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 12.5px;
-      font-weight: 700;
-      color: var(--text-main);
-      padding-bottom: 6px;
-      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
-    }
-
-    /* Deliverables & Brain Popover Drawer from Top Right */
-    #hubPopoverPanel {
-      top: 52px;
-      right: 20px;
-      width: 360px;
-      max-height: 76dvh;
-      overflow-y: auto;
-    }
-
-    #machinesPopoverPanel {
-      top: 52px;
-      right: 20px;
-      width: 380px;
-      max-height: 80dvh;
-      overflow-y: auto;
-    }
-
-    #voicePopoverPanel {
-      top: 52px;
-      right: 20px;
-      width: 340px;
-      max-height: 80dvh;
-      overflow-y: auto;
-    }
-
-    #omniPopoverPanel {
-      top: 52px;
-      right: 20px;
-      width: 400px;
-      max-height: 82dvh;
-      overflow-y: auto;
-    }
-
-    .omni-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 6px;
-    }
-
-    .omni-tile-btn {
-      padding: 7px 8px;
-      border-radius: 6px;
-      background-color: var(--bg-subtle);
-      border: 1px solid var(--border-color); /* taste-skill-ignore */
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-main);
-      text-align: left;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-    }
-
-    .omni-tile-btn:hover {
-      background-color: var(--accent-soft);
-      color: var(--accent);
-    }
-
-    .machine-card {
-      padding: 8px 10px;
-      border-radius: 6px;
-      background-color: var(--bg-subtle);
-      border: 1px solid var(--border-color); /* taste-skill-ignore */
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      font-size: 12px;
-    }
-
-    .machine-form-input {
-      width: 100%;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid var(--border-strong); /* taste-skill-ignore */
-      background-color: var(--bg-surface);
-      font-size: 12px;
-      outline: none;
-    }
-
-    .machine-btn {
-      padding: 6px 10px;
-      border-radius: 6px;
-      background-color: var(--accent);
-      color: #FFFFFF;
-      font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    /* Executive Summary Highlight Box inside Chat Replies */
-    .exec-summary-box {
-      padding: 8px 12px;
-      border-radius: 6px;
-      background-color: var(--bg-subtle);
-      border-left: 3px solid var(--accent); /* taste-skill-ignore */
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .exec-summary-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .exec-summary-list {
-      padding-left: 16px;
-      font-size: 13.5px;
-      font-weight: 600;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .hub-tabs {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 4px;
-      background-color: var(--bg-subtle);
-      padding: 3px;
-      border-radius: 6px;
-    }
-
-    .hub-tab {
-      padding: 5px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-muted);
-      text-align: center;
-    }
-
-    .hub-tab.active {
-      background-color: var(--bg-surface);
-      color: var(--accent);
-    }
-
-    .deliverable-mini-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
-
-    .media-item {
-      border: 1px solid var(--border-color); /* taste-skill-ignore */
-      border-radius: 8px;
-      overflow: hidden;
-      background-color: var(--bg-subtle);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .media-thumb {
-      width: 100%;
-      height: 110px;
-      background-color: #0F172A;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .media-thumb img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .media-caption {
-      padding: 6px 8px;
-      font-size: 11.5px;
-      font-weight: 600;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Conversation Stream */
-    .chat-stream {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px 24px;
-      scroll-behavior: smooth;
-    }
-
-    .chat-stream-inner {
-      max-width: 780px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .msg-row {
-      display: flex;
-      width: 100%;
-    }
-
-    .msg-row.user {
-      justify-content: flex-end;
-    }
-
-    .msg-row.assistant {
-      justify-content: flex-start;
-    }
-
-    .user-bubble {
-      max-width: 76%;
-      background-color: var(--user-bubble);
-      color: var(--text-main);
-      border: 1px solid var(--border-strong); /* taste-skill-ignore */
-      border-radius: 8px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-
-    .user-text {
-      font-size: 14px;
-      line-height: 1.55;
-      white-space: pre-wrap;
-      word-break: break-word;
-      flex: 1;
-    }
-
-    .user-hover-icons {
-      display: flex;
-      align-items: center;
-      gap: 2px;
-      opacity: 0.65;
-      flex-shrink: 0;
-    }
-
-    .user-bubble:hover .user-hover-icons {
-      opacity: 1;
-    }
-
-    .mini-icon-btn {
-      width: 26px;
-      height: 26px;
-      border-radius: 6px;
-      color: var(--text-muted);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .mini-icon-btn:hover {
-      background-color: var(--bg-hover);
-      color: var(--text-main);
-    }
-
-    .ai-bubble {
-      width: 100%;
-      max-width: 88%;
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-color); /* taste-skill-ignore */
-      border-radius: 8px;
-      padding: 12px 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      position: relative;
-    }
-
-    .ai-top-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .ai-badge-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--text-secondary);
-    }
-
-    .ai-time {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-muted);
-      font-variant-numeric: tabular-nums;
-    }
-
-    .ai-icon-actions {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .code-pill-btn {
-      padding: 2px 7px;
-      border-radius: 6px;
-      background-color: var(--bg-subtle);
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .code-pill-btn:hover {
-      background-color: var(--accent-soft);
-      color: var(--accent);
-    }
-
-    .code-popover-box {
-      display: none;
-      padding: 8px 10px;
-      border-radius: 6px;
-      background-color: var(--bg-subtle);
-      border: 1px solid var(--border-color); /* taste-skill-ignore */
-      font-size: 12px;
-      color: var(--text-secondary);
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .code-popover-box.open {
-      display: flex;
-    }
-
-    .ai-text-body {
-      font-size: 14px;
-      line-height: 1.6;
-      color: var(--text-main);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      word-break: break-word;
-    }
-
-    .ai-text-body h4 {
-      font-size: 14px;
-      font-weight: 700;
-      margin-top: 2px;
-    }
-
-    .ai-text-body ul {
-      padding-left: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-    }
-
-    .link-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      padding-top: 2px;
-    }
-
-    .link-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 5px 10px;
-      border-radius: 6px;
-      background-color: var(--accent-soft);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .link-pill:hover {
-      background-color: var(--accent);
-      color: #FFFFFF;
-    }
-
-    /* Minimal Bottom Composer Bar */
-    .composer-wrap {
-      padding: 10px 24px 16px;
-      background-color: var(--bg-app);
-      flex-shrink: 0;
-    }
-
-    .composer-bar {
-      max-width: 780px;
-      margin: 0 auto;
-      background-color: var(--bg-surface);
-      border: 1px solid var(--border-strong); /* taste-skill-ignore */
-      border-radius: 8px;
-      padding: 6px 8px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      position: relative;
-    }
-
-    .composer-bar:focus-within {
-      border-color: var(--accent);
-    }
-
-    .composer-input {
-      flex: 1;
-      min-height: 36px;
-      max-height: 120px;
-      padding: 6px 4px;
-      border: none;
-      background: transparent;
-      color: var(--text-main);
-      font-size: 14px;
-      line-height: 1.45;
-      resize: none;
-      outline: none;
-    }
-
-    /* Popover Menus above Composer (Quick Commands & Agent Selector) */
-    #quickCmdPopover {
-      bottom: calc(100% + 8px);
-      left: 0;
-      width: 310px;
-    }
-
-    #agentPickerPopover {
-      bottom: calc(100% + 8px);
-      left: 44px;
-      width: 280px;
-    }
-
-    .menu-option {
-      width: 100%;
-      text-align: left;
-      padding: 7px 10px;
-      border-radius: 6px;
-      font-size: 12.5px;
-      font-weight: 500;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .menu-option:hover {
-      background-color: var(--bg-subtle);
-    }
-
-    .menu-option.selected {
-      background-color: var(--accent-soft);
-      color: var(--accent);
-      font-weight: 700;
-    }
-
-    /* Modal Preview */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(15, 23, 42, 0.76);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      z-index: 120;
-    }
-
-    .modal-backdrop.open {
-      display: flex;
-    }
-
-    .modal-dialog {
-      width: 100%;
-      max-width: 720px;
-      max-height: 86dvh;
-      background-color: var(--bg-surface);
-      border-radius: 8px;
-      border: 1px solid var(--border-strong); /* taste-skill-ignore */
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .modal-header {
-      padding: 10px 16px;
-      border-bottom: 1px solid var(--border-color); /* taste-skill-ignore */
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-weight: 700;
-    }
-
-    .modal-body {
-      padding: 16px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .modal-body img, .modal-body video {
-      max-width: 100%;
-      max-height: 66dvh;
-      object-fit: contain;
-      border-radius: 8px;
-    }
-
-    @media (max-width: 900px) {
-      .sidebar {
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-      }
-      .sidebar:not(.mobile-open) {
-        display: none;
-      }
-      .chat-header {
-        padding: 0 18px;
-      }
-      .chat-stream {
-        padding: 14px 18px;
-      }
-      .composer-wrap {
-        padding: 8px 18px 14px;
-      }
-      .user-bubble, .ai-bubble {
-        max-width: 94%;
-      }
-      #hubPopoverPanel, #omniPopoverPanel, #machinesPopoverPanel, #voicePopoverPanel {
-        right: 18px;
-        width: calc(100vw - 36px);
-      }
-      #btnCopyCli, #btnThemeToggle {
-        display: none;
-      }
-    }
-  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <div class="app-layout">
-    <!-- LEFT SIDEBAR: Chỉ hiển thị Lịch sử Chat gọn gàng -->
-    <aside id="leftSidebar" class="sidebar" aria-label="Lịch sử trò chuyện">
-      <div class="sidebar-top">
-        <div class="sidebar-brand">
-          <span id="liveDot" class="status-dot" data-popover="Đang đồng bộ trực tiếp (1.5s/lần)" data-popover-pos="bottom"></span>
-          <span>Lịch sử Chat</span>
+
+  <!-- ====================================================================
+       GLOBAL TOP NAVIGATION BAR (5 MODES + ICON POPOVER BAR)
+       ==================================================================== -->
+  <header class="global-topbar">
+    <div class="brand-cluster">
+      <button type="button" id="btnToggleSidebar" class="icon-btn" data-popover="Ẩn / Hiện 339+ Phiên Chat" data-popover-pos="bottom" aria-label="Ẩn hiện thanh lịch sử chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>
+        </svg>
+      </button>
+      <div class="brand-avatar" style="background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff">AG2</div>
+      <div class="brand-name">
+        Đòn Bẩy AI V6 <span id="liveDot" class="online-dot" data-popover="Đồng bộ trực tiếp 1.5s/lần" data-popover-pos="bottom"></span>
+      </div>
+    </div>
+
+    <nav class="mode-tabs" aria-label="Chế độ hiển thị">
+      <button class="mode-tab active" data-mode="2d" onclick="switchStudioMode('2d')">
+        <span>📋</span> 1. 2D Điều hành &amp; Chat
+      </button>
+      <button class="mode-tab" data-mode="3d" onclick="switchStudioMode('3d')">
+        <span>🏢</span> 2. 3D Văn phòng AI
+      </button>
+      <button class="mode-tab" data-mode="node" onclick="switchStudioMode('node')">
+        <span>🕸️</span> 3. Node Graph
+      </button>
+      <button class="mode-tab" data-mode="editor" onclick="switchStudioMode('editor')">
+        <span>🎬</span> 4. 6 Cửa Sổ Editor
+      </button>
+      <button class="mode-tab" data-mode="web" onclick="switchStudioMode('web')">
+        <span>🐝</span> 5. 30 Agent Clone Web
+      </button>
+      <button class="btn-demo-chain" id="btn-demo-chain" onclick="startDemoChain()">
+        ▶ Demo Chain
+      </button>
+    </nav>
+
+    <div class="header-icon-bar">
+      <!-- Icon 1: Cánh Tay Máy Tính & Điều Phối Đa Agent (Omni-Pilot) -->
+      <button type="button" id="btnOpenOmniPopover" class="icon-btn active" data-popover="Cánh Tay Máy Tính &amp; Điều Phối Đa Agent (Omni-Pilot)" data-popover-pos="left" aria-label="Cánh tay điều khiển toàn bộ máy tính và Agent">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
+          <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>
+        </svg>
+        <span id="omniAgentsCountBadge" class="icon-badge">9</span>
+      </button>
+
+      <!-- Icon 2: Giọng Nói VieNeu-TTS v3 Turbo 48kHz -->
+      <button type="button" id="btnAutoSpeak" class="icon-btn active" data-popover="Giọng nói VieNeu 48kHz: Thùy Dung (Miền Nam)" data-popover-pos="left" aria-label="Chọn giọng nói VieNeu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        </svg>
+      </button>
+
+      <!-- Icon 3: Chế độ Ẩn 100% Code (Zero-Code Executive) -->
+      <button type="button" id="btnZeroCode" class="icon-btn active" data-popover="Chế độ Sếp: Đang ẩn 100% Code" data-popover-pos="left" aria-label="Chế độ ẩn code">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </button>
+
+      <!-- Icon 4: Liên kết Máy khác & Tài khoản Antigravity / Claude -->
+      <button type="button" id="btnOpenMachinesPopover" class="icon-btn" data-popover="Liên kết Máy khác &amp; Tài khoản (Antigravity / Claude)" data-popover-pos="left" aria-label="Liên kết máy khác và tài khoản">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+        <span id="machinesCountBadge" class="icon-badge">2</span>
+      </button>
+
+      <!-- Icon 5: Kho Sản phẩm 4K & Bộ Não Thứ Hai -->
+      <button type="button" id="btnOpenHubPopover" class="icon-btn" data-popover="Kho Sản phẩm 4K &amp; Bộ Não Thứ Hai" data-popover-pos="left" aria-label="Kho sản phẩm và Bộ não">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+          <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
+        </svg>
+        <span id="deliverableCountBadge" class="icon-badge">12</span>
+      </button>
+
+      <!-- Icon 6: Sao chép lệnh mở trên Terminal -->
+      <button type="button" id="btnCopyCli" class="icon-btn" data-popover="Sao chép lệnh mở trên Terminal" data-popover-pos="left" aria-label="Sao chép lệnh CLI">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- POPOVER 1: CÁNH TAY MÁY TÍNH & ĐIỀU PHỐI ĐA AGENT (OMNI-PILOT 100%) -->
+    <div id="omniPopoverPanel" class="popover-panel" aria-label="Cánh tay điều khiển toàn bộ máy tính và Đa Agent">
+      <div class="popover-header">
+        <span>🦾 Cánh Tay Máy Tính &amp; Điều Phối Đa Agent (100%)</span>
+        <button type="button" id="btnCloseOmniPopover" class="mini-icon-btn" aria-label="Đóng">×</button>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px;">
+        <div style="font-size:11.5px; font-weight:700; color:#86efac;">1. Mở Phiên Mới &amp; Phát Lệnh Cho Agent (Hoặc Toàn Đội)</div>
+        <select id="selectOmniTargetAgent" class="machine-form-input" aria-label="Chọn Agent nhận lệnh">
+          <option value="all-agents">Tất Cả 6 Agent Chủ Lực (Chạy Song Song 100%)</option>
+          <option value="windows-omni-pilot">Cánh Tay Omni-Pilot (Điều Khiển Toàn Máy Tính)</option>
+          <option value="flow-video-director">Đạo Diễn Google Flow V3.9 (Video 3 Hồi &amp; Ảnh 2K)</option>
+          <option value="aistudio-4k-upscaler">Chuyên Gia AI Studio 4K Ultra (hoatrang756)</option>
+          <option value="fb-viral-scout">Săn Viral FB &amp; Shopee V6 (5 Lớp Stealth)</option>
+          <option value="viral-video-editor">Đạo Diễn Hậu Kỳ (Remotion 4.0 &amp; CapCut PC)</option>
+          <option value="openmontage-director">Đạo Diễn OpenMontage (12 Pipelines $0.00)</option>
+          <option value="antigravity">Antigravity 2.0 CLI / IDE</option>
+          <option value="claude">Claude Code CLI</option>
+        </select>
+        <input type="text" id="inputOmniDirective" class="machine-form-input" placeholder="Nhập lệnh giao cho Agent (VD: Làm video 3 Hồi + nâng 4K)..." />
+        <div style="display:grid; grid-template-columns:1fr auto; gap:6px;">
+          <button type="button" id="btnSpawnAgentSession" class="machine-btn">+ Mở Phiên Mới &amp; Phát Lệnh Ngay</button>
+          <button type="button" id="btnOpenAntigravityIde" class="machine-btn" style="background:#334155; color:#f8fafc;" title="Mở cửa sổ Antigravity IDE trên máy tính">Mở AGY IDE</button>
         </div>
-        <div style="display:flex; gap:4px;">
-          <button type="button" id="btnRefreshSessions" class="icon-btn" data-popover="Làm mới danh sách" data-popover-pos="bottom" aria-label="Làm mới">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
-              <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/>
-            </svg>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:6px; padding-top:4px;">
+        <div style="font-size:11.5px; font-weight:700; color:#f8fafc;">2. Điều Khiển Màn Hình, CapCut &amp; 4 Chrome Multi-CDP</div>
+        <div class="omni-grid">
+          <button type="button" class="omni-tile-btn" data-omni-act="capture-screen">
+            <span>Chụp Màn Hình 60fps</span>
+            <span class="engine-mini">LIVE</span>
           </button>
-          <button type="button" id="btnNewSession" class="icon-btn primary" data-popover="Cuộc trò chuyện mới" data-popover-pos="bottom" aria-label="Cuộc trò chuyện mới">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
-              <path d="M12 5v14M5 12h14"/>
-            </svg>
+          <button type="button" class="omni-tile-btn" data-omni-act="record-and-capcut">
+            <span>Quay &amp; Dựng CapCut</span>
+            <span class="engine-mini">MP4</span>
+          </button>
+          <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_5_4k">
+            <span>Chrome AI Studio 4K</span>
+            <span class="engine-mini">9225</span>
+          </button>
+          <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_4_fb">
+            <span>Chrome FB &amp; Shopee</span>
+            <span class="engine-mini">9224</span>
+          </button>
+          <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_1_flow">
+            <span>Chrome Flow V3.9</span>
+            <span class="engine-mini">9222</span>
+          </button>
+          <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_6_course">
+            <span>Chrome Classroom</span>
+            <span class="engine-mini">9226</span>
           </button>
         </div>
       </div>
 
-      <div class="sidebar-controls">
-        <div class="search-wrap">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
-          </svg>
-          <input type="search" id="sessionSearchInput" class="search-input" placeholder="Tìm cuộc trò chuyện..." />
-        </div>
-
-        <div class="filter-pills" role="tablist">
-          <button type="button" class="filter-pill active" data-provider="all">Tất cả</button>
-          <button type="button" class="filter-pill" data-provider="antigravity">Antigravity</button>
-          <button type="button" class="filter-pill" data-provider="claude">Claude</button>
+      <div style="display:flex; flex-direction:column; gap:6px; padding-top:4px;">
+        <div style="font-size:11.5px; font-weight:700; color:#f8fafc;">3. Điều Khiển Ứng Dụng Windows, Phím Tắt &amp; Lệnh Máy Tính</div>
+        <input type="text" id="inputOmniSystemCmd" class="machine-form-input" placeholder="Tên phần mềm (CapCut, Chrome), phím tắt hoặc lệnh hệ thống..." />
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+          <button type="button" id="btnOmniDesktopApp" class="machine-btn" style="background:#334155; color:#f8fafc;">Mở App / Bấm Phím UIA</button>
+          <button type="button" id="btnOmniRunCommand" class="machine-btn">Chạy Lệnh Máy Tính</button>
         </div>
       </div>
+    </div>
 
-      <div id="sessionListContainer" class="session-list"></div>
-    </aside>
+    <!-- POPOVER 2: GIỌNG NÓI VIENEU-TTS V3 TURBO 48KHZ -->
+    <div id="voicePopoverPanel" class="popover-panel" aria-label="Chọn giọng nói VieNeu-TTS 48kHz">
+      <div class="popover-header">
+        <span>🔊 Giọng Nói VieNeu-TTS v3 Turbo (48kHz)</span>
+        <button type="button" id="btnCloseVoicePopover" class="mini-icon-btn" aria-label="Đóng">×</button>
+      </div>
+      <button type="button" id="btnToggleAutoSpeakInside" class="menu-option selected">
+        <span id="lblAutoSpeakStatus">Tự động đọc báo cáo mới: Đang Bật</span>
+        <span class="engine-mini">48kHz</span>
+      </button>
+      <div style="font-size:11.5px; font-weight:700; color:#94a3b8; padding:4px 2px 0;">Chọn giọng đọc (Bấm để chọn &amp; nghe thử):</div>
+      <button type="button" class="menu-option selected" data-vieneu-voice="Thùy Dung" data-sample-slug="thuy_dung">
+        <span>Thùy Dung (Nữ · Miền Nam · Tự nhiên)</span>
+        <span class="engine-mini">Nam</span>
+      </button>
+      <button type="button" class="menu-option" data-vieneu-voice="Mỹ Duyên" data-sample-slug="my_duyen">
+        <span>Mỹ Duyên (Nữ · Miền Nam · Truyền cảm)</span>
+        <span class="engine-mini">Nam</span>
+      </button>
+      <button type="button" class="menu-option" data-vieneu-voice="Adam" data-sample-slug="adam">
+        <span>Adam (Nam · Miền Nam · Điềm đạm)</span>
+        <span class="engine-mini">Nam</span>
+      </button>
+      <button type="button" class="menu-option" data-vieneu-voice="Trúc Ly" data-sample-slug="truc_ly">
+        <span>Trúc Ly (Nữ · Miền Bắc · Tự nhiên)</span>
+        <span class="engine-mini claude">Bắc</span>
+      </button>
+      <button type="button" class="menu-option" data-vieneu-voice="Mai Anh" data-sample-slug="mai_anh">
+        <span>Mai Anh (Nữ · Miền Bắc · Điểm tin)</span>
+        <span class="engine-mini claude">Bắc</span>
+      </button>
+      <button type="button" class="menu-option" data-vieneu-voice="Hải Đăng" data-sample-slug="hai_dang">
+        <span>Hải Đăng (Nam · Miền Bắc · Chuẩn mực)</span>
+        <span class="engine-mini claude">Bắc</span>
+      </button>
+    </div>
 
-    <!-- CENTER PANE: Khung Chat Qua Lại & Thanh Lệnh Icon Tối Giản -->
-    <main class="chat-main">
-      <header class="chat-header">
-        <div class="header-title-group">
-          <button type="button" id="btnToggleSidebar" class="icon-btn" data-popover="Ẩn/hiện danh sách chat" data-popover-pos="bottom" aria-label="Ẩn hiện danh sách chat">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/>
-            </svg>
-          </button>
-          <span id="activeEngineSymbol" class="engine-mini" data-popover="Đang chạy trên Antigravity 2.0" data-popover-pos="bottom">AG</span>
-          <h1 id="activeSessionTitle" class="chat-h1">Trợ Lý Điều Hành AI</h1>
+    <!-- POPOVER 3: LIÊN KẾT ĐA MÁY & TÀI KHOẢN ANTIGRAVITY / CLAUDE -->
+    <div id="machinesPopoverPanel" class="popover-panel" aria-label="Liên kết máy khác và tài khoản">
+      <div class="popover-header">
+        <span>🖥️ Liên Kết Máy Khác &amp; Tài Khoản AI</span>
+        <button type="button" id="btnCloseMachinesPopover" class="mini-icon-btn" aria-label="Đóng">×</button>
+      </div>
+      <div id="machinesListBody" style="display:flex; flex-direction:column; gap:6px;"></div>
+      <div style="display:flex; flex-direction:column; gap:6px; padding-top:6px;">
+        <div style="font-size:11.5px; font-weight:700; color:#f8fafc;">Thêm Máy Khác (PC Phụ / Laptop)</div>
+        <input type="text" id="inputMachineName" class="machine-form-input" placeholder="Tên máy (VD: Máy 2 - Laptop)" />
+        <input type="text" id="inputMachineUrl" class="machine-form-input" placeholder="URL Node (VD: http://192.168.1.25:8765 hoặc gws-drive)" />
+        <input type="text" id="inputMachineAccounts" class="machine-form-input" placeholder="Tài khoản (VD: hoatrang756, Claude Extension)" />
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
+          <button type="button" id="btnAddMachineNode" class="machine-btn">+ Liên kết Máy</button>
+          <button type="button" id="btnCopyMachineSetup" class="machine-btn" style="background:#334155; color:#f8fafc;">Chép lệnh cài Máy 2</button>
         </div>
+      </div>
+    </div>
 
-        <!-- Thanh công cụ 100% Icon + Popover -->
-        <div class="header-icon-bar">
-          <button type="button" id="btnOpenOmniPopover" class="icon-btn active" data-popover="Cánh Tay Máy Tính &amp; Điều Phối Đa Agent (Omni-Pilot)" data-popover-pos="left" aria-label="Cánh tay điều khiển toàn bộ máy tính và Agent">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
-              <path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/>
-            </svg>
-            <span id="omniAgentsCountBadge" class="icon-badge">9</span>
-          </button>
+    <!-- POPOVER 4: KHO SẢN PHẨM 4K & BỘ NÃO THỨ HAI -->
+    <div id="hubPopoverPanel" class="popover-panel" role="dialog" aria-label="Sản phẩm và Bộ não">
+      <div class="popover-header">
+        <span>📦 Kho Nghiệm Thu 4K &amp; Bộ Não Thứ Hai</span>
+        <button type="button" id="btnCloseHubPopover" class="mini-icon-btn" aria-label="Đóng">×</button>
+      </div>
+      <div class="hub-tabs">
+        <button type="button" class="hub-tab active" data-hubtab="deliverables">Sản phẩm (12)</button>
+        <button type="button" class="hub-tab" data-hubtab="brain">Luật của Sếp</button>
+      </div>
+      <div id="hubPopoverBody"></div>
+    </div>
+  </header>
 
-          <button type="button" id="btnAutoSpeak" class="icon-btn active" data-popover="Giọng nói VieNeu 48kHz: Thùy Dung (Miền Nam)" data-popover-pos="left" aria-label="Chọn giọng nói VieNeu">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-            </svg>
-          </button>
+  <!-- ====================================================================
+       MAIN STUDIO VIEWPORT (5 MODES)
+       ==================================================================== -->
+  <main class="studio-viewport">
 
-          <button type="button" id="btnZeroCode" class="icon-btn active" data-popover="Chế độ Sếp: Đang ẩn 100% Code" data-popover-pos="left" aria-label="Chế độ ẩn code">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-          </button>
-
-          <button type="button" id="btnOpenMachinesPopover" class="icon-btn" data-popover="Liên kết Máy khác &amp; Tài khoản (Antigravity / Claude)" data-popover-pos="left" aria-label="Liên kết máy khác và tài khoản">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
-            </svg>
-            <span id="machinesCountBadge" class="icon-badge">2</span>
-          </button>
-
-          <button type="button" id="btnOpenHubPopover" class="icon-btn" data-popover="Xem Sản phẩm nghiệm thu &amp; Bộ não" data-popover-pos="left" aria-label="Kho sản phẩm và Bộ não">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
-              <path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/>
-            </svg>
-            <span id="deliverableCountBadge" class="icon-badge">12</span>
-          </button>
-
-          <button type="button" id="btnCopyCli" class="icon-btn" data-popover="Sao chép lệnh mở trên Terminal" data-popover-pos="left" aria-label="Sao chép lệnh CLI">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/>
-            </svg>
-          </button>
-
-          <button type="button" id="btnThemeToggle" class="icon-btn" data-popover="Đổi giao diện Sáng / Tối" data-popover-pos="left" aria-label="Đổi giao diện">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2m-7.07-14.93 1.41 1.41m11.32 11.32 1.41 1.41M2 12h2m16 0h2m-14.93 7.07 1.41-1.41m11.32-11.32 1.41-1.41"/>
-            </svg>
-          </button>
-        </div>
-
-        <!-- POPOVER CÁNH TAY NỐI DÀI OMNI-PILOT: ĐIỀU KHIỂN TOÀN MÁY TÍNH & ĐA AGENT 100% -->
-        <div id="omniPopoverPanel" class="popover-panel" aria-label="Cánh tay điều khiển toàn bộ máy tính và Đa Agent">
-          <div class="popover-header">
-            <span>Cánh Tay Máy Tính &amp; Điều Phối Đa Agent (100%)</span>
-            <button type="button" id="btnCloseOmniPopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-          </div>
-
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            <div style="font-size:12px; font-weight:700; color:var(--accent);">1. Mở Phiên Mới &amp; Phát Lệnh Cho Agent (Hoặc Toàn Đội)</div>
-            <select id="selectOmniTargetAgent" class="machine-form-input" aria-label="Chọn Agent nhận lệnh">
-              <option value="all-agents">Tất Cả 6 Agent Chủ Lực (Chạy Song Song 100%)</option>
-              <option value="windows-omni-pilot">Cánh Tay Omni-Pilot (Điều Khiển Toàn Máy Tính)</option>
-              <option value="flow-video-director">Đạo Diễn Google Flow V3.9 (Video 3 Hồi &amp; Ảnh 2K)</option>
-              <option value="aistudio-4k-upscaler">Chuyên Gia AI Studio 4K Ultra (hoatrang756)</option>
-              <option value="fb-viral-scout">Săn Viral FB &amp; Shopee V6 (5 Lớp Stealth)</option>
-              <option value="viral-video-editor">Đạo Diễn Hậu Kỳ (Remotion 4.0 &amp; CapCut PC)</option>
-              <option value="openmontage-director">Đạo Diễn OpenMontage (12 Pipelines $0.00)</option>
-              <option value="antigravity">Antigravity 2.0 CLI / IDE</option>
-              <option value="claude">Claude Code CLI</option>
-            </select>
-            <input type="text" id="inputOmniDirective" class="machine-form-input" placeholder="Nhập lệnh giao cho Agent (VD: Làm video 3 Hồi + nâng 4K)..." />
-            <div style="display:grid; grid-template-columns:1fr auto; gap:6px;">
-              <button type="button" id="btnSpawnAgentSession" class="machine-btn">+ Mở Phiên Mới &amp; Phát Lệnh Ngay</button>
-              <button type="button" id="btnOpenAntigravityIde" class="machine-btn" style="background-color:var(--bg-subtle); color:var(--text-main);" title="Mở cửa sổ Antigravity IDE trên máy tính">Mở AGY IDE</button>
+    <!-- ==================================================================
+         MODE 1: 2D ĐIỀU HÀNH & CHAT TRỰC TIẾP (339+ PHIÊN ANTIGRAVITY & CLAUDE)
+         ================================================================== -->
+    <section class="mode-section active" id="mode-2d">
+      <div class="cmd2d-layout">
+        <!-- Left Sidebar: Live 339+ Antigravity & Claude Sessions -->
+        <aside id="leftSidebar" class="cmd2d-sidebar">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+            <span style="font-size:12px; font-weight:800; color:#86efac;">💬 Lịch Sử 339+ Phiên Chat</span>
+            <div style="display:flex; gap:4px;">
+              <button type="button" id="btnRefreshSessions" class="mini-icon-btn" data-popover="Làm mới phiên chat" data-popover-pos="bottom">↻</button>
+              <button type="button" id="btnNewSession" class="mini-icon-btn" style="background:rgba(134,239,172,0.18); color:#86efac; font-weight:800;" data-popover="Mở phiên trò chuyện mới" data-popover-pos="bottom">＋</button>
             </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:6px; padding-top:4px;">
-            <div style="font-size:12px; font-weight:700; color:var(--text-main);">2. Điều Khiển Màn Hình, CapCut &amp; 4 Chrome Multi-CDP</div>
-            <div class="omni-grid">
-              <button type="button" class="omni-tile-btn" data-omni-act="capture-screen">
-                <span>Chụp Màn Hình 60fps</span>
-                <span class="engine-mini">LIVE</span>
-              </button>
-              <button type="button" class="omni-tile-btn" data-omni-act="record-and-capcut">
-                <span>Quay &amp; Dựng CapCut</span>
-                <span class="engine-mini">MP4</span>
-              </button>
-              <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_5_4k">
-                <span>Chrome AI Studio 4K</span>
-                <span class="engine-mini">9225</span>
-              </button>
-              <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_4_fb">
-                <span>Chrome FB &amp; Shopee</span>
-                <span class="engine-mini">9224</span>
-              </button>
-              <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_1_flow">
-                <span>Chrome Flow V3.9</span>
-                <span class="engine-mini">9222</span>
-              </button>
-              <button type="button" class="omni-tile-btn" data-omni-act="open-cdp-profile" data-cdp-key="profile_6_course">
-                <span>Chrome Classroom</span>
-                <span class="engine-mini">9226</span>
-              </button>
+          <input type="search" id="sessionSearchInput" class="cmd2d-search" placeholder="Tìm phiên chat, dự án, mã #ID..." />
+
+          <div class="filter-pills" role="tablist">
+            <button type="button" class="filter-pill active" data-provider="all">Tất cả</button>
+            <button type="button" class="filter-pill" data-provider="antigravity">Antigravity</button>
+            <button type="button" class="filter-pill" data-provider="claude">Claude</button>
+          </div>
+
+          <div id="sessionListContainer" class="session-list" aria-label="Danh sách cuộc trò chuyện"></div>
+
+          <div style="display:flex; flex-direction:column; gap:5px; padding-top:4px; border-top:1px solid var(--cmd-border);">
+            <div class="cmd2d-channel-card">
+              <strong>🎙️ Bộ Não Thứ Hai CEO · VieNeu 48kHz</strong>
+              <span>339+ phiên · 774 luật · Giọng Thùy Dung</span>
+            </div>
+            <div class="cmd2d-channel-card">
+              <strong>🛡️ Multi-CDP Profile 1 · 4 · 5 · 6</strong>
+              <span>khakhunghiep · aichampionhk1 · hoatrang756</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Center & Right Area -->
+        <div class="cmd2d-main">
+          <div class="cmd2d-header">
+            <div class="cmd2d-header-top">
+              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
+                <span id="activeEngineSymbol" class="engine-mini" data-popover="Đang chạy trên Antigravity 2.0" data-popover-pos="bottom">AG</span>
+                <h1 id="activeSessionTitle">Trợ Lý Điều Hành AI · 12 Agent &amp; Cánh Tay Máy Tính</h1>
+              </div>
+              <div style="display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap;">
+                <button type="button" id="btnToggle2DCanvas" class="replay-pill" onclick="toggle2DCanvasStage()">Thu gọn Canvas ▴</button>
+                <button type="button" class="replay-pill" onclick="switchStudioMode('3d')">3D Văn phòng ↗</button>
+                <button type="button" class="replay-pill" onclick="switchStudioMode('editor')">6 Editor ↗</button>
+                <button type="button" class="replay-pill" onclick="switchStudioMode('web')">30 Agent Web ↗</button>
+              </div>
             </div>
           </div>
 
-          <div style="display:flex; flex-direction:column; gap:6px; padding-top:4px;">
-            <div style="font-size:12px; font-weight:700; color:var(--text-main);">3. Điều Khiển Ứng Dụng Windows, Phím Tắt &amp; Lệnh Máy Tính</div>
-            <input type="text" id="inputOmniSystemCmd" class="machine-form-input" placeholder="Tên phần mềm (CapCut, Chrome), phím tắt hoặc lệnh hệ thống..." />
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-              <button type="button" id="btnOmniDesktopApp" class="machine-btn" style="background-color:var(--bg-subtle); color:var(--text-main);">Mở App / Bấm Phím UIA</button>
-              <button type="button" id="btnOmniRunCommand" class="machine-btn">Chạy Lệnh Máy Tính</button>
+          <div class="cmd2d-body">
+            <!-- Center Left: Live 5-KOL Canvas + Real-Time Chat Stream + Unified Composer -->
+            <div class="cmd2d-preview-pane">
+              <div id="cmd2d-video-stage-wrap" class="cmd2d-video-stage">
+                <canvas id="cmd2d-preview-canvas" width="560" height="162" style="width:100%;height:100%;display:block"></canvas>
+              </div>
+
+              <!-- Live 2-Way Chat Stream (with Executive Summary Callouts & VieNeu Speaker) -->
+              <section id="chatStreamSection" class="chat-stream" aria-label="Nội dung hội thoại">
+                <div id="messagesListBox" class="chat-stream-inner"></div>
+              </section>
+
+              <!-- Unified Bottom Composer Bar -->
+              <div class="composer-wrap">
+                <div class="composer-bar">
+                  <!-- Popover 1: Lệnh Nhanh -->
+                  <div id="quickCmdPopover" class="popover-panel" role="menu">
+                    <div class="popover-header">
+                      <span>⚡ Chọn nhanh lệnh mẫu</span>
+                      <button type="button" class="mini-icon-btn" data-close-pop="quickCmdPopover">×</button>
+                    </div>
+                    <button type="button" class="menu-option" data-quick-cmd="Chụp màn hình máy tính và kiểm tra toàn bộ tiến trình đang chạy">
+                      <span>Chụp &amp; Xem màn hình máy tính</span>
+                      <span class="ai-time">/screen</span>
+                    </button>
+                    <button type="button" class="menu-option" data-quick-cmd="Quay màn hình 60fps và tự động dựng dự án CapCut PC kèm phụ đề cho tao">
+                      <span>Quay 60fps &amp; Dựng CapCut PC</span>
+                      <span class="ai-time">/capcut</span>
+                    </button>
+                    <button type="button" class="menu-option" data-quick-cmd="Phát lệnh đồng loạt cho tất cả agent kiểm tra sản phẩm 4K và báo cáo nghiệm thu">
+                      <span>Phát lệnh đồng loạt Toàn Bộ Agent</span>
+                      <span class="ai-time">/broadcast</span>
+                    </button>
+                    <button type="button" class="menu-option" data-quick-cmd="Nâng cấp ảnh và video 4K cho Bảo Trâm và Khánh Linh trên hoatrang756">
+                      <span>Nâng cấp ảnh &amp; video 4K</span>
+                      <span class="ai-time">/4k</span>
+                    </button>
+                    <button type="button" class="menu-option" data-quick-cmd="Sản xuất kịch bản và video 3 Hồi cho sản phẩm Shopee V6 trên Google Flow V3.9">
+                      <span>Sản xuất Video 3 Hồi</span>
+                      <span class="ai-time">/3hoi</span>
+                    </button>
+                  </div>
+
+                  <!-- Popover 2: Chọn Người Thực Thi -->
+                  <div id="agentPickerPopover" class="popover-panel" role="menu">
+                    <div class="popover-header">
+                      <span>🤖 Chọn người thực thi lệnh</span>
+                      <button type="button" class="mini-icon-btn" data-close-pop="agentPickerPopover">×</button>
+                    </div>
+                    <button type="button" class="menu-option selected" data-agent-val="auto">
+                      <span>Tự động theo phiên chat</span>
+                      <span class="engine-mini">AUTO</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="agent:windows-omni-pilot">
+                      <span>Cánh Tay Omni-Pilot (Toàn Máy Tính)</span>
+                      <span class="engine-mini">OMNI</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="antigravity">
+                      <span>Antigravity 2.0 CLI / IDE</span>
+                      <span class="engine-mini">AGY</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="claude">
+                      <span>Claude Code CLI</span>
+                      <span class="engine-mini claude">CL</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="agent:flow-video-director">
+                      <span>Đạo diễn Video Google Flow V3.9</span>
+                      <span class="engine-mini">FLOW</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="agent:aistudio-4k-upscaler">
+                      <span>Chuyên gia AI Studio 4K Ultra</span>
+                      <span class="engine-mini">4K</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="agent:fb-viral-scout">
+                      <span>Săn Viral FB &amp; Shopee 5 Lớp Stealth</span>
+                      <span class="engine-mini">FB</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="agent:viral-video-editor">
+                      <span>Đạo diễn Hậu kỳ Remotion &amp; CapCut</span>
+                      <span class="engine-mini">EDIT</span>
+                    </button>
+                    <button type="button" class="menu-option" data-agent-val="agent:openmontage-director">
+                      <span>Đạo diễn OpenMontage 12 Pipelines</span>
+                      <span class="engine-mini">MONT</span>
+                    </button>
+                  </div>
+
+                  <button type="button" id="btnQuickCmd" class="icon-btn" data-popover="Lệnh mẫu 1 chạm" aria-label="Lệnh mẫu">⚡</button>
+                  <button type="button" id="btnAgentPicker" class="icon-btn" data-popover="Chọn Trợ lý thực thi" aria-label="Chọn Trợ lý">🤖</button>
+
+                  <textarea
+                    id="composerTextarea"
+                    class="composer-input"
+                    rows="1"
+                    placeholder="Nhập lệnh cho Antigravity / Claude, bấm Mic để nói, hoặc dán URL để 30 Agent Clone Web..."
+                  ></textarea>
+
+                  <button type="button" id="btnVoiceMic" class="icon-btn" data-popover="Bấm để nói lệnh tiếng Việt" aria-label="Nói lệnh">🎙️</button>
+                  <button type="button" id="btnAbortJob" class="icon-btn danger" style="display:none;" data-popover="Dừng tác vụ đang chạy" aria-label="Dừng">⏹</button>
+                  <button type="button" id="btnSendCommand" class="icon-btn primary" data-popover="Gửi lệnh (Enter)" data-popover-pos="left" aria-label="Gửi lệnh">↑</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Center Right: Sub-task Accordions for the 12 Real Agents + 1-Click Dispatch -->
+            <div class="cmd2d-subtasks-pane">
+              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title">
+                    ▸ FB Viral Scout (Profile 4) · 5 Lớp Stealth khakhunghiep · Tải Reel 1080p &amp; Top Comments
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code">AG2-101</span>
+                    <span class="badge-status done">Hoàn thành</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div class="subtask-log-box">
+                    <div><strong>Engine:</strong> <code>modules/fb_human_stealth_engine.py</code> (Patchright CDP, Bezier Mouse, Zero .fill(), Kill-Switch 1501092823525282).</div>
+                    <div><strong>Kết quả:</strong> Đã tải 34+ video mẫu 1080p về <code>KHO_VIDEO_TRIEU_VIEW_TPHCM_10_20S/</code>.</div>
+                    <div style="margin-top:6px;">
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'fb-viral-scout', directive:'Quét FB Profile 4 (5 Lớp Stealth) và cập nhật Kho Reel 1080p + Đồ Shopee V6'})">⚡ Phát lệnh chạy AG2-101 ngay</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title">
+                    ▸ May Đo Ngược V3.0 (1500ml) · Cắt _HEADLESS.jpg &amp; Khóa 10 Đồ Shopee V6 (SP01..SP10_V6)
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code">AG2-102</span>
+                    <span class="badge-status done">Hoàn thành</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div class="subtask-log-box">
+                    <div><strong>Chuẩn giải phẫu:</strong> Khe chữ Y sâu + 2 cạnh ngực phồng rộng 5cm vượt khung sườn + Đáy cầu 3D chữ W + Eo 55cm cơ số 11.</div>
+                    <div><strong>Kho lưu trữ:</strong> <code>KHO_SAN_PHAM_SHOPEE/04_KHO_MAY_DO_NGUOC_1500ML/</code> (Link <code>affiliate_id=17367070550</code>).</div>
+                    <div style="margin-top:6px;">
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'fb-viral-scout', directive:'Chạy May Đo Ngược V3.0 (1500ml) cho bộ sưu tập Shopee V6 SP01..SP10_V6'})">⚡ Phát lệnh chạy AG2-102 ngay</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title">
+                    ▸ Google Flow Director V3.9 · Đồ thị 11 Node Clone Video 8.0s 1.0x &amp; Bộ 4 Ảnh 2K FB
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code">AG2-201</span>
+                    <span class="badge-status done">Hoàn thành</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div class="subtask-log-box">
+                    <div><strong>Đấu dây chuẩn:</strong> <code>['taoanh-2', 'taoanh-1']</code> (ngắt <code>anh-1</code> khỏi node video), đệm 10s xuất 192 frames @ 24fps = 8.000s tốc độ 1.0x.</div>
+                    <div><strong>Xóa logo:</strong> Tự động chạy <code>kd.xoa_sao_gemini_anh_va_video()</code> xóa sạch sao 4 cánh ✦ góc dưới phải.</div>
+                    <div style="margin-top:6px;">
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'flow-video-director', directive:'Chạy Node Studio V3.9 sản xuất Video 3 Hồi 1080p 1.0x và Bộ 4 Ảnh 2K FB'})">⚡ Phát lệnh chạy AG2-201 ngay</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subtask-accordion expanded" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title">
+                    ▾ AI Studio Ultra 4K &amp; Viral Video Editor · Nano Banana 2.1 4K + Remotion 4.0 + CapCut PC
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code">AG2-202..205</span>
+                    <span class="badge-status done">Hoàn thành</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div style="margin:6px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+                    <span class="badge-code" style="background:#374151;color:#86efac">🎬 5 KOLs V6</span>
+                    <span style="font-size:11px;color:#9ca69e">Bảo Trâm · Bảo Nhi · Khánh Linh · Hà Vy · Minh Anh</span>
+                  </div>
+                  <div class="subtask-log-box">
+                    <div><strong>AI Studio Ultra (Profile 5):</strong> <code>hoatrang756@gmail.com</code> · <code>Nano Banana 2.1</code> (3072×5504, 1.000 ảnh/ngày) &amp; <code>Omni 1.1 Flash 4K</code>.</div>
+                    <div><strong>Remotion 4.0 &amp; OpenMontage ($0 API):</strong> 6 phong cách <code>edit.fibus.vn</code>, phụ đề Karaoke <code>.ass</code>, giọng <code>VieNeu 48kHz / Leda</code>, SFX Auto-Ducking <code>-14dB</code>.</div>
+                    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'aistudio-4k-upscaler', directive:'Nâng cấp 4K Ultra trên hoatrang756 cho 5 AI KOLs V6'})">⚡ Chạy 4K Ultra</button>
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'viral-video-editor', directive:'Hậu kỳ Remotion 4.0 + xuất dự án CapCut PC'})">🎬 Chạy Remotion &amp; CapCut</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title">
+                    ▸ Windows Omni-Pilot &amp; Course Studio · UIA + Multi-CDP 9222..9230 + Quay 60fps Classroom
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code">AG2-206</span>
+                    <span class="badge-status running">100% Máy</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div class="subtask-log-box">
+                    <div>Cánh tay nối dài điều khiển toàn bộ máy tính, mở phiên mới cho mọi Agent, chụp/quay 60fps <code>cursor_events.json</code> và xuất CapCut PC.</div>
+                    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('capture-screen')">📸 Chụp Màn Hình 60fps</button>
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('record-and-capcut')">🎥 Quay &amp; Dựng CapCut</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title">
+                    ▸ Swarm Web Cloner (30 Agent) · Dựng Web Showroom Đòn Bẩy AI V6, Agent Hub &amp; Clone Mọi URL
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code">AG2-301</span>
+                    <span class="badge-status running">Đang chạy</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div class="subtask-log-box">
+                    <div>30 con trỏ chuột AI (<code>DhvanilPatel/swarm-cursors</code>) dàn trang trực tiếp trên <code>don-bay-ai-v6.html</code>, <code>ag2-agent-hub.html</code> và hút DOM mọi URL qua <code>/api/clone-web</code>.</div>
+                    <div style="margin-top:6px;">
+                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); switchStudioMode('web')">🐝 Mở Màn 30 Agent Clone Web ↗</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         MODE 2: 3D VĂN PHÒNG AI (3D ISOMETRIC VIRTUAL OFFICE CHO 12 AGENT)
+         ================================================================== -->
+    <section class="mode-section" id="mode-3d">
+      <div class="office3d-wrapper">
+        <aside class="office-left-drawer">
+          <div class="drawer-header">
+            <div class="drawer-title">
+              <span>‹</span>
+              <span>♟ Đội ngũ AG2</span>
+              <span class="drawer-count-badge">12</span>
+            </div>
+            <span style="font-size:11px;color:#94a3b8;cursor:pointer" onclick="switchStudioMode('2d')">Về 2D Chat</span>
+          </div>
+
+          <div class="drawer-subbar">
+            <span><strong style="color:#4ade80">● 12 đang làm</strong></span>
+            <span>Subagent thực chiến</span>
+          </div>
+
+          <input type="text" class="drawer-search" placeholder="Tìm Subagent hoặc KOL V6..." />
+
+          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#cbd5e1;padding:2px 4px">
+            <span>◆ Chỉ huy &amp; Chủ lực</span>
+            <span>4 Profile CDP ↗</span>
+          </div>
+
+          <div class="drawer-agent-list">
+            <div class="drawer-agent-card active" onclick="switchStudioMode('2d')">
+              <div class="agent-mini-icon"></div>
+              <div class="agent-card-info">
+                <h4>Bộ Não Thứ Hai CEO</h4>
+                <div class="agent-state">◎ Đang điều phối 12 Agent</div>
+                <p>AG2-CEO · 339 phiên / 774 luật · Giọng VieNeu 48kHz</p>
+              </div>
+            </div>
+
+            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'windows-omni-pilot', directive:'Kiểm tra toàn bộ máy tính & trình duyệt'})">
+              <div class="agent-mini-icon"></div>
+              <div class="agent-card-info">
+                <h4>windows-omni-pilot · Cánh Tay Máy Tính</h4>
+                <div class="agent-state" style="color:#38bdf8">● Đang chạy · UIA + Multi-CDP 9222..9226</div>
+              </div>
+            </div>
+
+            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'flow-video-director', directive:'Chạy Node Studio V3.9 Clone 1080p'})">
+              <div class="agent-mini-icon"></div>
+              <div class="agent-card-info">
+                <h4>flow-video-director · Node V3.9</h4>
+                <div class="agent-state" style="color:#93c5fd">● Đang chạy · 11 Node Clone 8.0s 1.0x</div>
+              </div>
+            </div>
+
+            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'aistudio-4k-upscaler', directive:'Nâng cấp ảnh & video 4K trên hoatrang756'})">
+              <div class="agent-mini-icon"></div>
+              <div class="agent-card-info">
+                <h4>aistudio-4k-upscaler · Profile 5</h4>
+                <div class="agent-state">● Sẵn sàng · Nano Banana 2.1 4K</div>
+              </div>
+            </div>
+
+            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'fb-viral-scout', directive:'Quét FB Profile 4 (5 Lớp Stealth)'})">
+              <div class="agent-mini-icon"></div>
+              <div class="agent-card-info">
+                <h4>fb-viral-scout · Profile 4</h4>
+                <div class="agent-state">● Sẵn sàng · 5 Lớp Stealth khakhunghiep</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer-toast-stack">
+            <div class="live-toast-item">
+              <strong>Cánh Tay Omni-Pilot · đang làm</strong>
+              <span>điều khiển toàn bộ máy tính, CapCut PC &amp; 4 Chrome CDP</span>
+            </div>
+            <div class="live-toast-item" style="border-left-color:#34d399">
+              <strong>Flow Node V3.9 · đang làm</strong>
+              <span>đấu dây ['taoanh-2', 'taoanh-1'] &amp; xóa sao Gemini ✦</span>
+            </div>
+            <div class="live-toast-item" style="border-left-color:#a78bfa">
+              <strong>Swarm Cloner · đang làm</strong>
+              <span>30 Agent đang dựng don-bay-ai-v6.html &amp; ag2-agent-hub.html</span>
+            </div>
+            <div class="live-toast-item" style="border-left-color:#fb923c">
+              <strong>VieNeu-TTS v3 Turbo · 48kHz</strong>
+              <span>đang phát báo cáo giọng Thùy Dung (Miền Nam)</span>
+            </div>
+          </div>
+        </aside>
+
+        <canvas id="office3d-canvas" width="1280" height="720"></canvas>
+        <div id="office3d-labels-layer"></div>
+
+        <div class="office-bottom-prompt">
+          <input type="text" id="office-prompt-input" placeholder="Giao việc cho Bộ Não Thứ Hai CEO hoặc dán link web cần Clone (Enter)..." onkeydown="if(event.key==='Enter') handleOfficePromptSubmit()" />
+          <div class="office-prompt-actions">
+            <div style="display:flex;gap:10px;align-items:center">
+              <span>⚙</span>
+              <span style="background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:5px">12 Agent · Omni-Pilot · VieNeu 48kHz</span>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span>Zero-Code ▾</span>
+              <button type="button" onclick="handleOfficePromptSubmit()" style="background:#38bdf8;color:#0f172a;border:none;border-radius:5px;padding:3px 9px;font-weight:800;cursor:pointer">↑</button>
             </div>
           </div>
         </div>
 
-        <!-- POPOVER CHỌN GIỌNG NÓI VIENEU-TTS V3 TURBO 48KHZ -->
-        <div id="voicePopoverPanel" class="popover-panel" aria-label="Chọn giọng nói VieNeu-TTS 48kHz">
-          <div class="popover-header">
-            <span>Giọng Nói VieNeu-TTS v3 Turbo (48kHz)</span>
-            <button type="button" id="btnCloseVoicePopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-          </div>
-          <button type="button" id="btnToggleAutoSpeakInside" class="menu-option selected">
-            <span id="lblAutoSpeakStatus">Tự động đọc báo cáo mới: Đang Bật</span>
-            <span class="engine-mini">48kHz</span>
-          </button>
-          <div style="font-size:12px; font-weight:700; color:var(--text-secondary); padding:4px 2px 0;">Chọn giọng đọc (Bấm để chọn & nghe thử):</div>
-          <button type="button" class="menu-option selected" data-vieneu-voice="Thùy Dung" data-sample-slug="thuy_dung">
-            <span>Thùy Dung (Nữ · Miền Nam · Tự nhiên)</span>
-            <span class="engine-mini">Nam</span>
-          </button>
-          <button type="button" class="menu-option" data-vieneu-voice="Mỹ Duyên" data-sample-slug="my_duyen">
-            <span>Mỹ Duyên (Nữ · Miền Nam · Truyền cảm)</span>
-            <span class="engine-mini">Nam</span>
-          </button>
-          <button type="button" class="menu-option" data-vieneu-voice="Adam" data-sample-slug="adam">
-            <span>Adam (Nam · Miền Nam · Điềm đạm)</span>
-            <span class="engine-mini">Nam</span>
-          </button>
-          <button type="button" class="menu-option" data-vieneu-voice="Trúc Ly" data-sample-slug="truc_ly">
-            <span>Trúc Ly (Nữ · Miền Bắc · Tự nhiên)</span>
-            <span class="engine-mini claude">Bắc</span>
-          </button>
-          <button type="button" class="menu-option" data-vieneu-voice="Mai Anh" data-sample-slug="mai_anh">
-            <span>Mai Anh (Nữ · Miền Bắc · Điểm tin)</span>
-            <span class="engine-mini claude">Bắc</span>
-          </button>
-          <button type="button" class="menu-option" data-vieneu-voice="Hải Đăng" data-sample-slug="hai_dang">
-            <span>Hải Đăng (Nam · Miền Bắc · Chuẩn mực)</span>
-            <span class="engine-mini claude">Bắc</span>
-          </button>
+        <div class="office-statusbar">
+          <span>● P1: aichampionhk1</span>
+          <span>● P4: khakhunghiep</span>
+          <span>● P5: hoatrang756 (4K)</span>
+          <span>Sync: 339+ Phiên Chat &amp; 774 Luật Bộ Não Thứ Hai</span>
         </div>
+      </div>
+    </section>
 
-        <!-- POPOVER LIÊN KẾT ĐA MÁY & TÀI KHOẢN ANTIGRAVITY / CLAUDE -->
-        <div id="machinesPopoverPanel" class="popover-panel" aria-label="Liên kết máy khác và tài khoản">
-          <div class="popover-header">
-            <span>Liên Kết Máy Khác & Tài Khoản AI</span>
-            <button type="button" id="btnCloseMachinesPopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-          </div>
-          <div id="machinesListBody" style="display:flex; flex-direction:column; gap:6px;"></div>
-          <div style="display:flex; flex-direction:column; gap:6px; padding-top:6px;">
-            <div style="font-size:11.5px; font-weight:700; color:var(--text-main);">Thêm Máy Khác (PC Phụ / Laptop)</div>
-            <input type="text" id="inputMachineName" class="machine-form-input" placeholder="Tên máy (VD: Máy 2 - Laptop)" />
-            <input type="text" id="inputMachineUrl" class="machine-form-input" placeholder="URL Node (VD: http://192.168.1.25:8765 hoặc gws-drive)" />
-            <input type="text" id="inputMachineAccounts" class="machine-form-input" placeholder="Tài khoản (VD: hoatrang756, Claude Extension)" />
-            <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px;">
-              <button type="button" id="btnAddMachineNode" class="machine-btn">+ Liên kết Máy</button>
-              <button type="button" id="btnCopyMachineSetup" class="machine-btn" style="background-color:var(--bg-subtle); color:var(--text-main);">Chép lệnh cài Máy 2</button>
-            </div>
+    <!-- ==================================================================
+         MODE 3: NODE GRAPH (SƠ ĐỒ LUỒNG DỮ LIỆU 12 AGENT TRÊN MÁY)
+         ================================================================== -->
+    <section class="mode-section" id="mode-node">
+      <div class="nodegraph-wrapper">
+        <div style="position:absolute;top:14px;left:18px;z-index:20;background:rgba(15,23,42,0.88);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.14)">
+          <div style="font-size:13px;font-weight:800;color:#f8fafc">🕸️ Sơ Đồ Luồng Dữ Liệu Thực Chiến 12 Agent Trên Máy (Bấm vào Node bất kỳ để phát lệnh chạy ngay)</div>
+          <div style="font-size:11.5px;color:#94a3b8;margin-top:3px">
+            Bộ Não Thứ Hai (AG2-CEO) ➔ FB Stealth P4 &amp; May Đo 1500ml (AG2-101..104) ➔ Flow V3.9, 4K Ultra &amp; Omni-Pilot (AG2-201..206) ➔ 30 Agent Clone Web &amp; Đa Kênh (AG2-301..302)
           </div>
         </div>
+        <svg id="nodegraph-svg"></svg>
+        <div id="nodegraph-dom-layer"></div>
+      </div>
+    </section>
 
-        <!-- POPOVER KHO SẢN PHẨM & BỘ NÃO THỨ HAI (Chỉ mở khi bấm icon Hộp sản phẩm) -->
-        <div id="hubPopoverPanel" class="popover-panel" role="dialog" aria-label="Sản phẩm và Bộ não">
-          <div class="popover-header">
-            <span>Kho Nghiệm Thu & Bộ Não Thứ Hai</span>
-            <button type="button" id="btnCloseHubPopover" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <!-- ==================================================================
+         MODE 4: LƯỚI 6 CỬA SỔ AG2 VIDEO STUDIO + TRẠNG THÁI AGENT
+         ================================================================== -->
+    <section class="mode-section" id="mode-editor">
+      <div class="editor-grid-desktop" id="editor-grid-container"></div>
+    </section>
+
+    <!-- ==================================================================
+         MODE 5: 30 AGENT CLONE & DÀN TRANG WEB MỚI (DhvanilPatel/swarm-cursors)
+         ================================================================== -->
+    <section class="mode-section" id="mode-web">
+      <div class="webbuilder-wrapper">
+        <div class="webbuilder-subbar" style="gap:6px;flex-wrap:nowrap;overflow:hidden">
+          <div class="web-page-tabs" style="flex-shrink:0">
+            <button class="web-page-tab active" data-sub="donbay" onclick="switchWebSubPage('donbay')">
+              🔥 Web 1: Showroom Đòn Bẩy AI V6
+            </button>
+            <button class="web-page-tab" data-sub="ag2hub" onclick="switchWebSubPage('ag2hub')">
+              🤖 Web 2: Trung Tâm 12 Agent AG2
+            </button>
+            <button class="web-page-tab" data-sub="hana" onclick="switchWebSubPage('hana')">
+              🌿 Web 3: Hana Nguyên
+            </button>
           </div>
-          <div class="hub-tabs">
-            <button type="button" class="hub-tab active" data-hubtab="deliverables">Sản phẩm (12)</button>
-            <button type="button" class="hub-tab" data-hubtab="brain">Luật của Sếp</button>
+
+          <div style="display:flex;gap:5px;align-items:center;flex:1;min-width:180px;max-width:340px">
+            <input
+              type="text"
+              id="clone-url-input"
+              placeholder="Dán URL bất kỳ để Clone &amp; 30 Agent vẽ lại..."
+              style="flex:1;min-width:110px;background:#090d16;border:1px solid #334155;color:#f8fafc;border-radius:7px;padding:5px 8px;font-size:11px;outline:none"
+              onkeydown="if(event.key==='Enter') cloneCustomUrlWithSwarm()"
+            />
+            <button
+              class="web-page-tab"
+              id="btn-clone-url"
+              style="background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;border:none;flex-shrink:0"
+              onclick="cloneCustomUrlWithSwarm()"
+            >
+              ⚡ Clone Web
+            </button>
           </div>
-          <div id="hubPopoverBody"></div>
+
+          <div style="display:flex;gap:5px;align-items:center;flex-shrink:0">
+            <button class="web-page-tab" style="background:#2563eb;color:#fff;border-color:#60a5fa" onclick="replaySwarmInIframe()">
+              🐝 30 Agent Vẽ Lại
+            </button>
+            <button class="web-page-tab" style="background:#334155;color:#f8fafc;border-color:#64748b" onclick="showLiveWebInIframe()">
+              ✅ Hoàn Chỉnh
+            </button>
+            <button class="web-page-tab" style="background:#16a34a;color:#fff;border-color:#4ade80" onclick="toggleVideo916Modal(true)">
+              📱 Video 9:16 (Bảo Trâm)
+            </button>
+          </div>
         </div>
-      </header>
 
-      <!-- Luồng Chat Qua Lại Tối Giản -->
-      <section id="chatStreamSection" class="chat-stream" aria-label="Nội dung hội thoại">
-        <div id="messagesListBox" class="chat-stream-inner"></div>
-      </section>
-
-      <!-- Thanh Nhập Lệnh Tối Giản (Icon + Popover) -->
-      <footer class="composer-wrap">
-        <div class="composer-bar">
-          <!-- Popover 1: Lệnh Nhanh (Mở khi bấm icon Tia chớp) -->
-          <div id="quickCmdPopover" class="popover-panel" role="menu">
-            <div class="popover-header">
-              <span>Chọn nhanh lệnh mẫu</span>
-              <button type="button" class="mini-icon-btn" data-close-pop="quickCmdPopover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-            </div>
-            <button type="button" class="menu-option" data-quick-cmd="Chụp màn hình máy tính và kiểm tra toàn bộ tiến trình đang chạy">
-              <span>Chụp &amp; Xem màn hình máy tính</span>
-              <span class="ai-time">/screen</span>
-            </button>
-            <button type="button" class="menu-option" data-quick-cmd="Quay màn hình 60fps và tự động dựng dự án CapCut PC kèm phụ đề cho tao">
-              <span>Quay 60fps &amp; Dựng CapCut PC</span>
-              <span class="ai-time">/capcut</span>
-            </button>
-            <button type="button" class="menu-option" data-quick-cmd="Phát lệnh đồng loạt cho tất cả agent kiểm tra sản phẩm 4K và báo cáo nghiệm thu">
-              <span>Phát lệnh đồng loạt Toàn Bộ Agent</span>
-              <span class="ai-time">/broadcast</span>
-            </button>
-            <button type="button" class="menu-option" data-quick-cmd="Kiểm tra nghiệm thu toàn bộ sản phẩm mới nhất và báo cáo ngắn gọn cho tao">
-              <span>Nghiệm thu toàn hệ thống</span>
-              <span class="ai-time">/verify</span>
-            </button>
-            <button type="button" class="menu-option" data-quick-cmd="Nâng cấp ảnh và video 4K cho Bảo Trâm và Khánh Linh trên hoatrang756">
-              <span>Nâng cấp ảnh &amp; video 4K</span>
-              <span class="ai-time">/4k</span>
-            </button>
-            <button type="button" class="menu-option" data-quick-cmd="Sản xuất kịch bản và video 3 Hồi cho sản phẩm Shopee V6 trên Google Flow V3.9">
-              <span>Sản xuất Video 3 Hồi</span>
-              <span class="ai-time">/3hoi</span>
-            </button>
-          </div>
-
-          <!-- Popover 2: Chọn Trợ Lý / Engine (Mở khi bấm icon Robot) -->
-          <div id="agentPickerPopover" class="popover-panel" role="menu">
-            <div class="popover-header">
-              <span>Chọn người thực thi lệnh</span>
-              <button type="button" class="mini-icon-btn" data-close-pop="agentPickerPopover"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
-            </div>
-            <button type="button" class="menu-option selected" data-agent-val="auto" data-agent-short="AUTO">
-              <span>Tự động theo phiên chat</span>
-              <span class="engine-mini">AUTO</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="agent:windows-omni-pilot" data-agent-short="OMNI">
-              <span>Cánh Tay Omni-Pilot (Toàn Máy Tính)</span>
-              <span class="engine-mini">OMNI</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="antigravity" data-agent-short="AGY">
-              <span>Antigravity 2.0 CLI / IDE</span>
-              <span class="engine-mini">AGY</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="claude" data-agent-short="CL">
-              <span>Claude Code CLI</span>
-              <span class="engine-mini claude">CL</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="agent:flow-video-director" data-agent-short="FLOW">
-              <span>Đạo diễn Video Google Flow V3.9</span>
-              <span class="engine-mini">FLOW</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="agent:aistudio-4k-upscaler" data-agent-short="4K">
-              <span>Chuyên gia AI Studio 4K Ultra</span>
-              <span class="engine-mini">4K</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="agent:fb-viral-scout" data-agent-short="FB">
-              <span>Săn Viral FB &amp; Shopee 5 Lớp Stealth</span>
-              <span class="engine-mini">FB</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="agent:viral-video-editor" data-agent-short="EDIT">
-              <span>Đạo diễn Hậu kỳ Remotion &amp; CapCut</span>
-              <span class="engine-mini">EDIT</span>
-            </button>
-            <button type="button" class="menu-option" data-agent-val="agent:openmontage-director" data-agent-short="MONT">
-              <span>Đạo diễn OpenMontage 12 Pipelines</span>
-              <span class="engine-mini">MONT</span>
-            </button>
-          </div>
-
-          <!-- Icon 1: Lệnh mẫu nhanh -->
-          <button type="button" id="btnQuickCmd" class="icon-btn" data-popover="Lệnh mẫu 1 chạm" aria-label="Lệnh mẫu">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-            </svg>
-          </button>
-
-          <!-- Icon 2: Chọn Bộ máy / Agent -->
-          <button type="button" id="btnAgentPicker" class="icon-btn" data-popover="Chọn Trợ lý thực thi (Đang chọn: Tự động)" aria-label="Chọn Trợ lý thực thi">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect width="16" height="12" x="4" y="8" rx="2"/><path d="M12 4v4"/><circle cx="9" cy="14" r="1"/><circle cx="15" cy="14" r="1"/>
-            </svg>
-          </button>
-
-          <!-- Ô gõ lệnh duy nhất -->
-          <textarea
-            id="composerTextarea"
-            class="composer-input"
-            rows="1"
-            placeholder="Nhập lệnh cho AI hoặc bấm Mic để nói..."
-          ></textarea>
-
-          <!-- Icon 3: Mic giọng nói tiếng Việt -->
-          <button type="button" id="btnVoiceMic" class="icon-btn" data-popover="Bấm để nói lệnh tiếng Việt" aria-label="Nói lệnh bằng giọng nói">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/>
-            </svg>
-          </button>
-
-          <!-- Icon 4: Dừng tác vụ (chỉ hiện khi đang chạy) -->
-          <button type="button" id="btnAbortJob" class="icon-btn danger" style="display:none;" data-popover="Dừng tác vụ đang chạy" aria-label="Dừng tác vụ">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
-              <rect x="6" y="6" width="12" height="12" rx="2"/>
-            </svg>
-          </button>
-
-          <!-- Icon 5: Gửi lệnh -->
-          <button type="button" id="btnSendCommand" class="icon-btn primary" data-popover="Gửi lệnh (Enter)" data-popover-pos="left" aria-label="Gửi lệnh">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-              <path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/>
-            </svg>
-          </button>
+        <div class="webbuilder-stage" style="overflow:hidden;display:flex;flex-direction:column">
+          <iframe
+            id="web-swarm-iframe"
+            src="about:blank"
+            title="30 Agent Swarm Rebuild Web Canvas"
+            style="width:100%;height:100%;border:none;flex:1;background:#0b0d13"
+          ></iframe>
         </div>
-      </footer>
-    </main>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ====================================================================
+       VERTICAL 9:16 REAL CLONED KOL VIDEO MODAL POPUP
+       ==================================================================== -->
+  <div class="video916-modal-backdrop" id="video916-modal">
+    <div class="video916-modal-card">
+      <div class="video916-modal-header">
+        <span>Bảo Trâm V6 (105-55-102) · Clone 1080p 1.0x (SP01_V6)</span>
+        <button class="video916-close-btn" onclick="toggleVideo916Modal(false)">×</button>
+      </div>
+      <div class="video916-player-frame" style="position:relative;background:#000">
+        <video
+          id="video916-real-player"
+          src="local-assets/video/01_Bao_Tram/DA_CLONE_1080P_NO_BG_CHANGE/MV25_19xonMDHhG_GYM_CORE_DUMBBELL_4_BAI_SP01_V6__BAO_TRAM_CLONED_1080P.mp4"
+          poster="local-assets/kol/bao_tram_4k_anchor.jpg"
+          style="width:100%;height:100%;object-fit:cover;display:block"
+          autoplay
+          loop
+          muted
+          playsinline
+          controls
+        ></video>
+      </div>
+      <a
+        class="video916-cta-green"
+        href="https://s.shopee.vn/an_redir?origin_link=https%3A%2F%2Fshopee.vn&affiliate_id=17367070550&sub_id=bao_tram-SP01_V6-Popup916"
+        target="_blank"
+        style="display:block;text-align:center;text-decoration:none"
+      >
+        Mua Set SP01_V6 (389k · HH 77.8k) Trên Shopee ↗
+      </a>
+    </div>
   </div>
 
-  <!-- MODAL XEM SẢN PHẨM -->
+  <!-- MODAL XEM SẢN PHẨM 4K TRONG KHO -->
   <div id="mediaModalBackdrop" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Xem sản phẩm">
     <div class="modal-dialog">
       <div class="modal-header">
         <span id="modalTitleText">Xem sản phẩm</span>
-        <button type="button" id="btnCloseModal" class="mini-icon-btn" aria-label="Đóng"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+        <button type="button" id="btnCloseModal" class="mini-icon-btn" aria-label="Đóng">×</button>
       </div>
       <div id="modalBodyContent" class="modal-body"></div>
     </div>
   </div>
 
-  <script>
-    (function () {
-      const LOCAL_API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost')
-        ? ''
-        : 'http://127.0.0.1:8765';
-
-      const state = {
-        sessions: [],
-        conversationsById: {},
-        activeSessionId: '',
-        providerFilter: 'all',
-        searchQuery: '',
-        zeroCodeMode: true,
-        autoSpeak: true,
-        selectedVoice: 'Thùy Dung',
-        selectedSampleSlug: 'thuy_dung',
-        selectedAgentVal: 'auto',
-        hubTab: 'deliverables',
-        daemonOnline: false,
-        brainSnapshot: null,
-        lastAnnouncedMsgId: '',
-        isRecordingMic: false,
-        linkedMachines: [
-          {
-            id: 'local-primary',
-            name: 'Máy Chính (PC-Manabie)',
-            url: 'http://127.0.0.1:8765',
-            accounts: ['khakhunghiep@gmail.com', 'hoatrang756@gmail.com', 'aichampionhk1@gmail.com', 'Claude Code Extension'],
-            status: 'online',
-          },
-          {
-            id: 'gws-drive-bridge',
-            name: 'Máy 2 / Laptop (Cầu nối Drive & LAN)',
-            url: 'gws://00_DONG_BO_ANTIGRAVITY_GIUA_CAC_MAY',
-            accounts: ['Đồng bộ 2 chiều gws + Antigravity + Claude Code'],
-            status: 'ready',
-          },
-        ],
-      };
-
-      const el = {
-        leftSidebar: document.getElementById('leftSidebar'),
-        liveDot: document.getElementById('liveDot'),
-        sessionSearchInput: document.getElementById('sessionSearchInput'),
-        sessionListContainer: document.getElementById('sessionListContainer'),
-        activeEngineSymbol: document.getElementById('activeEngineSymbol'),
-        activeSessionTitle: document.getElementById('activeSessionTitle'),
-        btnOpenOmniPopover: document.getElementById('btnOpenOmniPopover'),
-        omniPopoverPanel: document.getElementById('omniPopoverPanel'),
-        btnAutoSpeak: document.getElementById('btnAutoSpeak'),
-        voicePopoverPanel: document.getElementById('voicePopoverPanel'),
-        btnZeroCode: document.getElementById('btnZeroCode'),
-        btnOpenMachinesPopover: document.getElementById('btnOpenMachinesPopover'),
-        machinesPopoverPanel: document.getElementById('machinesPopoverPanel'),
-        machinesListBody: document.getElementById('machinesListBody'),
-        machinesCountBadge: document.getElementById('machinesCountBadge'),
-        btnOpenHubPopover: document.getElementById('btnOpenHubPopover'),
-        hubPopoverPanel: document.getElementById('hubPopoverPanel'),
-        hubPopoverBody: document.getElementById('hubPopoverBody'),
-        deliverableCountBadge: document.getElementById('deliverableCountBadge'),
-        chatStreamSection: document.getElementById('chatStreamSection'),
-        messagesListBox: document.getElementById('messagesListBox'),
-        quickCmdPopover: document.getElementById('quickCmdPopover'),
-        agentPickerPopover: document.getElementById('agentPickerPopover'),
-        btnQuickCmd: document.getElementById('btnQuickCmd'),
-        btnAgentPicker: document.getElementById('btnAgentPicker'),
-        composerTextarea: document.getElementById('composerTextarea'),
-        btnVoiceMic: document.getElementById('btnVoiceMic'),
-        btnAbortJob: document.getElementById('btnAbortJob'),
-        btnSendCommand: document.getElementById('btnSendCommand'),
-        mediaModalBackdrop: document.getElementById('mediaModalBackdrop'),
-        modalTitleText: document.getElementById('modalTitleText'),
-        modalBodyContent: document.getElementById('modalBodyContent'),
-      };
-
-      function escapeHtml(str) {
-        return String(str || '')
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;');
-      }
-
-      function closeAllPopovers() {
-        el.quickCmdPopover.classList.remove('open');
-        el.agentPickerPopover.classList.remove('open');
-        el.hubPopoverPanel.classList.remove('open');
-        if (el.machinesPopoverPanel) el.machinesPopoverPanel.classList.remove('open');
-        if (el.voicePopoverPanel) el.voicePopoverPanel.classList.remove('open');
-        if (el.omniPopoverPanel) el.omniPopoverPanel.classList.remove('open');
-      }
-
-      function extractClientSummaryPoints(text) {
-        if (!text) return [];
-        const lines = String(text).split(/\r?\n/);
-        const pts = [];
-        for (const raw of lines) {
-          const clean = raw
-            .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-            .replace(/^([#*\-•]+|\d+\.)\s*/, '')
-            .replace(/\*\*/g, '')
-            .replace(/`/g, '')
-            .trim();
-          if (clean.length >= 16 && !clean.endsWith(':') && !pts.some((p) => p.slice(0, 32) === clean.slice(0, 32))) {
-            pts.push(clean.slice(0, 135));
-            if (pts.length >= 3) break;
-          }
-        }
-        return pts;
-      }
-
-      function renderFormattedMarkdown(text) {
-        if (!text) return '<p>Đã hoàn tất xử lý ngầm.</p>';
-        const cleanedText = String(text).replace(/\[([^\]]+)\]\((?:file:\/\/\/|https?:\/\/)[^)]+\)/g, '**$1**');
-        const lines = cleanedText.split(/\r?\n/);
-        const htmlParts = [];
-        let inList = false;
-
-        for (let rawLine of lines) {
-          const line = rawLine.trim();
-          if (!line) {
-            if (inList) {
-              htmlParts.push('</ul>');
-              inList = false;
-            }
-            continue;
-          }
-          if (/^#{1,4}\s+/.test(line)) {
-            if (inList) {
-              htmlParts.push('</ul>');
-              inList = false;
-            }
-            htmlParts.push(`<h4>${escapeHtml(line.replace(/^#{1,4}\s+/, '').replace(/\*\*/g, ''))}</h4>`);
-          } else if (/^([-*•]|\d+\.)\s+/.test(line)) {
-            if (!inList) {
-              htmlParts.push('<ul>');
-              inList = true;
-            }
-            let item = escapeHtml(line.replace(/^([-*•]|\d+\.)\s+/, ''))
-              .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-              .replace(/`([^`]+)`/g, '<code>$1</code>');
-            htmlParts.push(`<li>${item}</li>`);
-          } else {
-            if (inList) {
-              htmlParts.push('</ul>');
-              inList = false;
-            }
-            let p = escapeHtml(line)
-              .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-              .replace(/`([^`]+)`/g, '<code>$1</code>');
-            htmlParts.push(`<p>${p}</p>`);
-          }
-        }
-        if (inList) htmlParts.push('</ul>');
-        return htmlParts.join('');
-      }
-
-      let currentAudioPlayer = null;
-      async function speakVietnameseText(text, forceSampleSlug = '') {
-        if (currentAudioPlayer) {
-          try { currentAudioPlayer.pause(); } catch (_) {}
-          currentAudioPlayer = null;
-        }
-        if (forceSampleSlug) {
-          const sampleUrl = `audio_cache/vieneu_sample_${forceSampleSlug}.wav`;
-          currentAudioPlayer = new Audio(sampleUrl);
-          currentAudioPlayer.play().catch(() => {});
-          return;
-        }
-        const clean = String(text || '').replace(/[#*`_~]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 380);
-        if (!clean) return;
-        if (state.daemonOnline) {
-          try {
-            const res = await fetch(`${LOCAL_API_BASE}/api/speak`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ text: clean, voice: state.selectedVoice || 'Thùy Dung' }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              if (data.audio_url) {
-                const audioUrl = data.audio_url.startsWith('http')
-                  ? data.audio_url
-                  : `${LOCAL_API_BASE}${data.audio_url}`;
-                currentAudioPlayer = new Audio(audioUrl);
-                currentAudioPlayer.play().catch(() => {});
-                return;
-              }
-            }
-          } catch (_) {}
-        }
-        // Khi mở bản Cloud tĩnh (Netlify), phát trực tiếp giọng mẫu VieNeu-TTS 48kHz chất lượng cao thay vì giọng trình duyệt
-        const fallbackSlug = state.selectedSampleSlug || 'thuy_dung';
-        currentAudioPlayer = new Audio(`audio_cache/vieneu_sample_${fallbackSlug}.wav`);
-        currentAudioPlayer.play().catch(() => {});
-      }
-
-      function getFilteredSessions() {
-        return state.sessions.filter((s) => {
-          if (state.providerFilter === 'antigravity' && s.engine_code !== 'antigravity') return false;
-          if (state.providerFilter === 'claude' && s.engine_code !== 'claude') return false;
-          if (state.searchQuery) {
-            const q = state.searchQuery.toLowerCase();
-            const hay = `${s.title || ''} ${s.project || ''} ${s.short_id || ''}`.toLowerCase();
-            if (!hay.includes(q)) return false;
-          }
-          return true;
-        });
-      }
-
-      function renderSessionList() {
-        const filtered = getFilteredSessions();
-        if (!filtered.length) {
-          el.sessionListContainer.innerHTML = `<div style="padding:20px 10px; text-align:center; color:var(--text-muted); font-size:12px;">Không có cuộc trò chuyện nào.</div>`;
-          return;
-        }
-
-        el.sessionListContainer.innerHTML = filtered.map((s) => {
-          const isActive = s.session_id === state.activeSessionId;
-          const isClaude = s.engine_code === 'claude';
-          const shortTime = String(s.updated_str || '').split('·')[0].trim().slice(0, 5);
-          const topicBadge = s.topic_badge || (isClaude ? 'Claude Project' : 'Điều phối AI');
-          const machineLabel = s.machine_name || 'Máy Chính';
-          const accountLabel = s.account_tag || (isClaude ? 'Claude Extension' : 'khakhunghiep');
-          const popInfo = `${s.engine} · ${machineLabel} (${accountLabel}) · Mã: #${s.short_id || ''} · Ẩn ${s.filtered_count || 4} bước code`;
-          const rawTitle = (s.title && s.title !== 'Phiên điều phối Antigravity 2.0')
-            ? s.title
-            : `Phiên ${s.project || 'Antigravity'} #${s.short_id || ''}`;
-          const lastTurn = Array.isArray(s.turns) && s.turns.length ? s.turns[s.turns.length - 1] : null;
-          const summaryPreview = s.summary_line
-            || (lastTurn && lastTurn.ai ? String(lastTurn.ai).replace(/\s+/g, ' ').slice(0, 90) : '')
-            || `Dự án ${s.project || 'mang xa hoi'} · Sẵn sàng nhận lệnh`;
-          return `
-            <button
-              type="button"
-              class="session-item ${isActive ? 'active' : ''}"
-              data-session-id="${escapeHtml(s.session_id)}"
-              title="${escapeHtml(popInfo)}"
-            >
-              <div class="session-item-top">
-                <div class="session-badges">
-                  <span class="engine-mini ${isClaude ? 'claude' : ''}">${isClaude ? 'CL' : 'AG'}</span>
-                  <span class="topic-pill">${escapeHtml(topicBadge)}</span>
-                  <span class="session-item-time">#${escapeHtml((s.short_id || '').slice(0, 4))}</span>
-                </div>
-                <span class="session-item-time">${escapeHtml(shortTime)}</span>
-              </div>
-              <div class="session-item-title">${escapeHtml(rawTitle)}</div>
-              <div class="session-item-summary">${escapeHtml(summaryPreview)}</div>
-            </button>
-          `;
-        }).join('');
-
-        el.sessionListContainer.querySelectorAll('[data-session-id]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const sid = btn.getAttribute('data-session-id');
-            el.leftSidebar.classList.remove('mobile-open');
-            selectSession(sid, true);
-          });
-        });
-      }
-
-      function buildMessagesFromCompactTurns(sessionObj) {
-        const msgs = [];
-        const turns = sessionObj.turns || [];
-        turns.forEach((t, idx) => {
-          if (t.user) {
-            msgs.push({
-              id: `${sessionObj.session_id}-u-${idx}`,
-              role: 'user',
-              text: t.user,
-              timestamp: t.timestamp || sessionObj.updated_str || '',
-            });
-          }
-          if (t.ai) {
-            msgs.push({
-              id: `${sessionObj.session_id}-a-${idx}`,
-              role: 'assistant',
-              text: t.ai,
-              summary_points: t.summary_points || extractClientSummaryPoints(t.ai),
-              timestamp: t.timestamp || sessionObj.updated_str || '',
-              model: sessionObj.engine,
-              hidden_count: Math.max(2, Math.round((sessionObj.filtered_count || 6) / Math.max(1, turns.length))),
-              tools: [],
-              links: t.links || [],
-            });
-          }
-        });
-        return msgs;
-      }
-
-      function renderActiveConversation(autoScroll = false) {
-        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId) || state.sessions[0];
-        if (!activeSession) return;
-
-        const isClaude = activeSession.engine_code === 'claude';
-        el.activeEngineSymbol.className = `engine-mini ${isClaude ? 'claude' : ''}`;
-        el.activeEngineSymbol.textContent = isClaude ? 'CL' : 'AG';
-        el.activeEngineSymbol.setAttribute('data-popover', `${activeSession.engine} · Dự án: ${activeSession.project || 'mang xa hoi'}`);
-
-        const rawTitle = activeSession.title || 'Trợ Lý Điều Hành AI';
-        el.activeSessionTitle.textContent = rawTitle.length > 48 ? rawTitle.slice(0, 48) + '...' : rawTitle;
-
-        const convObj = state.conversationsById[activeSession.session_id];
-        const messages = (convObj && Array.isArray(convObj.messages) && convObj.messages.length)
-          ? convObj.messages
-          : buildMessagesFromCompactTurns(activeSession);
-
-        const isWorking = Boolean((convObj && convObj.is_working) || activeSession.is_working);
-        el.btnAbortJob.style.display = isWorking ? 'inline-flex' : 'none';
-
-        const streamEl = el.chatStreamSection;
-        const wasNearBottom = (streamEl.scrollHeight - streamEl.scrollTop - streamEl.clientHeight) < 160;
-
-        el.messagesListBox.innerHTML = messages.map((m, idx) => {
-          const rawTs = String(m.timestamp || '').trim();
-          const shortTs = (rawTs.includes(' ') ? rawTs.split(' ').pop() : rawTs).slice(0, 5);
-          if (m.role === 'user') {
-            return `
-              <div class="msg-row user">
-                <div class="user-bubble">
-                  <div class="user-text">${escapeHtml(m.text || '')}</div>
-                  <div class="user-hover-icons">
-                    <button type="button" class="mini-icon-btn" data-reuse-prompt="${escapeHtml(m.text || '')}" data-popover="Gửi lại lệnh này" data-popover-pos="left" aria-label="Gửi lại">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
-                      </svg>
-                    </button>
-                    <button type="button" class="mini-icon-btn" data-copy-text="${escapeHtml(m.text || '')}" data-popover="Sao chép" data-popover-pos="left" aria-label="Sao chép">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
-            `;
-          }
-
-          const hiddenCount = Number(m.hidden_count || 0);
-          const toolsList = Array.isArray(m.tools) ? m.tools : [];
-          const linksList = Array.isArray(m.links) ? m.links : [];
-          const totalHidden = Math.max(hiddenCount, toolsList.length);
-
-          const codePopoverId = `code-pop-${idx}`;
-          const codeBadgeHtml = totalHidden > 0
-            ? `<button type="button" class="code-pill-btn" data-toggle-code="${codePopoverId}" data-popover="Đã tự động ẩn ${totalHidden} bước kỹ thuật & code (Bấm để xem)" data-popover-pos="left">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
-                </svg>
-                <span>Ẩn ${totalHidden}</span>
-              </button>`
-            : '';
-
-          const stepDetailsHtml = totalHidden > 0
-            ? `<div id="${codePopoverId}" class="code-popover-box ${state.zeroCodeMode ? '' : 'open'}">
-                ${toolsList.length
-                  ? toolsList.map((t) => `<div>• <strong>${escapeHtml(t.name || 'Tool')}:</strong> ${escapeHtml(t.summary || 'Xử lý ngầm')}</div>`).join('')
-                  : `<div>• Đã tự động lọc sạch ${totalHidden} khối code và log kỹ thuật để Sếp chỉ duyệt kết quả.</div>`
-                }
-              </div>`
-            : '';
-
-          const linksHtml = linksList.length
-            ? `<div class="link-pills">${linksList.map((u) => {
-                const urlStr = typeof u === 'string' ? u : (u && u.url ? u.url : '');
-                const labelStr = (typeof u === 'object' && u && u.label)
-                  ? u.label
-                  : urlStr.replace(/^https?:\/\//, '').slice(0, 32);
-                if (!urlStr) return '';
-                const finalHref = (urlStr.startsWith('/media') && LOCAL_API_BASE) ? `${LOCAL_API_BASE}${urlStr}` : urlStr;
-                return `
-                  <a href="${escapeHtml(finalHref)}" target="_blank" rel="noopener" class="link-pill">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" x2="21" y1="14" y2="3"/>
-                    </svg>
-                    <span>${escapeHtml(labelStr)}</span>
-                  </a>
-                `;
-              }).join('')}</div>`
-            : '';
-
-          const rawSummaryPts = Array.isArray(m.summary_points) && m.summary_points.length
-            ? m.summary_points
-            : extractClientSummaryPoints(m.text);
-          const execSummaryHtml = (rawSummaryPts.length > 0 && String(m.text || '').length > 140)
-            ? `<div class="exec-summary-box">
-                <div class="exec-summary-title">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-                    <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
-                  </svg>
-                  <span>Tóm tắt báo cáo quan trọng</span>
-                </div>
-                <ul class="exec-summary-list">
-                  ${rawSummaryPts.slice(0, 3).map((pt) => `<li>${escapeHtml(pt)}</li>`).join('')}
-                </ul>
-              </div>`
-            : '';
-
-          return `
-            <div class="msg-row assistant">
-              <article class="ai-bubble">
-                <div class="ai-top-bar">
-                  <div class="ai-badge-group">
-                    <span class="engine-mini ${isClaude ? 'claude' : ''}">${isClaude ? 'CL' : 'AG'}</span>
-                    <span>${escapeHtml(m.model || activeSession.engine)}</span>
-                    <span class="ai-time">${escapeHtml(shortTs)}</span>
-                  </div>
-                  <div class="ai-icon-actions">
-                    ${codeBadgeHtml}
-                    <button type="button" class="mini-icon-btn" data-speak-msg="${escapeHtml(m.text || '')}" data-popover="Nghe đọc nội dung này" data-popover-pos="left" aria-label="Nghe đọc">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-                      </svg>
-                    </button>
-                    <button type="button" class="mini-icon-btn" data-copy-text="${escapeHtml(m.text || '')}" data-popover="Sao chép báo cáo" data-popover-pos="left" aria-label="Sao chép">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect width="14" height="14" x="8" y="8" rx="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-                ${execSummaryHtml}
-                ${stepDetailsHtml}
-                <div class="ai-text-body">
-                  ${renderFormattedMarkdown(m.text)}
-                </div>
-                ${linksHtml}
-              </article>
-            </div>
-          `;
-        }).join('');
-
-        el.messagesListBox.querySelectorAll('[data-toggle-code]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            const target = document.getElementById(btn.getAttribute('data-toggle-code'));
-            if (target) target.classList.toggle('open');
-          });
-        });
-
-        el.messagesListBox.querySelectorAll('[data-speak-msg]').forEach((btn) => {
-          btn.addEventListener('click', () => speakVietnameseText(btn.getAttribute('data-speak-msg')));
-        });
-
-        el.messagesListBox.querySelectorAll('[data-copy-text]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            navigator.clipboard.writeText(btn.getAttribute('data-copy-text') || '');
-            btn.setAttribute('data-popover', 'Đã sao chép!');
-            setTimeout(() => btn.setAttribute('data-popover', 'Sao chép'), 1200);
-          });
-        });
-
-        el.messagesListBox.querySelectorAll('[data-reuse-prompt]').forEach((btn) => {
-          btn.addEventListener('click', () => {
-            el.composerTextarea.value = btn.getAttribute('data-reuse-prompt') || '';
-            el.composerTextarea.focus();
-          });
-        });
-
-        if (autoScroll || wasNearBottom) {
-          streamEl.scrollTop = streamEl.scrollHeight;
-        }
-      }
-
-      async function selectSession(sessionId, scrollToEnd = true) {
-        if (!sessionId) return;
-        state.activeSessionId = sessionId;
-        renderSessionList();
-
-        const targetSess = state.sessions.find((s) => s.session_id === sessionId);
-        const apiBase = (targetSess && targetSess.remote_url) ? targetSess.remote_url : LOCAL_API_BASE;
-
-        if (state.daemonOnline || (targetSess && targetSess.remote_url)) {
-          try {
-            const res = await fetch(`${apiBase}/api/conversation?id=${encodeURIComponent(sessionId)}`, { cache: 'no-store' });
-            if (res.ok) {
-              const conv = await res.json();
-              if (conv && conv.session_id) {
-                state.conversationsById[sessionId] = conv;
-              }
-            }
-          } catch (_) {}
-        }
-        renderActiveConversation(scrollToEnd);
-      }
-
-      async function fetchLiveSessions(isInitial = false) {
-        try {
-          const res = await fetch(`${LOCAL_API_BASE}/api/live-chats`, { cache: 'no-store' });
-          if (res.ok) {
-            const data = await res.json();
-            state.daemonOnline = true;
-            let mergedSessions = data.sessions || [];
-            if (Array.isArray(data.linked_machines) && data.linked_machines.length) {
-              state.linkedMachines = data.linked_machines;
-            }
-            const remoteNodes = (state.linkedMachines || []).filter(
-              (m) => m.id !== 'local-primary' && String(m.url || '').startsWith('http') && !String(m.url).includes('127.0.0.1')
-            );
-            for (const rm of remoteNodes) {
-              try {
-                const rBase = String(rm.url).replace(/\/+$/, '');
-                const rRes = await fetch(`${rBase}/api/live-chats`, { cache: 'no-store' });
-                if (rRes.ok) {
-                  const rData = await rRes.json();
-                  const rList = (rData.sessions || []).map((rs) => Object.assign({}, rs, {
-                    machine_name: rm.name,
-                    remote_url: rBase,
-                  }));
-                  mergedSessions = mergedSessions.concat(rList);
-                }
-              } catch (_) {}
-            }
-            state.sessions = mergedSessions;
-            el.liveDot.setAttribute('data-popover', `Trực tuyến 1.5s/lần · Cập nhật ${data.updated_at || ''}`);
-
-            if (!state.activeSessionId && state.sessions.length > 0) {
-              state.activeSessionId = state.sessions[0].session_id;
-            }
-            if (state.activeSessionId) {
-              const activeObj = state.sessions.find((s) => s.session_id === state.activeSessionId);
-              const apiBase = (activeObj && activeObj.remote_url) ? activeObj.remote_url : LOCAL_API_BASE;
-              const convRes = await fetch(`${apiBase}/api/conversation?id=${encodeURIComponent(state.activeSessionId)}`, { cache: 'no-store' });
-              if (convRes.ok) {
-                const conv = await convRes.json();
-                if (conv && conv.session_id) {
-                  const prevConv = state.conversationsById[state.activeSessionId];
-                  const prevCount = prevConv && prevConv.messages ? prevConv.messages.length : 0;
-                  state.conversationsById[state.activeSessionId] = conv;
-                  if (!isInitial && state.autoSpeak && conv.messages && conv.messages.length > prevCount) {
-                    const lastMsg = conv.messages[conv.messages.length - 1];
-                    if (lastMsg && lastMsg.role === 'assistant' && !lastMsg.is_working && lastMsg.id !== state.lastAnnouncedMsgId) {
-                      state.lastAnnouncedMsgId = lastMsg.id;
-                      speakVietnameseText(lastMsg.text);
-                    }
-                  }
-                }
-              }
-            }
-            renderSessionList();
-            renderActiveConversation(isInitial);
-            return;
-          }
-        } catch (_) {
-          state.daemonOnline = false;
-        }
-
-        // Cloud Snapshot Fallback
-        try {
-          const snapRes = await fetch('data/brain_snapshot.json', { cache: 'no-store' });
-          if (snapRes.ok) {
-            const snap = await snapRes.json();
-            state.brainSnapshot = snap;
-            const liveBlock = snap.live_chats || {};
-            state.sessions = liveBlock.sessions || [];
-            state.conversationsById = Object.assign({}, snap.conversations_by_id || {}, state.conversationsById);
-            el.liveDot.setAttribute('data-popover', 'Đồng bộ Cloud Snapshot (Netlify)');
-            if (!state.activeSessionId && state.sessions.length > 0) {
-              state.activeSessionId = state.sessions[0].session_id;
-            }
-            renderSessionList();
-            renderActiveConversation(isInitial);
-            renderHubPopover();
-          }
-        } catch (_) {}
-      }
-
-      async function loadBrainSnapshotMetadata() {
-        try {
-          const snapRes = await fetch('data/brain_snapshot.json', { cache: 'no-store' });
-          if (snapRes.ok) {
-            const snap = await snapRes.json();
-            state.brainSnapshot = snap;
-            const delivs = snap.deliverables || [];
-            if (delivs.length) el.deliverableCountBadge.textContent = String(delivs.length);
-            if (!state.sessions.length && snap.live_chats && Array.isArray(snap.live_chats.sessions)) {
-              state.sessions = snap.live_chats.sessions;
-              state.conversationsById = Object.assign({}, snap.conversations_by_id || {}, state.conversationsById);
-              if (!state.activeSessionId && state.sessions.length > 0) {
-                state.activeSessionId = state.sessions[0].session_id;
-              }
-              renderSessionList();
-              renderActiveConversation(true);
-            }
-            renderHubPopover();
-          }
-        } catch (_) {}
-      }
-
-      function renderHubPopover() {
-        const snap = state.brainSnapshot || {};
-        if (state.hubTab === 'deliverables') {
-          const items = (snap.deliverables || []).slice(0, 12);
-          if (!items.length) {
-            el.hubPopoverBody.innerHTML = `<div style="font-size:12px; color:var(--text-muted); padding:8px;">Đang tải sản phẩm nghiệm thu...</div>`;
-            return;
-          }
-          el.hubPopoverBody.innerHTML = `
-            <div class="deliverable-mini-grid">
-              ${items.map((item, idx) => {
-                const rawUrl = item.static_preview_url || item.preview_url || item.web_url || item.thumb_url || '';
-                const mediaSrc = (rawUrl.startsWith('/media') && !state.daemonOnline && item.static_preview_url)
-                  ? item.static_preview_url
-                  : ((rawUrl.startsWith('/media') && LOCAL_API_BASE) ? `${LOCAL_API_BASE}${rawUrl}` : rawUrl);
-                const isImg = item.kind === 'image' || /\.(jpg|jpeg|png|webp)$/i.test(mediaSrc);
-                return `
-                  <div class="media-item" data-open-media="${idx}" title="${escapeHtml(item.title)}">
-                    <div class="media-thumb">
-                      ${isImg && mediaSrc
-                        ? `<img src="${escapeHtml(mediaSrc)}" alt="${escapeHtml(item.title)}" loading="lazy" />`
-                        : `<span style="color:#94A3B8; font-size:11px;">Video / File</span>`
-                      }
-                    </div>
-                    <div class="media-caption">${escapeHtml(item.title)}</div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `;
-          el.hubPopoverBody.querySelectorAll('[data-open-media]').forEach((card) => {
-            card.addEventListener('click', () => {
-              const item = items[Number(card.getAttribute('data-open-media'))];
-              if (!item) return;
-              const rawUrl = item.static_preview_url || item.preview_url || item.web_url || item.thumb_url || '';
-              const mediaSrc = (rawUrl.startsWith('/media') && !state.daemonOnline && item.static_preview_url)
-                ? item.static_preview_url
-                : ((rawUrl.startsWith('/media') && LOCAL_API_BASE) ? `${LOCAL_API_BASE}${rawUrl}` : rawUrl);
-              el.modalTitleText.textContent = item.title || 'Sản phẩm nghiệm thu';
-              if (item.kind === 'video') {
-                el.modalBodyContent.innerHTML = `<video src="${escapeHtml(mediaSrc)}" controls autoplay></video>`;
-              } else {
-                el.modalBodyContent.innerHTML = `<img src="${escapeHtml(mediaSrc)}" alt="${escapeHtml(item.title)}" />`;
-              }
-              el.mediaModalBackdrop.classList.add('open');
-            });
-          });
-          return;
-        }
-
-        const brainObj = snap.brain || snap;
-        const rules = (brainObj.executive_rules || []).slice(0, 6);
-        el.hubPopoverBody.innerHTML = `
-          <div style="display:flex; flex-direction:column; gap:6px;">
-            ${rules.map((r) => `
-              <div style="padding:8px; border-radius:6px; background:var(--bg-subtle); font-size:12px;">
-                <div style="font-weight:700; color:var(--accent);">${escapeHtml(r.id)} · ${escapeHtml(r.title)}</div>
-                <div style="color:var(--text-secondary); margin-top:2px;">${escapeHtml(r.rule)}</div>
-              </div>
-            `).join('')}
-          </div>
-        `;
-      }
-
-      function answerFromSecondBrainOffline(commandText) {
-        const q = commandText.toLowerCase();
-        if (q.includes('4k') || q.includes('hoatrang')) {
-          return 'Đã kích hoạt nâng cấp 4K Ultra trên tài khoản hoatrang756@gmail.com (Nano Banana 2.1 4K & Gemini Omni 1.1 Flash).';
-        }
-        if (q.includes('3 hồi') || q.includes('video') || q.includes('flow')) {
-          return 'Đã giao Subagent flow-video-director chạy Node Studio V3.9 với Khuôn Đúc 3 Cột V1 ~1600ml.';
-        }
-        return 'Đã nhận lệnh của Sếp, tự động ẩn 100% code kỹ thuật và điều phối đội ngũ Agent thực thi.';
-      }
-
-      async function sendChatCommand() {
-        const text = el.composerTextarea.value.trim();
-        if (!text) return;
-        el.composerTextarea.value = '';
-        closeAllPopovers();
-
-        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId) || state.sessions[0];
-        const sid = activeSession ? activeSession.session_id : `web-${Date.now()}`;
-        const selectedVal = state.selectedAgentVal;
-        let engineCode = activeSession ? activeSession.engine_code : 'antigravity';
-        let agentName = '';
-
-        if (selectedVal === 'antigravity') engineCode = 'antigravity';
-        else if (selectedVal === 'claude') engineCode = 'claude';
-        else if (selectedVal === 'ceo-proxy') engineCode = 'ceo-proxy';
-        else if (selectedVal.startsWith('agent:')) {
-          engineCode = 'antigravity';
-          agentName = selectedVal.replace('agent:', '');
-        }
-
-        if (!state.conversationsById[sid]) {
-          state.conversationsById[sid] = {
-            session_id: sid,
-            messages: activeSession ? buildMessagesFromCompactTurns(activeSession) : [],
-          };
-        }
-        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
-        state.conversationsById[sid].messages.push({
-          id: `local-u-${Date.now()}`,
-          role: 'user',
-          text: text,
-          timestamp: nowStr,
-        });
-        renderActiveConversation(true);
-
-        const targetApiBase = (activeSession && activeSession.remote_url) ? activeSession.remote_url : LOCAL_API_BASE;
-        if (state.daemonOnline || (activeSession && activeSession.remote_url)) {
-          try {
-            const res = await fetch(`${targetApiBase}/api/chat/send`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                session_id: sid,
-                command: text,
-                engine: engineCode,
-                agent: agentName,
-                mode: 'accept-edits',
-                voice: state.selectedVoice || 'Thùy Dung',
-                speak: state.autoSpeak,
-              }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              if (data.conversation) {
-                state.conversationsById[sid] = data.conversation;
-              }
-              if (data.audio_url && state.autoSpeak) {
-                const audioUrl = data.audio_url.startsWith('http')
-                  ? data.audio_url
-                  : `${LOCAL_API_BASE}${data.audio_url}`;
-                new Audio(audioUrl).play().catch(() => {});
-              }
-              await fetchLiveSessions(false);
-              renderActiveConversation(true);
-              return;
-            }
-          } catch (_) {}
-        }
-
-        const replyText = answerFromSecondBrainOffline(text);
-        state.conversationsById[sid].messages.push({
-          id: `local-a-${Date.now()}`,
-          role: 'assistant',
-          text: replyText,
-          timestamp: nowStr,
-          model: 'Bộ Não Thứ Hai CEO',
-          hidden_count: 2,
-          tools: [],
-          links: [],
-        });
-        renderActiveConversation(true);
-        if (state.autoSpeak) speakVietnameseText(replyText);
-      }
-
-      async function createNewSession() {
-        const title = window.prompt('Nhập tên cuộc trò chuyện mới:', 'Chỉ đạo mới');
-        if (!title) return;
-        if (state.daemonOnline) {
-          try {
-            const res = await fetch(`${LOCAL_API_BASE}/api/chat/new`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ title: title, engine: 'antigravity', project: 'mang xa hoi' }),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              await fetchLiveSessions(false);
-              if (data.session_id) await selectSession(data.session_id, true);
-              el.composerTextarea.focus();
-              return;
-            }
-          } catch (_) {}
-        }
-
-        const newId = `web-${Date.now().toString(16)}`;
-        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
-        state.sessions.unshift({
-          session_id: newId,
-          short_id: newId.slice(0, 8),
-          engine: 'Antigravity 2.0',
-          engine_code: 'antigravity',
-          project: 'mang xa hoi',
-          title: title,
-          updated_str: nowStr,
-          filtered_count: 0,
-          turns: [],
-        });
-        state.conversationsById[newId] = {
-          session_id: newId,
-          messages: [
-            {
-              id: `init-${newId}`,
-              role: 'assistant',
-              text: `Đã mở cuộc trò chuyện: **${title}**. Sếp nhập lệnh hoặc bấm Mic ở dưới nhé.`,
-              timestamp: nowStr,
-              model: 'Bộ Não Thứ Hai',
-              hidden_count: 0,
-            },
-          ],
-        };
-        state.activeSessionId = newId;
-        renderSessionList();
-        renderActiveConversation(true);
-        el.composerTextarea.focus();
-      }
-
-      // Events
-      document.getElementById('btnToggleSidebar').addEventListener('click', () => {
-        if (window.innerWidth <= 900) {
-          el.leftSidebar.classList.toggle('mobile-open');
-        } else {
-          el.leftSidebar.classList.toggle('collapsed');
-        }
-      });
-
-      document.getElementById('btnRefreshSessions').addEventListener('click', () => fetchLiveSessions(false));
-      document.getElementById('btnNewSession').addEventListener('click', createNewSession);
-
-      el.sessionSearchInput.addEventListener('input', (e) => {
-        state.searchQuery = e.target.value || '';
-        renderSessionList();
-      });
-
-      document.querySelectorAll('[data-provider]').forEach((pill) => {
-        pill.addEventListener('click', () => {
-          document.querySelectorAll('[data-provider]').forEach((p) => p.classList.remove('active'));
-          pill.classList.add('active');
-          state.providerFilter = pill.getAttribute('data-provider') || 'all';
-          renderSessionList();
-        });
-      });
-
-      if (el.btnOpenOmniPopover) {
-        el.btnOpenOmniPopover.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const wasOpen = el.omniPopoverPanel.classList.contains('open');
-          closeAllPopovers();
-          if (!wasOpen) el.omniPopoverPanel.classList.add('open');
-        });
-      }
-
-      const btnCloseOmni = document.getElementById('btnCloseOmniPopover');
-      if (btnCloseOmni) {
-        btnCloseOmni.addEventListener('click', () => el.omniPopoverPanel.classList.remove('open'));
-      }
-
-      async function executeOmniAction(actionName, extraPayload = {}) {
-        closeAllPopovers();
-        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId) || state.sessions[0];
-        const sid = activeSession ? activeSession.session_id : `web-${Date.now()}`;
-        const nowStr = new Date().toLocaleTimeString('vi-VN', { hour12: false });
-
-        if (!state.conversationsById[sid]) {
-          state.conversationsById[sid] = {
-            session_id: sid,
-            messages: activeSession ? buildMessagesFromCompactTurns(activeSession) : [],
-          };
-        }
-
-        const actionLabelMap = {
-          'capture-screen': 'Chụp & Ghi hình trực tiếp màn hình máy tính (60fps)',
-          'record-and-capcut': 'Quay màn hình 60fps & tự động dựng Project CapCut PC',
-          'open-cdp-profile': `Mở trình duyệt Chrome Multi-CDP (${extraPayload.profile_key || '9222'})`,
-          'spawn-agent-session': `Mở phiên mới & giao việc cho ${extraPayload.agent || 'Agent'}: ${extraPayload.directive || ''}`,
-          'broadcast-all-agents': `Phát lệnh đồng loạt tới toàn bộ 6 Agent chủ lực: ${extraPayload.directive || ''}`,
-          'desktop-uia': `Điều khiển ứng dụng Windows UIA: ${extraPayload.app || extraPayload.keys || 'Quét cửa sổ'}`,
-          'run-command': `Chạy lệnh hệ thống trên máy tính: ${extraPayload.command || ''}`,
-        };
-
-        state.conversationsById[sid].messages.push({
-          id: `omni-u-${Date.now()}`,
-          role: 'user',
-          text: `[Cánh Tay Omni-Pilot] ${actionLabelMap[actionName] || actionName}`,
-          timestamp: nowStr,
-        });
-        renderActiveConversation(true);
-
-        if (state.daemonOnline) {
-          try {
-            const res = await fetch(`${LOCAL_API_BASE}/api/omni/execute`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(Object.assign({
-                action: actionName,
-                session_id: sid,
-                voice: state.selectedVoice || 'Thùy Dung',
-              }, extraPayload)),
-            });
-            if (res.ok) {
-              const data = await res.json();
-              const targetSid = data.spawned_session_id || data.session_id || sid;
-              if (data.conversation) {
-                state.conversationsById[targetSid] = data.conversation;
-              }
-              await fetchLiveSessions(false);
-              state.activeSessionId = targetSid;
-              renderSessionList();
-              renderActiveConversation(true);
-              if (data.audio_url && state.autoSpeak) {
-                const audioUrl = data.audio_url.startsWith('http')
-                  ? data.audio_url
-                  : `${LOCAL_API_BASE}${data.audio_url}`;
-                new Audio(audioUrl).play().catch(() => {});
-              }
-              return;
-            }
-          } catch (_) {}
-        }
-
-        const fallbackReply = `Báo cáo sếp: Cánh tay Omni-Pilot đã ghi nhận thao tác "${actionLabelMap[actionName] || actionName}" và điều phối toàn bộ máy tính thực thi tự động 100%.`;
-        state.conversationsById[sid].messages.push({
-          id: `omni-a-${Date.now()}`,
-          role: 'assistant',
-          text: fallbackReply,
-          summary_points: extractClientSummaryPoints(fallbackReply),
-          timestamp: nowStr,
-          model: 'Cánh Tay Omni-Pilot · Điều Khiển Toàn Máy Tính',
-          hidden_count: 1,
-          tools: [{ name: 'Omni-Pilot Engine', summary: actionName }],
-          links: [],
-        });
-        renderActiveConversation(true);
-        if (state.autoSpeak) speakVietnameseText(fallbackReply);
-      }
-
-      const btnSpawnAgentSession = document.getElementById('btnSpawnAgentSession');
-      if (btnSpawnAgentSession) {
-        btnSpawnAgentSession.addEventListener('click', () => {
-          const agSel = document.getElementById('selectOmniTargetAgent');
-          const dirInput = document.getElementById('inputOmniDirective');
-          const targetAg = agSel ? agSel.value : 'all-agents';
-          const dirVal = (dirInput && dirInput.value.trim()) || 'Kiểm tra tiến độ, nâng cấp sản phẩm 4K và báo cáo nghiệm thu cho Sếp';
-          const actType = targetAg === 'all-agents' ? 'broadcast-all-agents' : 'spawn-agent-session';
-          if (dirInput) dirInput.value = '';
-          executeOmniAction(actType, { agent: targetAg, directive: dirVal });
-        });
-      }
-
-      const btnOpenAntigravityIde = document.getElementById('btnOpenAntigravityIde');
-      if (btnOpenAntigravityIde) {
-        btnOpenAntigravityIde.addEventListener('click', () => {
-          executeOmniAction('spawn-agent-session', {
-            agent: 'antigravity',
-            directive: 'Mở cửa sổ Antigravity IDE trực tiếp trên màn hình máy tính và đồng bộ phiên làm việc',
-            open_ide_window: true,
-          });
-        });
-      }
-
-      document.querySelectorAll('[data-omni-act]').forEach((btn) => {
-        btn.addEventListener('click', () => {
-          const act = btn.getAttribute('data-omni-act') || 'capture-screen';
-          const cdpKey = btn.getAttribute('data-cdp-key') || '';
-          executeOmniAction(act, cdpKey ? { profile_key: cdpKey } : {});
-        });
-      });
-
-      const btnOmniDesktopApp = document.getElementById('btnOmniDesktopApp');
-      if (btnOmniDesktopApp) {
-        btnOmniDesktopApp.addEventListener('click', () => {
-          const sysInput = document.getElementById('inputOmniSystemCmd');
-          const val = (sysInput && sysInput.value.trim()) || 'Antigravity';
-          if (sysInput) sysInput.value = '';
-          executeOmniAction('desktop-uia', { app: val, uia_action: 'snapshot' });
-        });
-      }
-
-      const btnOmniRunCommand = document.getElementById('btnOmniRunCommand');
-      if (btnOmniRunCommand) {
-        btnOmniRunCommand.addEventListener('click', () => {
-          const sysInput = document.getElementById('inputOmniSystemCmd');
-          const val = (sysInput && sysInput.value.trim()) || 'Get-Process | Select-Object -First 8 Name, Id';
-          if (sysInput) sysInput.value = '';
-          executeOmniAction('run-command', { command: val });
-        });
-      }
-
-      el.btnAutoSpeak.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = el.voicePopoverPanel.classList.contains('open');
-        closeAllPopovers();
-        if (!wasOpen) el.voicePopoverPanel.classList.add('open');
-      });
-
-      const btnCloseVoice = document.getElementById('btnCloseVoicePopover');
-      if (btnCloseVoice) {
-        btnCloseVoice.addEventListener('click', () => el.voicePopoverPanel.classList.remove('open'));
-      }
-
-      const btnToggleAutoSpeakInside = document.getElementById('btnToggleAutoSpeakInside');
-      if (btnToggleAutoSpeakInside) {
-        btnToggleAutoSpeakInside.addEventListener('click', () => {
-          state.autoSpeak = !state.autoSpeak;
-          el.btnAutoSpeak.classList.toggle('active', state.autoSpeak);
-          btnToggleAutoSpeakInside.classList.toggle('selected', state.autoSpeak);
-          const lbl = document.getElementById('lblAutoSpeakStatus');
-          if (lbl) lbl.textContent = state.autoSpeak ? 'Tự động đọc báo cáo mới: Đang Bật' : 'Tự động đọc báo cáo mới: Đang Tắt';
-          el.btnAutoSpeak.setAttribute('data-popover', `Giọng VieNeu 48kHz: ${state.selectedVoice} (${state.autoSpeak ? 'Đang Bật' : 'Đang Tắt'})`);
-        });
-      }
-
-      document.querySelectorAll('[data-vieneu-voice]').forEach((opt) => {
-        opt.addEventListener('click', () => {
-          document.querySelectorAll('[data-vieneu-voice]').forEach((o) => o.classList.remove('selected'));
-          opt.classList.add('selected');
-          state.selectedVoice = opt.getAttribute('data-vieneu-voice') || 'Thùy Dung';
-          state.selectedSampleSlug = opt.getAttribute('data-sample-slug') || 'thuy_dung';
-          el.btnAutoSpeak.setAttribute('data-popover', `Giọng nói VieNeu 48kHz: ${state.selectedVoice}`);
-          speakVietnameseText('', state.selectedSampleSlug);
-        });
-      });
-
-      el.btnZeroCode.addEventListener('click', () => {
-        state.zeroCodeMode = !state.zeroCodeMode;
-        el.btnZeroCode.classList.toggle('active', state.zeroCodeMode);
-        el.btnZeroCode.setAttribute('data-popover', state.zeroCodeMode
-          ? 'Chế độ Sếp: Đang ẩn 100% Code'
-          : 'Chế độ Kỹ thuật: Đang hiện bước chạy');
-        renderActiveConversation(false);
-      });
-
-      function renderMachinesPopover() {
-        if (!el.machinesListBody) return;
-        const machines = state.linkedMachines || [];
-        if (el.machinesCountBadge) el.machinesCountBadge.textContent = String(machines.length);
-        el.machinesListBody.innerHTML = machines.map((m) => {
-          const isOnline = m.status === 'online';
-          const accText = Array.isArray(m.accounts) ? m.accounts.join(' · ') : String(m.accounts || '');
-          return `
-            <div class="machine-card">
-              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-                <span style="font-weight:700; color:var(--text-main);">${escapeHtml(m.name)}</span>
-                <span class="engine-mini ${isOnline ? '' : 'claude'}">${isOnline ? 'Trực tuyến' : 'Cầu nối Sẵn sàng'}</span>
-              </div>
-              <div style="color:var(--text-muted); font-size:11px;">Địa chỉ: ${escapeHtml(m.url)}</div>
-              <div style="color:var(--text-secondary); font-size:11.5px;">Tài khoản: ${escapeHtml(accText)}</div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      async function loadLinkedMachines() {
-        try {
-          const saved = localStorage.getItem('ceo_linked_machines');
-          if (saved) {
-            const parsed = JSON.parse(saved);
-            if (Array.isArray(parsed) && parsed.length) state.linkedMachines = parsed;
-          }
-        } catch (_) {}
-        if (state.daemonOnline) {
-          try {
-            const res = await fetch(`${LOCAL_API_BASE}/api/machines`, { cache: 'no-store' });
-            if (res.ok) {
-              const data = await res.json();
-              if (Array.isArray(data.machines) && data.machines.length) {
-                state.linkedMachines = data.machines;
-              }
-            }
-          } catch (_) {}
-        }
-        renderMachinesPopover();
-      }
-
-      if (el.btnOpenMachinesPopover) {
-        el.btnOpenMachinesPopover.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const wasOpen = el.machinesPopoverPanel.classList.contains('open');
-          closeAllPopovers();
-          if (!wasOpen) {
-            el.machinesPopoverPanel.classList.add('open');
-            loadLinkedMachines();
-          }
-        });
-      }
-
-      const btnCloseMachines = document.getElementById('btnCloseMachinesPopover');
-      if (btnCloseMachines) {
-        btnCloseMachines.addEventListener('click', () => {
-          el.machinesPopoverPanel.classList.remove('open');
-        });
-      }
-
-      const btnAddMachineNode = document.getElementById('btnAddMachineNode');
-      if (btnAddMachineNode) {
-        btnAddMachineNode.addEventListener('click', async () => {
-          const nameEl = document.getElementById('inputMachineName');
-          const urlEl = document.getElementById('inputMachineUrl');
-          const accEl = document.getElementById('inputMachineAccounts');
-          const nameVal = (nameEl.value || '').trim() || `Máy Liên Kết #${state.linkedMachines.length + 1}`;
-          const urlVal = (urlEl.value || '').trim() || 'http://192.168.1.25:8765';
-          const accVal = (accEl.value || '').trim() || 'Antigravity 2.0, Claude Code';
-          const newNode = {
-            id: `node-${Date.now()}`,
-            name: nameVal,
-            url: urlVal,
-            accounts: accVal.split(',').map((x) => x.trim()).filter(Boolean),
-            status: 'ready',
-          };
-          state.linkedMachines.push(newNode);
-          try {
-            localStorage.setItem('ceo_linked_machines', JSON.stringify(state.linkedMachines));
-          } catch (_) {}
-          if (state.daemonOnline) {
-            try {
-              await fetch(`${LOCAL_API_BASE}/api/machines`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ action: 'add', name: nameVal, url: urlVal, accounts: newNode.accounts }),
-              });
-            } catch (_) {}
-          }
-          nameEl.value = '';
-          urlEl.value = '';
-          accEl.value = '';
-          renderMachinesPopover();
-        });
-      }
-
-      const btnCopyMachineSetup = document.getElementById('btnCopyMachineSetup');
-      if (btnCopyMachineSetup) {
-        btnCopyMachineSetup.addEventListener('click', (e) => {
-          const setupCmd = `uv run --with edge-tts python -X utf8 voice_ceo_dashboard_server.py --port 8765`;
-          navigator.clipboard.writeText(setupCmd);
-          const b = e.currentTarget;
-          const old = b.textContent;
-          b.textContent = 'Đã chép lệnh!';
-          setTimeout(() => { b.textContent = old; }, 1400);
-        });
-      }
-
-      el.btnOpenHubPopover.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = el.hubPopoverPanel.classList.contains('open');
-        closeAllPopovers();
-        if (!wasOpen) {
-          el.hubPopoverPanel.classList.add('open');
-          renderHubPopover();
-        }
-      });
-
-      document.getElementById('btnCloseHubPopover').addEventListener('click', () => {
-        el.hubPopoverPanel.classList.remove('open');
-      });
-
-      document.querySelectorAll('[data-hubtab]').forEach((tab) => {
-        tab.addEventListener('click', () => {
-          document.querySelectorAll('[data-hubtab]').forEach((t) => t.classList.remove('active'));
-          tab.classList.add('active');
-          state.hubTab = tab.getAttribute('data-hubtab') || 'deliverables';
-          renderHubPopover();
-        });
-      });
-
-      document.getElementById('btnCopyCli').addEventListener('click', (e) => {
-        const activeSession = state.sessions.find((s) => s.session_id === state.activeSessionId);
-        if (!activeSession) return;
-        const cmd = activeSession.resume_command || `agy --conversation ${activeSession.session_id}`;
-        navigator.clipboard.writeText(cmd);
-        const btn = e.currentTarget;
-        btn.setAttribute('data-popover', 'Đã sao chép lệnh CLI!');
-        setTimeout(() => btn.setAttribute('data-popover', 'Sao chép lệnh mở trên Terminal'), 1400);
-      });
-
-      document.getElementById('btnThemeToggle').addEventListener('click', () => {
-        const html = document.documentElement;
-        html.setAttribute('data-theme', html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-      });
-
-      el.btnQuickCmd.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = el.quickCmdPopover.classList.contains('open');
-        closeAllPopovers();
-        if (!wasOpen) el.quickCmdPopover.classList.add('open');
-      });
-
-      el.btnAgentPicker.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const wasOpen = el.agentPickerPopover.classList.contains('open');
-        closeAllPopovers();
-        if (!wasOpen) el.agentPickerPopover.classList.add('open');
-      });
-
-      document.querySelectorAll('[data-close-pop]').forEach((btn) => {
-        btn.addEventListener('click', () => closeAllPopovers());
-      });
-
-      document.querySelectorAll('[data-quick-cmd]').forEach((opt) => {
-        opt.addEventListener('click', () => {
-          el.composerTextarea.value = opt.getAttribute('data-quick-cmd') || '';
-          closeAllPopovers();
-          el.composerTextarea.focus();
-        });
-      });
-
-      document.querySelectorAll('[data-agent-val]').forEach((opt) => {
-        opt.addEventListener('click', () => {
-          document.querySelectorAll('[data-agent-val]').forEach((o) => o.classList.remove('selected'));
-          opt.classList.add('selected');
-          state.selectedAgentVal = opt.getAttribute('data-agent-val') || 'auto';
-          const label = opt.querySelector('span').textContent;
-          el.btnAgentPicker.setAttribute('data-popover', `Người thực thi: ${label}`);
-          closeAllPopovers();
-        });
-      });
-
-      document.addEventListener('click', (e) => {
-        if (!e.target.closest('.popover-panel') && !e.target.closest('#btnQuickCmd') && !e.target.closest('#btnAgentPicker') && !e.target.closest('#btnOpenHubPopover') && !e.target.closest('#btnOpenMachinesPopover') && !e.target.closest('#btnAutoSpeak') && !e.target.closest('#btnOpenOmniPopover')) {
-          closeAllPopovers();
-        }
-      });
-
-      el.composerTextarea.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendChatCommand();
-        }
-      });
-
-      el.btnSendCommand.addEventListener('click', sendChatCommand);
-
-      el.btnAbortJob.addEventListener('click', async () => {
-        if (!state.daemonOnline || !state.activeSessionId) return;
-        try {
-          await fetch(`${LOCAL_API_BASE}/api/chat/abort`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ session_id: state.activeSessionId }),
-          });
-          await fetchLiveSessions(false);
-        } catch (_) {}
-      });
-
-      // Voice Speech-to-Text
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      let recognition = null;
-      if (SpeechRecognition) {
-        recognition = new SpeechRecognition();
-        recognition.lang = 'vi-VN';
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.onstart = () => {
-          state.isRecordingMic = true;
-          el.btnVoiceMic.classList.add('danger');
-          el.btnVoiceMic.setAttribute('data-popover', 'Đang nghe Sếp nói...');
-        };
-        recognition.onresult = (event) => {
-          el.composerTextarea.value = event.results[0][0].transcript;
-          sendChatCommand();
-        };
-        recognition.onend = () => {
-          state.isRecordingMic = false;
-          el.btnVoiceMic.classList.remove('danger');
-          el.btnVoiceMic.setAttribute('data-popover', 'Bấm để nói lệnh tiếng Việt');
-        };
-      }
-
-      el.btnVoiceMic.addEventListener('click', () => {
-        if (!recognition) {
-          alert('Trình duyệt không hỗ trợ Mic giọng nói. Sếp vui lòng mở bằng Chrome hoặc Edge.');
-          return;
-        }
-        if (state.isRecordingMic) recognition.stop();
-        else recognition.start();
-      });
-
-      document.getElementById('btnCloseModal').addEventListener('click', () => {
-        el.mediaModalBackdrop.classList.remove('open');
-        el.modalBodyContent.innerHTML = '';
-      });
-
-      el.mediaModalBackdrop.addEventListener('click', (e) => {
-        if (e.target === el.mediaModalBackdrop) {
-          el.mediaModalBackdrop.classList.remove('open');
-          el.modalBodyContent.innerHTML = '';
-        }
-      });
-
-      loadLinkedMachines();
-      loadBrainSnapshotMetadata();
-      fetchLiveSessions(true);
-      setInterval(() => fetchLiveSessions(false), 1500);
-    })();
-  </script>
+  <script src="app.js"></script>
 </body>
 </html>

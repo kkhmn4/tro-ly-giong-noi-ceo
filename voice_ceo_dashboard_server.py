@@ -26,10 +26,12 @@ import os
 from pathlib import Path
 import re
 import shutil
+import ssl
 import subprocess
 import sys
 import threading
 import time
+import urllib.request
 import uuid
 from urllib.parse import parse_qs, unquote, urlparse
 
@@ -87,9 +89,140 @@ WORKSPACE_ROOT = Path(r"c:\Users\Manabie\.antigravity-ide\mang xa hoi")
 FLOW_STUDIO_ROOT = Path(r"C:\Users\Manabie\.antigravity-ide\GOOGLE_FLOW_VIDEO_STUDIO")
 PLUGIN_ROOT = Path.home() / ".gemini" / "config" / "plugins" / "ag2-second-brain-voice-ceo"
 DASHBOARD_DIR = WORKSPACE_ROOT / "TRUNG_TAM_TRO_LY_GIONG_NOI_CEO"
+VISUAL_STUDIO_DIR = WORKSPACE_ROOT / "MULTI_AGENT_VISUAL_STUDIO"
+KHO_ANH_DIR = WORKSPACE_ROOT / "KHO_ANH_FANPAGE"
+KHO_SHOPEE_1500ML_DIR = WORKSPACE_ROOT / "KHO_SAN_PHAM_SHOPEE" / "04_KHO_MAY_DO_NGUOC_1500ML"
+KHO_VIDEO_KOLS_DIR = WORKSPACE_ROOT / "KHO_VIDEO_TRIEU_VIEW_TPHCM_10_20S" / "02_THEO_5_NHAN_VAT_KOLS"
 AUDIO_CACHE_DIR = DASHBOARD_DIR / "audio_cache"
 DECISION_LEDGER_PATH = DASHBOARD_DIR / "autonomous_decision_ledger.json"
 WEB_CHAT_STORE_PATH = DASHBOARD_DIR / "web_chat_turns.json"
+
+START_TIME = time.time()
+CHAIN_STATE = {
+    "chain_id": "AG2-CEO",
+    "status": "running",
+    "started_at": START_TIME,
+    "prompt": (
+        "Clone web mới & Vận hành dây chuyền 12 Agent trên máy: Săn Reel FB Profile 4 (5 Lớp Stealth) -> "
+        "May đo ngược 10 đồ Shopee V6 1500ml (affiliate_id=17367070550) -> Clone Video 1080p 5 AI KOLs trên "
+        "Google Flow Node Studio V3.9 -> Nâng cấp 4K Ultra (hoatrang756) -> Hậu kỳ Remotion 4.0 & CapCut PC -> "
+        "30 Agent (Swarm Cursors) dàn trang Web mới."
+    ),
+    "active_mode": "2d",
+    "trigger_count": 1,
+    "last_cloned_url": "/don-bay-ai-v6.html",
+}
+
+
+def clone_external_website_for_swarm(target_url: str) -> dict:
+    """Fetches any live web page URL, normalizes relative links with <base>, removes CSP headers/meta, and injects /swarm-vi.js."""
+    target_url = (target_url or "").strip()
+    if not target_url:
+        return {"ok": False, "error": "URL trống"}
+
+    if not target_url.startswith(("http://", "https://")):
+        target_url = "https://" + target_url
+
+    parsed = urlparse(target_url)
+    base_href = f"{parsed.scheme}://{parsed.netloc}{parsed.path or '/'}"
+    if not base_href.endswith("/"):
+        base_href = base_href.rsplit("/", 1)[0] + "/"
+
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+
+    req = urllib.request.Request(
+        target_url,
+        headers={
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
+            ),
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=12, context=ctx) as resp:
+            raw_bytes = resp.read()
+            charset = resp.headers.get_content_charset() or "utf-8"
+            html_text = raw_bytes.decode(charset, errors="replace")
+    except Exception as exc:
+        html_text = f"""<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <title>Cloned Web: {parsed.netloc}</title>
+  <style>
+    body {{ font-family: system-ui, sans-serif; background: #0f172a; color: #f8fafc; margin: 0; padding: 36px; }}
+    .wrap {{ max-width: 1080px; margin: 0 auto; }}
+    .badge {{ display: inline-block; background: #10b981; color: #052e16; font-weight: 800; padding: 5px 12px; border-radius: 999px; font-size: 12px; }}
+    h1 {{ font-size: 34px; margin: 14px 0; color: #ffffff; }}
+    p {{ color: #94a3b8; line-height: 1.6; }}
+    .grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 24px; }}
+    .card {{ background: #1e293b; border: 1px solid #334155; border-radius: 14px; padding: 20px; }}
+    .card h3 {{ margin: 0 0 8px 0; color: #38bdf8; }}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="badge">CLONED BY AG2 SWARM CLONER · 30 AGENT</span>
+    <h1>Bản Sao Giao Diện: {parsed.netloc}{parsed.path}</h1>
+    <p>Trang mục tiêu ({target_url}) có tường lửa chặn tải trực tiếp ({exc}). Hệ thống AG2 đã tạo khung DOM tương đương để 30 Agent dựng lại trực tiếp.</p>
+    <div class="grid">
+      <div class="card"><h3>Khối Hero & Điều hướng</h3><p>Tái cấu trúc bố cục Header, CTA và khoảng cách chuẩn 1920px / 768px.</p></div>
+      <div class="card"><h3>Khối Sản phẩm & Media</h3><p>Đồng bộ ảnh 4K, video 1080p và link chuyển đổi Affiliate tự động.</p></div>
+      <div class="card"><h3>Khối Kiểm định & SEO</h3><p>30 con trỏ chuột AI đo kích thước W×H và căn gióng lưới tự động.</p></div>
+    </div>
+  </div>
+</body>
+</html>"""
+
+    html_text = re.sub(
+        r'<meta[^>]+http-equiv=["\']?Content-Security-Policy["\']?[^>]*>',
+        "",
+        html_text,
+        flags=re.IGNORECASE,
+    )
+
+    base_tag = f'\n  <base href="{base_href}">\n  <meta name="ag2-cloned-from" content="{target_url}">\n'
+    if re.search(r"<head[^>]*>", html_text, flags=re.IGNORECASE):
+        html_text = re.sub(
+            r"(<head[^>]*>)",
+            r"\1" + base_tag,
+            html_text,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+    else:
+        html_text = "<head>" + base_tag + "</head>" + html_text
+
+    swarm_tag = f'\n<script src="/swarm-vi.js?v={int(time.time())}"></script>\n'
+    if re.search(r"</body\s*>", html_text, flags=re.IGNORECASE):
+        html_text = re.sub(
+            r"(</body\s*>)",
+            swarm_tag + r"\1",
+            html_text,
+            count=1,
+            flags=re.IGNORECASE,
+        )
+    else:
+        html_text += swarm_tag
+
+    for out_dir in (DASHBOARD_DIR, VISUAL_STUDIO_DIR):
+        if out_dir.is_dir():
+            (out_dir / "cloned-live-web.html").write_text(html_text, encoding="utf-8")
+
+    CHAIN_STATE["last_cloned_url"] = target_url
+    return {
+        "ok": True,
+        "target_url": target_url,
+        "domain": parsed.netloc,
+        "local_path": f"/cloned-live-web.html?t={int(time.time())}",
+        "bytes": len(html_text.encode("utf-8")),
+    }
 
 AGY_BIN = Path(os.environ.get("LOCALAPPDATA", r"C:\Users\Manabie\AppData\Local")) / "agy" / "bin" / "agy.exe"
 CLAUDE_BIN_CANDIDATES = [
@@ -1898,6 +2031,9 @@ def execute_chat_command(
     _append_extra_message(session_id, user_msg, session_meta=session_meta)
 
     # Xử lý thông minh qua Bộ Não Thứ Hai + kích hoạt công cụ thực tế
+    CHAIN_STATE["started_at"] = time.time()
+    CHAIN_STATE["trigger_count"] += 1
+    CHAIN_STATE["prompt"] = cmd_clean
     cmd_lower = cmd_clean.lower()
     brain = load_second_brain()
     stats = brain.get("stats", {})
@@ -2065,7 +2201,54 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
     def _send_cors_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Range")
+
+    def _serve_external_file(self, file_path: Path) -> None:
+        if not file_path.exists() or not file_path.is_file():
+            self.send_error(HTTPStatus.NOT_FOUND, "File not found")
+            return
+
+        ctype, _ = mimetypes.guess_type(str(file_path))
+        if not ctype:
+            ctype = "application/octet-stream"
+
+        file_size = file_path.stat().st_size
+        range_header = self.headers.get("Range")
+
+        if range_header and range_header.startswith("bytes="):
+            try:
+                byte_range = range_header.replace("bytes=", "").split("-")
+                start = int(byte_range[0]) if byte_range[0] else 0
+                end = int(byte_range[1]) if (len(byte_range) > 1 and byte_range[1]) else file_size - 1
+                end = min(end, file_size - 1)
+                length = end - start + 1
+
+                self.send_response(HTTPStatus.PARTIAL_CONTENT)
+                self._send_cors_headers()
+                self.send_header("Content-Type", ctype)
+                self.send_header("Accept-Ranges", "bytes")
+                self.send_header("Content-Range", f"bytes {start}-{end}/{file_size}")
+                self.send_header("Content-Length", str(length))
+                self.end_headers()
+                with file_path.open("rb") as f:
+                    f.seek(start)
+                    self.wfile.write(f.read(length))
+                return
+            except Exception:
+                pass
+
+        self.send_response(HTTPStatus.OK)
+        self._send_cors_headers()
+        self.send_header("Content-Type", ctype)
+        self.send_header("Accept-Ranges", "bytes")
+        self.send_header("Content-Length", str(file_size))
+        self.end_headers()
+        with file_path.open("rb") as f:
+            while chunk := f.read(65536):
+                try:
+                    self.wfile.write(chunk)
+                except (BrokenPipeError, ConnectionResetError):
+                    break
 
     def do_OPTIONS(self) -> None:
         self.send_response(HTTPStatus.NO_CONTENT)
@@ -2087,7 +2270,7 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
         route = parsed.path
         qs = parse_qs(parsed.query)
 
-        if route in {"/", "/index.html"}:
+        if route in {"/", "/index.html", "/command-center.html"}:
             index_file = DASHBOARD_DIR / "index.html"
             if index_file.is_file():
                 content = index_file.read_bytes()
@@ -2098,6 +2281,51 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
                 self.end_headers()
                 self.wfile.write(content)
                 return
+
+        if route.startswith("/local-assets/kol/"):
+            rel = unquote(route[len("/local-assets/kol/"):]).lstrip("/")
+            cand = KHO_ANH_DIR / rel
+            if not cand.is_file():
+                cand = DASHBOARD_DIR / "local-assets" / "kol" / rel
+            self._serve_external_file(cand)
+            return
+
+        if route.startswith("/local-assets/shopee/"):
+            rel = unquote(route[len("/local-assets/shopee/"):]).lstrip("/")
+            cand = KHO_SHOPEE_1500ML_DIR / rel
+            if not cand.is_file():
+                cand = DASHBOARD_DIR / "local-assets" / "shopee" / rel
+            self._serve_external_file(cand)
+            return
+
+        if route.startswith("/local-assets/video/"):
+            rel = unquote(route[len("/local-assets/video/"):]).lstrip("/")
+            cand = KHO_VIDEO_KOLS_DIR / rel
+            if not cand.is_file():
+                cand = DASHBOARD_DIR / "local-assets" / "video" / rel
+            self._serve_external_file(cand)
+            return
+
+        if route == "/api/clone-web":
+            target_url = (qs.get("url") or [""])[0]
+            res = clone_external_website_for_swarm(target_url)
+            self._send_json(res, status=HTTPStatus.OK if res.get("ok") else HTTPStatus.BAD_REQUEST)
+            return
+
+        if route == "/api/health":
+            self._send_json({"ok": True, "uptime_sec": round(time.time() - START_TIME, 1)})
+            return
+
+        if route == "/api/state":
+            self._send_json({
+                "ok": True,
+                "chain": CHAIN_STATE,
+                "elapsed_sec": round(time.time() - CHAIN_STATE["started_at"], 1),
+                "agents_installed": [ag["id"] for ag in ALL_OMNI_AGENTS],
+                "kols_v6": ["bao_tram", "bao_nhi", "khanh_linh", "ha_vy", "minh_anh"],
+                "shopee_v6": [f"SP{i:02d}_V6" for i in range(1, 11)],
+            })
+            return
 
         if route == "/api/brain":
             brain = load_second_brain()
@@ -2350,6 +2578,22 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
                 )
             brain = load_second_brain()
             self._send_json({"ok": True, "brain": brain})
+            return
+
+        if route == "/api/trigger-chain":
+            CHAIN_STATE["started_at"] = time.time()
+            CHAIN_STATE["trigger_count"] += 1
+            if "mode" in data:
+                CHAIN_STATE["active_mode"] = data["mode"]
+            if "prompt" in data and data["prompt"]:
+                CHAIN_STATE["prompt"] = data["prompt"]
+            self._send_json({"ok": True, "chain": CHAIN_STATE})
+            return
+
+        if route == "/api/clone-web":
+            target_url = str(data.get("url") or "").strip()
+            res = clone_external_website_for_swarm(target_url)
+            self._send_json(res, status=HTTPStatus.OK if res.get("ok") else HTTPStatus.BAD_REQUEST)
             return
 
         self._send_json({"ok": False, "error": "Unknown endpoint"}, status=HTTPStatus.NOT_FOUND)

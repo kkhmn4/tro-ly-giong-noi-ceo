@@ -1,0 +1,342 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trung Tâm Điều Phối 12 Agent Tự Hành Antigravity 2.0 & Bộ Não Thứ Hai CEO</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: #090d16;
+      color: #f8fafc;
+      line-height: 1.5;
+      padding-bottom: 110px;
+    }
+    .page-shell {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 28px;
+    }
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background-color: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      margin-bottom: 24px;
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ag-badge {
+      background-color: #10b981;
+      color: #052e16;
+      font-weight: 900;
+      font-size: 13px;
+      padding: 7px 11px;
+      border-radius: 9px;
+    }
+    .header-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+    }
+    .header-sub {
+      font-size: 11.5px;
+      color: #9ca3af;
+    }
+    .cdp-pills {
+      display: flex;
+      gap: 8px;
+    }
+    .cdp-pill {
+      background-color: #1e293b;
+      border: 1px solid #334155;
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+    }
+    .ceo-hero {
+      background-color: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 18px;
+      padding: 26px;
+      margin-bottom: 26px;
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+    .ceo-kicker {
+      display: inline-block;
+      background-color: #064e3b;
+      color: #34d399;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 11px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+    .ceo-h1 {
+      font-size: 28px;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.24;
+      margin-bottom: 10px;
+    }
+    .ceo-p {
+      font-size: 13px;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+    .ceo-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .ceo-stat {
+      background-color: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .ceo-stat-v {
+      font-size: 17px;
+      font-weight: 900;
+      color: #4ade80;
+    }
+    .ceo-stat-l {
+      font-size: 10.5px;
+      color: #9ca3af;
+    }
+    .ceo-rules-box {
+      background-color: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .ceo-rules-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #fbbf24;
+      margin-bottom: 10px;
+    }
+    .ceo-rule-item {
+      font-size: 11.5px;
+      color: #cbd5e1;
+      margin-bottom: 7px;
+      padding-left: 10px;
+      border-left: 2px solid #10b981;
+    }
+    .sec-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .sec-sub {
+      font-size: 12.5px;
+      color: #9ca3af;
+      margin-bottom: 16px;
+    }
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .agent-card {
+      background-color: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .agent-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .agent-code {
+      background-color: #1e293b;
+      color: #38bdf8;
+      font-size: 10.5px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+    .agent-status {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #4ade80;
+    }
+    .agent-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .agent-desc {
+      font-size: 11.5px;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+    .agent-cli {
+      background-color: #090d16;
+      border: 1px solid #1e293b;
+      border-radius: 7px;
+      padding: 6px 9px;
+      font-family: monospace;
+      font-size: 10.5px;
+      color: #f472b6;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="header-bar">
+      <div class="header-left">
+        <div class="ag-badge">AG2 · 12 AGENTS</div>
+        <div>
+          <div class="header-title">Hệ Sinh Thái Multi-Agent Trên Máy Chủ Nhân (Antigravity 2.0 × Đòn Bẩy AI V6)</div>
+          <div class="header-sub">Điều phối tự động bởi Bộ Não Thứ Hai CEO (SECOND_BRAIN_KNOWLEDGE_GRAPH.json) · $0.00 Cloud API</div>
+        </div>
+      </div>
+      <div class="cdp-pills">
+        <span class="cdp-pill cp-1">Profile 1: aichampionhk1</span>
+        <span class="cdp-pill cp-2">Profile 4: khakhunghiep (FB Stealth)</span>
+        <span class="cdp-pill cp-3">Profile 5: hoatrang756 (4K Ultra)</span>
+        <span class="cdp-pill cp-4">Profile 14: gubling.store</span>
+      </div>
+    </header>
+
+    <section class="ceo-hero">
+      <div>
+        <span class="ceo-kicker">TỔNG CHỈ HUY · CEO-SECOND-BRAIN-PROXY</span>
+        <h1 class="ceo-h1">Bộ Não Thứ Hai & Tổng Quản Lý Giọng Nói Tiếng Việt (Zero-Code Executive)</h1>
+        <p class="ceo-p">
+          Chắt lọc từ 322 phiên làm việc và 774 chỉ đạo thực chiến trong transcript.jsonl. Tự động trả lời quyết định kỹ thuật thay Chủ nhân, giao việc song song cho 12 Subagent, tự chạy kiểm định (verify.py + ffprobe + Vision QC 10/10) và báo cáo bằng giọng nữ miền Nam.
+        </p>
+        <div class="ceo-stats">
+          <div class="ceo-stat cs-1"><div class="ceo-stat-v">322 Phiên</div><div class="ceo-stat-l">Lịch Sử Bộ Não Thứ Hai</div></div>
+          <div class="ceo-stat cs-2"><div class="ceo-stat-v">774 Luật</div><div class="ceo-stat-l">Chỉ Đạo Đã Chắt Lọc</div></div>
+          <div class="ceo-stat cs-3"><div class="ceo-stat-v">12 Agent</div><div class="ceo-stat-l">Chuyên Gia Chạy Song Song</div></div>
+          <div class="ceo-stat cs-4"><div class="ceo-stat-v">$0.00 API</div><div class="ceo-stat-l">100% Tài Nguyên Trên Máy</div></div>
+        </div>
+      </div>
+      <div class="ceo-rules-box">
+        <div class="ceo-rules-title">⚡ 5 Luật Tối Thượng Đang Thực Thi Tự Động</div>
+        <div class="ceo-rule-item cr-1">1. Zero-Code Executive: Chỉ bàn giao Sản phẩm cuối, Ảnh 4K, Video 1080p & Link chạy thật.</div>
+        <div class="ceo-rule-item cr-2">2. Khóa Giải Phẫu V6: 105-55-102cm (~1500ml), cơ bụng số 11, chân kiếm 115cm, xóa sao Gemini ✦.</div>
+        <div class="ceo-rule-item cr-3">3. Chống Checkpoint FB 5 Lớp: 100% link FB qua Profile 4, chuột Bézier, cấm .fill(), Max 1 Page/24h.</div>
+        <div class="ceo-rule-item cr-4">4. Clone Video 8.000s (192 frames @ 24fps): Khóa tốc độ người thật 1.0x & chia đoạn theo scdet.</div>
+        <div class="ceo-rule-item cr-5">5. Tự Kiểm Thử 10/10: Chạy verify.py, ffprobe và chụp kiểm tra đa độ phân giải trước khi báo cáo.</div>
+      </div>
+    </section>
+
+    <div class="sec-title">Danh Bạ 12 Subagent & Quy Trình Phối Hợp Thực Chiến Trên Máy</div>
+    <div class="sec-sub">Toàn bộ Agent dưới đây đã được cài đặt sẵn trong ~/.gemini/config/plugins/ và kết nối trực tiếp với cổng 23984</div>
+
+    <section class="agent-grid">
+      <article class="agent-card ag-1">
+        <div class="agent-top"><span class="agent-code">AG2-CEO · TỔNG CHỈ HUY</span><span class="agent-status">● Đang điều phối</span></div>
+        <h3 class="agent-name">ceo-second-brain-proxy</h3>
+        <p class="agent-desc">Đọc SECOND_BRAIN_KNOWLEDGE_GRAPH.json, tự quyết định thông số kỹ thuật cho các Agent thợ và phát báo cáo giọng nói edge-tts.</p>
+        <div class="agent-cli">voice_ceo_dashboard_server.py (Port 8765)</div>
+      </article>
+
+      <article class="agent-card ag-2">
+        <div class="agent-top"><span class="agent-code">AG2-101 · FB STEALTH 5 LỚP</span><span class="agent-status">● Đang săn Reel</span></div>
+        <h3 class="agent-name">fb-viral-scout</h3>
+        <p class="agent-desc">Lướt Facebook giả lập người thật trên Profile 4 (khakhunghiep@gmail.com), tải MP4 H.264 + Caption + Top Comments & chống Checkpoint.</p>
+        <div class="agent-cli">modules/fb_human_stealth_engine.py</div>
+      </article>
+
+      <article class="agent-card ag-3">
+        <div class="agent-top"><span class="agent-code">AG2-102 · MAY ĐO NGƯỢC V3.0</span><span class="agent-status">● Đã khóa 1500ml</span></div>
+        <h3 class="agent-name">reverse-tailor-outfit-engine</h3>
+        <p class="agent-desc">Cắt _HEADLESS.jpg 20% và may đo ngược 10 đồ Shopee V6 (SP01..SP10_V6) lên khuôn 105-55-102cm khe chữ Y sâu & đáy cầu 3D chữ W.</p>
+        <div class="agent-cli">04_KHO_MAY_DO_NGUOC_1500ML/</div>
+      </article>
+
+      <article class="agent-card ag-4">
+        <div class="agent-top"><span class="agent-code">AG2-201 · GOOGLE FLOW V3.9</span><span class="agent-status">● 11 Node Active</span></div>
+        <h3 class="agent-name">flow-video-director</h3>
+        <p class="agent-desc">Điều khiển đồ thị 11-15 Node trên Google Flow, đấu dây ['taoanh-2', 'taoanh-1'], xuất Video Clone 8.0s 1.0x & Bộ 4 Ảnh 2K FB.</p>
+        <div class="agent-cli">FLOW_TOOLS/bo_chay/chay_node_graph.py</div>
+      </article>
+
+      <article class="agent-card ag-5">
+        <div class="agent-top"><span class="agent-code">AG2-202 · AI STUDIO ULTRA 4K</span><span class="agent-status">● 1,000 hình/ngày</span></div>
+        <h3 class="agent-name">aistudio-4k-upscaler</h3>
+        <p class="agent-desc">Điều khiển Profile 5 (hoatrang756@gmail.com) chạy Nano Banana 2.1 4K (3072×5504) & Gemini Omni 1.1 Flash 4K (2160×3840).</p>
+        <div class="agent-cli">aistudio_ultra_4k_cli.py</div>
+      </article>
+
+      <article class="agent-card ag-6">
+        <div class="agent-top"><span class="agent-code">AG2-203 · SITCOM & ACTING</span><span class="agent-status">● 18 Micro-Beats</span></div>
+        <h3 class="agent-name">sitcom-storyboard-director</h3>
+        <p class="agent-desc">Biên dịch ý tưởng Sitcom thành 18 phân đoạn nhỏ (1.5s-2.0s) kèm Character Sheet diễn xuất Stanislavski (48 FACS + 104 Poses).</p>
+        <div class="agent-cli">compile_sitcom_storyboard.py</div>
+      </article>
+
+      <article class="agent-card ag-7">
+        <div class="agent-top"><span class="agent-code">AG2-204 · OPENMONTAGE $0</span><span class="agent-status">● 12 Pipelines</span></div>
+        <h3 class="agent-name">openmontage-director</h3>
+        <p class="agent-desc">Điều phối 12 Pipelines × 7 Stages với chi phí $0.00 API: Phụ đề TikTok Karaoke .ass, Clip Factory 9:16, Free B-Roll & giọng Leda.</p>
+        <div class="agent-cli">modules/step15_openmontage_free_studio.py</div>
+      </article>
+
+      <article class="agent-card ag-8">
+        <div class="agent-top"><span class="agent-code">AG2-205 · REMOTION & CAPCUT</span><span class="agent-status">● 6 Style Pro</span></div>
+        <h3 class="agent-name">viral-video-editor</h3>
+        <p class="agent-desc">Hậu kỳ tự động 6 phong cách edit.fibus.vn, Douyin Beat-Sync, 3D LUT .cube, SFX Auto-Ducking -14dB & xuất Project CapCut PC.</p>
+        <div class="agent-cli">modules/step14_auto_video_editor_pro.py</div>
+      </article>
+
+      <article class="agent-card ag-9">
+        <div class="agent-top"><span class="agent-code">AG2-206 · WINDOWS OMNI-PILOT</span><span class="agent-status">● Multi-CDP 9222</span></div>
+        <h3 class="agent-name">windows-omni-pilot</h3>
+        <p class="agent-desc">Điều khiển Desktop Windows (UIA + agent-desktop), quay màn hình 60fps kèm tọa độ chuột Auto Zoom-in CapCut & đăng Google Classroom.</p>
+        <div class="agent-cli">windows_omni_pilot_cli.py</div>
+      </article>
+
+      <article class="agent-card ag-10">
+        <div class="agent-top"><span class="agent-code">AG2-103 · LUXURY HUNTER</span><span class="agent-status">● Kho 3 Trụ Cột</span></div>
+        <h3 class="agent-name">luxury-allure-asset-hunter</h3>
+        <p class="agent-desc">Săn ảnh độ phân giải cao House of CB, Mugler, Dion Lee, Jacquemus, LSOUL, phụ kiện Hermès/Chanel & bối cảnh sang trọng không người.</p>
+        <div class="agent-cli">hunt_luxury_assets.py</div>
+      </article>
+
+      <article class="agent-card ag-11">
+        <div class="agent-top"><span class="agent-code">AG2-301 · SWARM WEB CLONER</span><span class="agent-status">● 30 Agent Active</span></div>
+        <h3 class="agent-name">swarm-cursors-vi-engine</h3>
+        <p class="agent-desc">Hút DOM của bất kỳ trang web mục tiêu nào về máy và điều khiển 30 con trỏ chuột AI vẽ thước đỏ, kéo khung W×H dựng lại từng lớp.</p>
+        <div class="agent-cli">MULTI_AGENT_VISUAL_STUDIO/swarm-vi.js</div>
+      </article>
+
+      <article class="agent-card ag-12">
+        <div class="agent-top"><span class="agent-code">AG2-302 · AUDITOR & GDRIVE</span><span class="agent-status">● QC 10/10 Pass</span></div>
+        <h3 class="agent-name">agent-auditor & gws-sync</h3>
+        <p class="agent-desc">Kiểm định tự động cấu trúc Plugin/Agent, xóa sao Gemini ✦, kiểm tra ffprobe 1.0x và đồng bộ 2 chiều qua Google Drive khi có lệnh.</p>
+        <div class="agent-cli">.agents/scripts/verify.py</div>
+      </article>
+    </section>
+  </div>
+
+  <script>
+    if (!window.location.search.includes("noswarm=1")) {
+      var s = document.createElement("script");
+      s.src = "/swarm-vi.js?v=" + Date.now();
+      document.body.appendChild(s);
+    }
+  </script>
+</body>
+</html>

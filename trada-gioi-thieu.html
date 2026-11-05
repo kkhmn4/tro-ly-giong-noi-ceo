@@ -1,0 +1,287 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Giới thiệu — Trà Đá AI (/gioi-thieu) | Mẫu câu lệnh, Quy trình Agent &amp; 8 Video Mẫu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      background: #232326;
+      color: #f4f4f6;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.5;
+    }
+    .navbar {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 18px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+    }
+    .logo {
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+    }
+    .logo span { color: #fb923c; }
+    .nav-links {
+      display: flex;
+      gap: 22px;
+      font-size: 13px;
+      color: #d4d4d8;
+      font-weight: 500;
+    }
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 38px 28px 90px;
+    }
+    .eyebrow {
+      display: inline-block;
+      font-size: 11.5px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: #fb923c;
+      background: rgba(251, 146, 60, 0.12);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin-bottom: 14px;
+    }
+    .hero-h1 {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1.18;
+      letter-spacing: -0.02em;
+      color: #ffffff;
+      max-width: 820px;
+      margin-bottom: 16px;
+    }
+    .hero-sub {
+      font-size: 15.5px;
+      line-height: 1.62;
+      color: #d4d4d8;
+      max-width: 720px;
+      margin-bottom: 28px;
+    }
+    .metrics-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 38px;
+    }
+    .metric-card {
+      background: #2c2c31;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .metric-card strong {
+      display: block;
+      font-size: 22px;
+      font-weight: 800;
+      color: #4ade80;
+    }
+    .metric-card span {
+      font-size: 12px;
+      color: #a1a1aa;
+    }
+    .sec-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+    }
+    .sec-sub {
+      font-size: 13.5px;
+      color: #a1a1aa;
+      margin-bottom: 18px;
+    }
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 42px;
+    }
+    .vcard {
+      background: #2c2c31;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+    }
+    .vcard-badge {
+      display: inline-block;
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 8px;
+    }
+    .vcard strong {
+      display: block;
+      font-size: 14.5px;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .vcard span {
+      font-size: 12px;
+      color: #a1a1aa;
+    }
+    .news-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .news-card {
+      background: #2c2c31;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .news-src {
+      font-size: 11px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 6px;
+    }
+    .news-card h4 {
+      font-size: 14.5px;
+      color: #f8fafc;
+      margin-bottom: 6px;
+    }
+    .news-card p {
+      font-size: 12.5px;
+      color: #a1a1aa;
+    }
+  </style>
+</head>
+<body>
+  <header class="navbar">
+    <div class="logo">trà đá ai<span>*</span></div>
+    <nav class="nav-links">
+      <span>Về Trà Đá AI</span>
+      <span>8 Video Mẫu HyperFrames</span>
+      <span>Tin AI Đã Kiểm Chứng</span>
+      <span>Văn Phòng AI 3D</span>
+      <span>Câu Hỏi Thường Gặp</span>
+    </nav>
+  </header>
+
+  <main class="container">
+    <span class="eyebrow">VỀ TRÀ ĐÁ AI · HỒ SƠ DOANH NGHIỆP (/GIOI-THIEU)</span>
+    <h1 class="hero-h1">
+      Chép một mẫu vào chat AI, có ngay bản nháp trả lời khách, email khó nói hay kịch bản video
+    </h1>
+    <p class="hero-sub">
+      Trà Đá AI là nơi mình chia sẻ các mẫu câu lệnh, quy trình agent và tài liệu thực hành cứ lấy dùng, miễn phí. Cần dựng hệ thống riêng thì mới cần nhắn mình. Ai cũng có thể sử dụng ngay cho công việc hằng ngày.
+    </p>
+
+    <div class="metrics-row">
+      <div class="metric-card">
+        <strong>14 Agent</strong>
+        <span>Phối hợp 2D · 3D · Node Graph</span>
+      </div>
+      <div class="metric-card">
+        <strong>8 Video Mẫu</strong>
+        <span>Tự dựng bằng HyperFrames 60fps</span>
+      </div>
+      <div class="metric-card">
+        <strong>30 Chuột AI</strong>
+        <span>Cùng dàn trang web trực tiếp</span>
+      </div>
+      <div class="metric-card">
+        <strong>100% Có Nguồn</strong>
+        <span>Kiểm chứng qua lib/news-items.json</span>
+      </div>
+    </div>
+
+    <h2 class="sec-title">🎬 8 Loại Video Mẫu Dựng Tự Động Bằng HyperFrames &amp; Trà Đá Editor</h2>
+    <p class="sec-sub">Được đồng bộ trực tiếp từ lib/profile-videos.ts và kiểm tra khung hình tự động</p>
+
+    <div class="videos-grid">
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#f472b6">TD-201 · 16:9</span>
+        <strong>1. Hỏi rõ, được việc</strong>
+        <span>Kinetic Typography · 15 giây · 1920x1080</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#fb923c">TD-202 · 16:9</span>
+        <strong>2. Biểu đồ động</strong>
+        <span>Motion Data Chart · So sánh hiệu suất</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#a3e635">TD-203 · 16:9</span>
+        <strong>3. Sơ đồ agent</strong>
+        <span>Nhiều agent chia việc thế nào · 15 giây</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#34d399">TD-204 · 16:9</span>
+        <strong>4. Quảng cáo sản phẩm</strong>
+        <span>Một ly cà phê — Cà phê Góc Nhỏ</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#38bdf8">TD-205 · 16:9</span>
+        <strong>5. Demo giao diện</strong>
+        <span>Từ mẫu câu lệnh đến ba cách trả lời khách</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#a78bfa">TD-206 · 9:16</span>
+        <strong>6. Clip giải thích tin</strong>
+        <span>Website từ chối huấn luyện AI · 1080x1920</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#fb7185">TD-207 · 16:9</span>
+        <strong>7. Dựng lại đoạn cắt</strong>
+        <span>Highlight quy trình xưởng sấy Hana Nguyên</span>
+      </div>
+      <div class="vcard">
+        <span class="vcard-badge" style="color:#facc15">TD-208 · 16:9</span>
+        <strong>8. Nhiều chuột điều khiển</strong>
+        <span>30 Agent đồng bộ dàn bố cục trang web</span>
+      </div>
+    </div>
+
+    <h2 class="sec-title">📰 Điểm Tin AI Đã Kiểm Chứng Nguồn (lib/news-items.json)</h2>
+    <p class="sec-sub">Nguyên tắc: Có nguồn thì ghi nguồn. Chưa kiểm được thì nói chưa kiểm.</p>
+
+    <div class="news-grid">
+      <div class="news-card">
+        <div class="news-src">✓ W3C &amp; IETF AI Preferences · Đã xác minh</div>
+        <h4>Một cách chung để website từ chối huấn luyện AI</h4>
+        <p>Chuẩn giao thức mới giúp các chủ sở hữu website khai báo rõ ràng quyền thu thập dữ liệu huấn luyện mô hình ngôn ngữ lớn.</p>
+      </div>
+      <div class="news-card">
+        <div class="news-src">✓ HyperFrames HTML-to-MP4 · Đã xác minh</div>
+        <h4>Dựng video 60fps bằng mã HTML/CSS và Sub-Agent</h4>
+        <p>Mỗi Editor Agent phụ trách một cửa sổ độc lập, tự thêm dấu chữ thương hiệu, căn chỉnh timeline và xuất MP4 đồng loạt.</p>
+      </div>
+      <div class="news-card">
+        <div class="news-src">✓ Swarm Rebuild DOM Engine · Đã xác minh</div>
+        <h4>30 con trỏ chuột AI cùng vẽ lại giao diện theo thời gian thực</h4>
+        <p>Phân rã hơn 240 lớp giao diện thành đồ thị phụ thuộc, kéo thước canh lề đỏ và gõ từng dòng tiêu đề trực tiếp trên màn hình.</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get("live") !== "1") {
+        var s = document.createElement("script");
+        s.src = "/swarm-vi.js";
+        document.body.appendChild(s);
+      }
+    })();
+  </script>
+</body>
+</html>
