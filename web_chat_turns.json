@@ -341,6 +341,49 @@
           }
         ]
       }
+    ],
+    "767818c0-3798-49c3-80fa-7b35016cb652": [
+      {
+        "id": "web-u-1793862567489",
+        "role": "user",
+        "text": "Điều khiển máy kiểm tra tiến trình đang chạy và chụp màn hình trực tiếp cho tao",
+        "timestamp": "14:09:27",
+        "engine": "Antigravity 2.0",
+        "model": "Chủ nhân (Sếp)",
+        "hidden_count": 0,
+        "tools": [],
+        "code_blocks": [],
+        "links": []
+      },
+      {
+        "id": "omni-a-1793862584995",
+        "role": "assistant",
+        "reply_to": "[Omni-Pilot: run-command]",
+        "text": "Báo cáo sếp: Cánh tay Omni-Pilot đã thực thi trực tiếp lệnh hệ thống trên máy tính của sếp. Kết quả tóm tắt: Name Id ---- -- Antigravity 17888 language_server 5904 AICoworker 3708 Antigravity 12176 audiodg 17824 Antigravity 8164 Antigravity 21316 chrome 18108",
+        "summary_points": [
+          "Báo cáo sếp: Cánh tay Omni-Pilot đã thực thi trực tiếp lệnh hệ thống trên máy tính của sếp. Kết quả tóm tắt: Name Id ---- -- Antigravity 178"
+        ],
+        "audio_url": "/audio_cache/vieneu_sample_thuy_dung.wav",
+        "live_screenshot_url": "/assets/deliverables/omni_run_command_1793862584046.jpg",
+        "timestamp": "14:09:44",
+        "engine": "Antigravity 2.0",
+        "model": "Cánh Tay Omni-Pilot · Điều Khiển Toàn Máy Tính",
+        "hidden_count": 1,
+        "tools": [
+          {
+            "name": "PowerShell System Control",
+            "summary": "Exit code 0: Get-Process | Sort-Object CPU -Descending | Sele"
+          }
+        ],
+        "code_blocks": [],
+        "links": [
+          {
+            "label": "Xem Màn Hình Máy Tính Trực Tiếp",
+            "url": "/assets/deliverables/omni_run_command_1793862584046.jpg",
+            "kind": "image"
+          }
+        ]
+      }
     ]
   }
 }

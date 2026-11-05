@@ -2453,7 +2453,10 @@
             new Audio(audioUrl).play().catch(() => {});
           }
           await fetchLiveSessions(false);
-          renderActiveConversation(true);
+          if (data.conversation) {
+            chatState.conversationsById[sid] = data.conversation;
+          }
+          renderActiveConversation(true, true);
           return;
         }
       } catch (_) {}
@@ -2633,8 +2636,11 @@
           }
           await fetchLiveSessions(false);
           chatState.activeSessionId = targetSid;
-          renderSessionList();
-          renderActiveConversation(true);
+          if (data.conversation) {
+            chatState.conversationsById[targetSid] = data.conversation;
+          }
+          renderSessionList(true);
+          renderActiveConversation(true, true);
           if (data.audio_url && chatState.autoSpeak) {
             const audioUrl = data.audio_url.startsWith("http")
               ? data.audio_url

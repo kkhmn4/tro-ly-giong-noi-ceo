@@ -1859,12 +1859,12 @@ def execute_omni_pilot_action(
             except Exception:
                 pass
 
-        if omni is not None:
+        if omni is not None and not captured_ok:
             try:
                 rec_res = omni.record_screen_60fps(
                     output_mp4=mp4_path,
                     cursor_json=events_path,
-                    duration_sec=2.5,
+                    duration_sec=2.0,
                     fps=60,
                     topic_title="Omni-Pilot Live Computer & Antigravity Control",
                 )
@@ -2131,7 +2131,14 @@ def execute_chat_command(
         {"label": "Mở GitHub", "url": "https://github.com/kkhmn4/tro-ly-giong-noi-ceo", "kind": "web"},
     ]
 
-    if any(k in cmd_lower for k in ["chụp màn hình", "xem màn hình", "capture screen", "màn hình máy tính", "/screen"]):
+    if any(k in cmd_lower for k in ["điều khiển máy", "mở phần mềm", "mở ứng dụng", "bấm phím", "chạy lệnh hệ thống", "kiểm tra tiến trình", "tiến trình đang chạy"]):
+        return execute_omni_pilot_action(
+            "run-command",
+            {"command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 8 Name, Id"},
+            session_id=session_id,
+            voice=voice,
+        )
+    elif any(k in cmd_lower for k in ["chụp màn hình", "xem màn hình", "capture screen", "màn hình máy tính", "/screen"]):
         return execute_omni_pilot_action("capture-screen", {}, session_id=session_id, voice=voice)
     elif any(k in cmd_lower for k in ["dựng capcut", "quay 60fps", "quay màn hình", "xuất capcut", "/capcut"]):
         return execute_omni_pilot_action("record-and-capcut", {"topic": cmd_clean}, session_id=session_id, voice=voice)
@@ -2148,13 +2155,6 @@ def execute_chat_command(
         return execute_omni_pilot_action("open-cdp-profile", {"profile_key": pkey}, session_id=session_id, voice=voice)
     elif any(k in cmd_lower for k in ["tất cả agent", "toàn bộ agent", "đồng loạt agent", "broadcast", "/broadcast"]):
         return execute_omni_pilot_action("broadcast-all-agents", {"directive": cmd_clean}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["điều khiển máy", "mở phần mềm", "mở ứng dụng", "bấm phím", "chạy lệnh hệ thống", "kiểm tra tiến trình", "tiến trình đang chạy"]):
-        return execute_omni_pilot_action(
-            "run-command",
-            {"command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 8 Name, Id"},
-            session_id=session_id,
-            voice=voice,
-        )
     elif any(k in cmd_lower for k in ["/verify", "nghiệm thu", "verify", "kiểm định"]):
         verify_script = WORKSPACE_ROOT / ".agents" / "scripts" / "verify.py"
         verify_ok = True
