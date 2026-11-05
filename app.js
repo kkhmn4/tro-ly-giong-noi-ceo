@@ -9,7 +9,10 @@
   const IS_LOCALHOST =
     window.location.hostname === "127.0.0.1" ||
     window.location.hostname === "localhost";
-  const LOCAL_API_BASE = IS_LOCALHOST ? "" : "http://127.0.0.1:8765";
+  let LOCAL_API_BASE = IS_LOCALHOST ? "" : "http://127.0.0.1:8765";
+  const LOCAL_CANDIDATE_BASES = IS_LOCALHOST
+    ? [""]
+    : ["http://127.0.0.1:8765", "http://127.0.0.1:23984"];
 
   // --------------------------------------------------------------------------
   // 1. UNIFIED STATE (5-Mode Visual Studio + Live Chat + Omni-Pilot + VieNeu)
@@ -35,6 +38,10 @@
     searchQuery: "",
     zeroCodeMode: true,
     autoSpeak: true,
+    autoFollowLive: false,
+    lastTopSessionMtime: 0,
+    lastRenderedListSig: "",
+    lastRenderedConvSig: "",
     selectedVoice: "Thùy Dung",
     selectedSampleSlug: "thuy_dung",
     selectedAgentVal: "auto",
@@ -1532,10 +1539,46 @@
     });
   }
 
-  function renderSessionList() {
+  function updateFilterPillCounts() {
+    const allCount = chatState.sessions.length;
+    const agCount = chatState.sessions.filter(
+      (s) => s.engine_code !== "claude"
+    ).length;
+    const clCount = chatState.sessions.filter(
+      (s) => s.engine_code === "claude"
+    ).length;
+    const pillAll = document.getElementById("pillFilterAll");
+    const pillAg = document.getElementById("pillFilterAg");
+    const pillCl = document.getElementById("pillFilterCl");
+    if (pillAll) pillAll.textContent = `Tất cả (${allCount})`;
+    if (pillAg) pillAg.textContent = `Antigravity (${agCount})`;
+    if (pillCl) pillCl.textContent = `Claude (${clCount})`;
+  }
+
+  function renderSessionList(forceRender = false) {
     const listEl = document.getElementById("sessionListContainer");
     if (!listEl) return;
+    updateFilterPillCounts();
     const filtered = getFilteredSessions();
+    const listSig =
+      `${chatState.activeSessionId}|${chatState.providerFilter}|${chatState.searchQuery}|` +
+      filtered
+        .map(
+          (s) =>
+            `${s.session_id}:${s.live_signature || s.updated_str || ""}:${
+              s.is_working ? 1 : 0
+            }`
+        )
+        .join(",");
+    if (
+      !forceRender &&
+      chatState.lastRenderedListSig === listSig &&
+      listEl.children.length > 0
+    ) {
+      return;
+    }
+    chatState.lastRenderedListSig = listSig;
+
     if (!filtered.length) {
       listEl.innerHTML = `<div style="padding:18px 8px; text-align:center; color:#94a3b8; font-size:12px;">Không có phiên chat nào khớp bộ lọc.</div>`;
       return;
@@ -1545,6 +1588,7 @@
       .map((s) => {
         const isActive = s.session_id === chatState.activeSessionId;
         const isClaude = s.engine_code === "claude";
+        const isWorking = Boolean(s.is_working);
         const shortTime = String(s.updated_str || "")
           .split("·")[0]
           .trim()
@@ -1571,6 +1615,9 @@
             ? String(lastTurn.ai).replace(/\s+/g, " ").slice(0, 88)
             : "") ||
           `Dự án ${s.project || "mang xa hoi"} · Sẵn sàng nhận lệnh`;
+        const liveBadgeHtml = isWorking
+          ? `<span style="color:#4ade80;font-weight:800;font-size:10px;">● ĐANG CHẠY</span>`
+          : `<span class="session-item-time">${escapeHtml(shortTime)}</span>`;
         return `
         <button
           type="button"
@@ -1588,7 +1635,7 @@
                 (s.short_id || "").slice(0, 4)
               )}</span>
             </div>
-            <span class="session-item-time">${escapeHtml(shortTime)}</span>
+            ${liveBadgeHtml}
           </div>
           <div class="session-item-title">${escapeHtml(rawTitle)}</div>
           <div class="session-item-summary">${escapeHtml(summaryPreview)}</div>
@@ -1642,7 +1689,7 @@
     return msgs;
   }
 
-  function renderActiveConversation(autoScroll = false) {
+  function renderActiveConversation(autoScroll = false, forceRender = false) {
     const activeSession =
       chatState.sessions.find(
         (s) => s.session_id === chatState.activeSessionId
@@ -1666,7 +1713,7 @@
     if (titleEl) {
       const rawTitle = activeSession.title || "Trợ Lý Điều Hành AI";
       titleEl.textContent =
-        rawTitle.length > 68 ? rawTitle.slice(0, 68) + "..." : rawTitle;
+        rawTitle.length > 62 ? rawTitle.slice(0, 62) + "..." : rawTitle;
     }
 
     const convObj = chatState.conversationsById[activeSession.session_id];
@@ -1675,20 +1722,70 @@
         ? convObj.messages
         : buildMessagesFromCompactTurns(activeSession);
 
+    const isWorking = Boolean(
+      (convObj && convObj.is_working) || activeSession.is_working
+    );
     const abortBtn = document.getElementById("btnAbortJob");
     if (abortBtn) {
-      const isWorking = Boolean(
-        (convObj && convObj.is_working) || activeSession.is_working
-      );
       abortBtn.style.display = isWorking ? "inline-flex" : "none";
+    }
+
+    const liveStatusBadge = document.getElementById("activeLiveStatusBadge");
+    if (liveStatusBadge) {
+      if (isWorking) {
+        liveStatusBadge.textContent = `⚡ ${
+          (convObj && convObj.status_label) ||
+          activeSession.status_label ||
+          "Đang thực thi trên máy..."
+        }`;
+        liveStatusBadge.style.background = "rgba(250,204,21,0.18)";
+        liveStatusBadge.style.borderColor = "rgba(250,204,21,0.55)";
+        liveStatusBadge.style.color = "#fde047";
+      } else if (chatState.daemonOnline) {
+        liveStatusBadge.textContent = `🟢 LIVE 1.2s · #${(
+          activeSession.short_id || ""
+        ).slice(0, 6)}`;
+        liveStatusBadge.style.background = "rgba(74,222,128,0.16)";
+        liveStatusBadge.style.borderColor = "rgba(74,222,128,0.45)";
+        liveStatusBadge.style.color = "#86efac";
+      } else {
+        liveStatusBadge.textContent = `☁️ Cloud Sync · #${(
+          activeSession.short_id || ""
+        ).slice(0, 6)}`;
+        liveStatusBadge.style.background = "rgba(56,189,248,0.16)";
+        liveStatusBadge.style.borderColor = "rgba(56,189,248,0.45)";
+        liveStatusBadge.style.color = "#7dd3fc";
+      }
     }
 
     const streamEl = document.getElementById("chatStreamSection");
     const listBox = document.getElementById("messagesListBox");
     if (!streamEl || !listBox) return;
 
+    const lastMsg = messages.length ? messages[messages.length - 1] : null;
+    const convSig = [
+      activeSession.session_id,
+      messages.length,
+      lastMsg ? lastMsg.id : "",
+      lastMsg ? (lastMsg.text || "").length : 0,
+      lastMsg && lastMsg.live_screenshot_url ? lastMsg.live_screenshot_url : "",
+      isWorking ? "1" : "0",
+      chatState.zeroCodeMode ? "1" : "0",
+      (convObj && convObj.live_signature) || activeSession.live_signature || "",
+    ].join("|");
+
+    if (
+      !forceRender &&
+      !autoScroll &&
+      chatState.lastRenderedConvSig === convSig &&
+      listBox.children.length > 0
+    ) {
+      return;
+    }
+    chatState.lastRenderedConvSig = convSig;
+
     const wasNearBottom =
-      streamEl.scrollHeight - streamEl.scrollTop - streamEl.clientHeight < 160;
+      streamEl.scrollHeight - streamEl.scrollTop - streamEl.clientHeight < 180;
 
     listBox.innerHTML = messages
       .map((m, idx) => {
@@ -1750,6 +1847,41 @@
               </div>`
             : "";
 
+        // Detect live screenshot or image deliverable in message
+        let screenshotUrl = m.live_screenshot_url || "";
+        if (!screenshotUrl && linksList.length) {
+          const imgLink = linksList.find(
+            (u) =>
+              typeof u === "object" &&
+              u &&
+              (u.kind === "image" ||
+                /\.(jpg|jpeg|png|webp)$/i.test(String(u.url || "")))
+          );
+          if (imgLink && imgLink.url) screenshotUrl = imgLink.url;
+        }
+        if (screenshotUrl) {
+          if (screenshotUrl.startsWith("/") && LOCAL_API_BASE) {
+            screenshotUrl = `${LOCAL_API_BASE}${screenshotUrl}`;
+          }
+        }
+        const liveShotHtml = screenshotUrl
+          ? `<div style="margin-top:8px; border-radius:10px; overflow:hidden; border:1px solid rgba(74,222,128,0.4); background:#090d16;">
+              <div style="display:flex; align-items:center; justify-content:space-between; padding:5px 10px; background:rgba(74,222,128,0.12); font-size:11px; font-weight:700; color:#86efac;">
+                <span>🖥️ Ảnh Chụp Trực Tiếp Màn Hình Máy Tính</span>
+                <a href="${escapeHtml(
+                  screenshotUrl
+                )}" target="_blank" rel="noopener" style="color:#7dd3fc; text-decoration:none;">Phóng to ↗</a>
+              </div>
+              <a href="${escapeHtml(
+                screenshotUrl
+              )}" target="_blank" rel="noopener" style="display:block;">
+                <img src="${escapeHtml(
+                  screenshotUrl
+                )}" alt="Màn hình máy tính trực tiếp" style="width:100%; max-height:240px; object-fit:cover; display:block;" loading="lazy" />
+              </a>
+            </div>`
+          : "";
+
         const linksHtml = linksList.length
           ? `<div class="link-pills">${linksList
               .map((u) => {
@@ -1761,7 +1893,7 @@
                     : urlStr.replace(/^https?:\/\//, "").slice(0, 32);
                 if (!urlStr) return "";
                 const finalHref =
-                  urlStr.startsWith("/media") && LOCAL_API_BASE
+                  urlStr.startsWith("/") && LOCAL_API_BASE
                     ? `${LOCAL_API_BASE}${urlStr}`
                     : urlStr;
                 return `
@@ -1820,6 +1952,7 @@
             <div class="ai-text-body">
               ${renderFormattedMarkdown(m.text)}
             </div>
+            ${liveShotHtml}
             ${linksHtml}
           </article>
         </div>
@@ -1868,7 +2001,7 @@
   async function selectSession(sessionId, scrollToEnd = true) {
     if (!sessionId) return;
     chatState.activeSessionId = sessionId;
-    renderSessionList();
+    renderSessionList(true);
 
     const targetSess = chatState.sessions.find(
       (s) => s.session_id === sessionId
@@ -1892,18 +2025,30 @@
         }
       } catch (_) {}
     }
-    renderActiveConversation(scrollToEnd);
+    renderActiveConversation(scrollToEnd, true);
   }
   window.selectSession = selectSession;
+
+  async function probeLiveDaemonSessions() {
+    for (const base of LOCAL_CANDIDATE_BASES) {
+      try {
+        const res = await fetch(`${base}/api/live-chats?limit=52`, {
+          cache: "no-store",
+        });
+        if (res.ok) {
+          LOCAL_API_BASE = base;
+          return await res.json();
+        }
+      } catch (_) {}
+    }
+    return null;
+  }
 
   async function fetchLiveSessions(isInitial = false) {
     const liveDot = document.getElementById("liveDot");
     try {
-      const res = await fetch(`${LOCAL_API_BASE}/api/live-chats`, {
-        cache: "no-store",
-      });
-      if (res.ok) {
-        const data = await res.json();
+      const data = await probeLiveDaemonSessions();
+      if (data && data.ok) {
         chatState.daemonOnline = true;
         let mergedSessions = data.sessions || [];
         if (
@@ -1940,13 +2085,42 @@
         if (liveDot) {
           liveDot.setAttribute(
             "data-popover",
-            `Trực tuyến 1.5s/lần · Cập nhật ${data.updated_at || ""}`
+            `🟢 Đồng bộ trực tiếp 1.2s/lần từ Máy tính · ${data.updated_at || ""}`
           );
         }
 
-        if (!chatState.activeSessionId && chatState.sessions.length > 0) {
-          chatState.activeSessionId = chatState.sessions[0].session_id;
+        const hdrLbl = document.getElementById("sidebarSessionsHeaderLabel");
+        if (hdrLbl && data.total_ag_on_disk) {
+          const totalAll =
+            Number(data.total_ag_on_disk || 298) +
+            Number(data.total_claude_on_disk || 41);
+          hdrLbl.textContent = `💬 Lịch Sử ${totalAll}+ Phiên (Live)`;
         }
+
+        // Tự động chuyển sang phiên chat vừa có hoạt động mới trên máy nếu bật Bám Live
+        if (chatState.sessions.length > 0) {
+          const topSess = chatState.sessions[0];
+          const topMtime = Number(topSess.mtime || 0);
+          if (!chatState.activeSessionId) {
+            chatState.activeSessionId = topSess.session_id;
+            chatState.lastTopSessionMtime = topMtime;
+          } else if (
+            !isInitial &&
+            chatState.autoFollowLive &&
+            topMtime > chatState.lastTopSessionMtime + 0.5
+          ) {
+            chatState.lastTopSessionMtime = topMtime;
+            if (
+              chatState.providerFilter === "all" ||
+              topSess.engine_code === chatState.providerFilter
+            ) {
+              chatState.activeSessionId = topSess.session_id;
+            }
+          } else if (topMtime > chatState.lastTopSessionMtime) {
+            chatState.lastTopSessionMtime = topMtime;
+          }
+        }
+
         if (chatState.activeSessionId) {
           const activeObj = chatState.sessions.find(
             (s) => s.session_id === chatState.activeSessionId
@@ -1989,10 +2163,11 @@
             }
           }
         }
-        renderSessionList();
-        renderActiveConversation(isInitial);
+        renderSessionList(isInitial);
+        renderActiveConversation(isInitial, isInitial);
         return;
       }
+      chatState.daemonOnline = false;
     } catch (_) {
       chatState.daemonOnline = false;
     }
@@ -2596,9 +2771,31 @@
       });
     }
 
+    const btnAutoFollow = document.getElementById("btnAutoFollowLive");
+    if (btnAutoFollow) {
+      btnAutoFollow.addEventListener("click", () => {
+        chatState.autoFollowLive = !chatState.autoFollowLive;
+        btnAutoFollow.style.background = chatState.autoFollowLive
+          ? "rgba(134,239,172,0.18)"
+          : "rgba(148,163,184,0.12)";
+        btnAutoFollow.style.color = chatState.autoFollowLive
+          ? "#86efac"
+          : "#94a3b8";
+        btnAutoFollow.textContent = chatState.autoFollowLive
+          ? "⚡ Bám Live"
+          : "⏸ Đang ghim";
+        btnAutoFollow.setAttribute(
+          "data-popover",
+          chatState.autoFollowLive
+            ? "Đang bật: Tự động chuyển sang phiên chat vừa có tin nhắn mới trên máy"
+            : "Đang tắt: Giữ cố định phiên chat đang xem"
+        );
+      });
+    }
+
     const btnRefresh = document.getElementById("btnRefreshSessions");
     if (btnRefresh)
-      btnRefresh.addEventListener("click", () => fetchLiveSessions(false));
+      btnRefresh.addEventListener("click", () => fetchLiveSessions(true));
 
     const btnNew = document.getElementById("btnNewSession");
     if (btnNew) btnNew.addEventListener("click", createNewSession);
@@ -2607,7 +2804,7 @@
     if (searchInput) {
       searchInput.addEventListener("input", (e) => {
         chatState.searchQuery = e.target.value || "";
-        renderSessionList();
+        renderSessionList(true);
       });
     }
 
@@ -2618,7 +2815,13 @@
           .forEach((p) => p.classList.remove("active"));
         pill.classList.add("active");
         chatState.providerFilter = pill.getAttribute("data-provider") || "all";
-        renderSessionList();
+        const filtered = getFilteredSessions();
+        if (filtered.length > 0) {
+          selectSession(filtered[0].session_id, true);
+        } else {
+          renderSessionList(true);
+          renderActiveConversation(false, true);
+        }
       });
     });
 
@@ -3112,10 +3315,10 @@
     window.addEventListener("resize", resize3DOfficeCanvas);
     requestAnimationFrame(tickLoop);
 
-    // Start Live 1.5s Sync of 339+ Antigravity & Claude Sessions
+    // Start Live 1.2s Sync of 339+ Antigravity & Claude Sessions
     loadLinkedMachines();
     loadBrainSnapshotMetadata();
     fetchLiveSessions(true);
-    setInterval(() => fetchLiveSessions(false), 1500);
+    setInterval(() => fetchLiveSessions(false), 1200);
   });
 })();

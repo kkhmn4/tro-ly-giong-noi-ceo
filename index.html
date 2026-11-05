@@ -248,19 +248,20 @@
         <!-- Left Sidebar: Live 339+ Antigravity & Claude Sessions -->
         <aside id="leftSidebar" class="cmd2d-sidebar">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-            <span style="font-size:12px; font-weight:800; color:#86efac;">💬 Lịch Sử 339+ Phiên Chat</span>
+            <span id="sidebarSessionsHeaderLabel" style="font-size:12px; font-weight:800; color:#86efac;">💬 Lịch Sử 339+ Phiên Chat</span>
             <div style="display:flex; gap:4px;">
-              <button type="button" id="btnRefreshSessions" class="mini-icon-btn" data-popover="Làm mới phiên chat" data-popover-pos="bottom">↻</button>
+              <button type="button" id="btnAutoFollowLive" class="mini-icon-btn" style="background:rgba(148,163,184,0.12); color:#cbd5e1; font-weight:700; width:auto; padding:0 6px; font-size:10px;" data-popover="Bấm để bật Tự động nhảy sang phiên chat vừa có tin nhắn mới trên máy" data-popover-pos="bottom">📌 Đang ghim</button>
+              <button type="button" id="btnRefreshSessions" class="mini-icon-btn" data-popover="Làm mới phiên chat ngay lập tức" data-popover-pos="bottom">↻</button>
               <button type="button" id="btnNewSession" class="mini-icon-btn" style="background:rgba(134,239,172,0.18); color:#86efac; font-weight:800;" data-popover="Mở phiên trò chuyện mới" data-popover-pos="bottom">＋</button>
             </div>
           </div>
 
-          <input type="search" id="sessionSearchInput" class="cmd2d-search" placeholder="Tìm phiên chat, dự án, mã #ID..." />
+          <input type="search" id="sessionSearchInput" class="cmd2d-search" placeholder="Tìm phiên Antigravity, Claude, mã #ID..." />
 
           <div class="filter-pills" role="tablist">
-            <button type="button" class="filter-pill active" data-provider="all">Tất cả</button>
-            <button type="button" class="filter-pill" data-provider="antigravity">Antigravity</button>
-            <button type="button" class="filter-pill" data-provider="claude">Claude</button>
+            <button type="button" class="filter-pill active" data-provider="all" id="pillFilterAll">Tất cả</button>
+            <button type="button" class="filter-pill" data-provider="antigravity" id="pillFilterAg">Antigravity</button>
+            <button type="button" class="filter-pill" data-provider="claude" id="pillFilterCl">Claude</button>
           </div>
 
           <div id="sessionListContainer" class="session-list" aria-label="Danh sách cuộc trò chuyện"></div>
@@ -284,8 +285,10 @@
               <div style="display:flex; align-items:center; gap:8px; min-width:0;">
                 <span id="activeEngineSymbol" class="engine-mini" data-popover="Đang chạy trên Antigravity 2.0" data-popover-pos="bottom">AG</span>
                 <h1 id="activeSessionTitle">Trợ Lý Điều Hành AI · 12 Agent &amp; Cánh Tay Máy Tính</h1>
+                <span id="activeLiveStatusBadge" style="font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(74,222,128,0.16); border:1px solid rgba(74,222,128,0.45); color:#86efac; white-space:nowrap; flex-shrink:0;">🟢 LIVE 1.2s</span>
               </div>
               <div style="display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap;">
+                <button type="button" class="replay-pill" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="executeOmniAction('capture-screen', {})">📸 Chụp Màn Hình Máy</button>
                 <button type="button" id="btnToggle2DCanvas" class="replay-pill" onclick="toggle2DCanvasStage()">Thu gọn Canvas ▴</button>
                 <button type="button" class="replay-pill" onclick="switchStudioMode('3d')">3D Văn phòng ↗</button>
                 <button type="button" class="replay-pill" onclick="switchStudioMode('editor')">6 Editor ↗</button>

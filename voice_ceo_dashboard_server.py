@@ -810,6 +810,8 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
     summary_pts = extract_executive_summary_points(latest_ai_text, max_points=2)
     summary_line = summary_pts[0] if summary_pts else (latest_ai_text.splitlines()[0][:110] if latest_ai_text else "Sẵn sàng nhận lệnh trực tiếp")
     topic_badge = classify_session_topic(title, summary_line)
+    last_msg_id = messages[-1].get("id", "") if messages else ""
+    live_sig = f"{mtime:.3f}:{len(messages)}:{int(is_working)}:{current_tool}:{last_msg_id}"
 
     return {
         "session_id": session_id,
@@ -828,6 +830,8 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
         "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
         "seconds_ago": sec_ago,
         "is_working": is_working,
+        "current_tool": current_tool,
+        "live_signature": live_sig,
         "status_label": (
             f"Đang chạy: {current_tool}"
             if is_working and current_tool
@@ -836,21 +840,25 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
         "filtered_count": max(filtered_count, 4),
         "message_count": len(messages),
         "resume_command": f'agy --conversation {session_id}',
-        "turns": turns_compact[-6:],
+        "turns": turns_compact[-8:],
         "messages": messages,
     }
 
 
 def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_500_000) -> dict:
-    """Đọc toàn bộ luồng chat qua lại (User <-> Assistant) của một phiên Claude Code."""
+    """Đọc toàn bộ luồng chat qua lại (User <-> Assistant) của một phiên Claude Code (gồm cả Main & Subagent)."""
     try:
         mtime = fpath.stat().st_mtime
     except OSError:
         mtime = time.time()
 
+    is_subagent = "subagents" in [p.lower() for p in fpath.parts]
+    raw_proj_dir = fpath.parent.parent.parent.name if is_subagent else fpath.parent.name
     proj_folder = (
-        fpath.parent.name.replace("c--Users-Manabie--antigravity-ide-", "")
+        raw_proj_dir.replace("c--Users-Manabie--antigravity-ide-", "")
         .replace("C--Users-Manabie--antigravity-ide-", "")
+        .replace("C--Users-Manabie", "Manabie Workspace")
+        .replace("c--Users-Manabie", "Manabie Workspace")
         .replace("-", " ")
         .strip()
         or "Claude Project"
@@ -1000,8 +1008,10 @@ def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_5
     latest_ai_text = ai_msgs[-1] if ai_msgs else ""
     summary_pts = extract_executive_summary_points(latest_ai_text, max_points=2)
     summary_line = summary_pts[0] if summary_pts else (latest_ai_text.splitlines()[0][:110] if latest_ai_text else f"Dự án {proj_folder}")
-    title = ai_title or (last_user_text[:64] if last_user_text else f"{proj_folder} ({session_id[:8]})")
+    title = ai_title or (last_user_text[:68] if last_user_text else f"{proj_folder} ({session_id[:8]})")
     topic_badge = classify_session_topic(title, summary_line)
+    last_msg_id = messages[-1].get("id", "") if messages else ""
+    live_sig = f"{mtime:.3f}:{len(messages)}:{int(is_working)}:{last_msg_id}"
     return {
         "session_id": session_id,
         "short_id": session_id[:8],
@@ -1013,24 +1023,26 @@ def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_5
         "summary_points": summary_pts,
         "machine_id": "local-primary",
         "machine_name": f"Máy Chính ({HOSTNAME_LABEL})",
-        "account_tag": "Claude Extension",
+        "account_tag": "Claude Subagent" if is_subagent else "Claude Code CLI/Ext",
         "title": title,
         "mtime": mtime,
         "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
         "seconds_ago": sec_ago,
         "is_working": is_working,
+        "live_signature": live_sig,
         "status_label": "Đang chạy trực tiếp" if is_working else "Đã đồng bộ",
         "filtered_count": max(filtered_count, 6),
         "message_count": len(messages),
         "resume_command": f'claude --resume {session_id}',
-        "turns": turns_compact[-6:],
+        "turns": turns_compact[-8:],
         "messages": messages,
     }
 
 
-def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
-    """Quét danh sách các phiên chat trên cả Antigravity 2.0, Claude Code và Phiên tạo mới từ Web."""
-    sessions: list[dict] = []
+def scan_live_chats_realtime(limit_sessions: int = 52) -> dict:
+    """Quét danh sách các phiên chat theo thời gian thực trên cả Antigravity 2.0, Claude Code và Phiên tạo mới từ Web."""
+    ag_sessions: list[dict] = []
+    cl_sessions: list[dict] = []
     file_map: dict[str, tuple[str, Path]] = {}
 
     # 1. Phiên tạo trực tiếp từ Web
@@ -1060,60 +1072,75 @@ def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
         s_pts = extract_executive_summary_points(last_ai, max_points=2)
         s_line = s_pts[0] if s_pts else (last_ai[:100] if last_ai else "Phiên chỉ đạo trực tiếp trên Web")
         c_title = cs.get("title", last_u[:64])
-        sessions.append({
+        eng_code = cs.get("engine_code", "antigravity")
+        last_msg_id = msgs[-1].get("id", "") if msgs else ""
+        sess_obj = {
             "session_id": sid,
             "short_id": sid[:8],
             "engine": cs.get("engine", "Antigravity 2.0"),
-            "engine_code": cs.get("engine_code", "antigravity"),
+            "engine_code": eng_code,
             "project": cs.get("project", "mang xa hoi"),
             "topic_badge": classify_session_topic(c_title, s_line),
             "summary_line": s_line,
             "summary_points": s_pts,
             "machine_id": "local-primary",
             "machine_name": f"Máy Chính ({HOSTNAME_LABEL})",
-            "account_tag": "khakhunghiep@gmail.com",
+            "account_tag": "Claude Code CLI/Ext" if eng_code == "claude" else "khakhunghiep@gmail.com",
             "title": c_title,
             "mtime": mtime,
             "updated_str": time.strftime("%H:%M:%S · %d/%m", time.localtime(mtime)),
             "seconds_ago": max(0, int(time.time() - mtime)),
             "is_working": is_working,
+            "live_signature": f"{mtime:.3f}:{len(msgs)}:{int(is_working)}:{last_msg_id}",
             "status_label": "Đang thực thi lệnh" if is_working else "Phiên Web trực tiếp",
             "filtered_count": 0,
             "message_count": len(msgs),
-            "resume_command": f"agy --conversation {sid}",
-            "turns": turns[-6:],
-        })
+            "resume_command": f"claude --resume {sid}" if eng_code == "claude" else f"agy --conversation {sid}",
+            "turns": turns[-8:],
+        }
+        if eng_code == "claude":
+            cl_sessions.append(sess_obj)
+        else:
+            ag_sessions.append(sess_obj)
 
     # 2. Quét Antigravity 2.0 transcripts (~/.gemini/antigravity/brain)
     ag_root = Path.home() / ".gemini" / "antigravity" / "brain"
+    total_ag_on_disk = 0
     if ag_root.is_dir():
-        ag_files = sorted(
+        all_ag_files = sorted(
             ag_root.glob("*/.system_generated/logs/transcript.jsonl"),
             key=lambda p: p.stat().st_mtime if p.exists() else 0,
             reverse=True,
-        )[:24]
-        for fpath in ag_files:
+        )
+        total_ag_on_disk = len(all_ag_files)
+        for fpath in all_ag_files[:32]:
             conv_id = fpath.parent.parent.parent.name
             file_map[conv_id] = ("antigravity", fpath)
-            parsed = parse_antigravity_conversation(fpath, conv_id, max_bytes=360_000)
-            if len(parsed.get("turns", [])) > 0 and not str(parsed.get("title", "")).startswith("Điều phối Tác vụ AI #"):
-                sessions.append({k: v for k, v in parsed.items() if k != "messages"})
+            parsed = parse_antigravity_conversation(fpath, conv_id, max_bytes=450_000)
+            if parsed.get("message_count", 0) > 0 or len(parsed.get("turns", [])) > 0:
+                ag_sessions.append({k: v for k, v in parsed.items() if k != "messages"})
 
-    # 3. Quét Claude Code transcripts (~/.claude/projects/**/*.jsonl)
+    # 3. Quét Claude Code transcripts (~/.claude/projects/**/*.jsonl, gồm cả Main & Subagent)
     cl_root = Path.home() / ".claude" / "projects"
+    total_cl_on_disk = 0
     if cl_root.is_dir():
-        cl_files = sorted(
-            [p for p in cl_root.rglob("*.jsonl") if "subagents" not in str(p)],
-            key=lambda p: p.stat().st_mtime if p.exists() else 0,
+        all_cl_files = sorted(
+            list(cl_root.rglob("*.jsonl")),
+            key=lambda p: (0 if "subagents" in str(p).lower() else 1, p.stat().st_mtime if p.exists() else 0),
             reverse=True,
-        )[:18]
-        for fpath in cl_files:
+        )
+        total_cl_on_disk = len(all_cl_files)
+        for fpath in all_cl_files[:28]:
             sess_id = fpath.stem
             file_map[sess_id] = ("claude", fpath)
-            parsed = parse_claude_conversation(fpath, sess_id, max_bytes=360_000)
-            if parsed["message_count"] > 0:
-                sessions.append({k: v for k, v in parsed.items() if k != "messages"})
+            parsed = parse_claude_conversation(fpath, sess_id, max_bytes=450_000)
+            if parsed.get("message_count", 0) > 0:
+                cl_sessions.append({k: v for k, v in parsed.items() if k != "messages"})
+            if len(cl_sessions) >= 20:
+                break
 
+    # Đảm bảo danh sách trả về luôn có đủ cả Antigravity lẫn Claude để bộ lọc trên Web hiển thị tức thì
+    sessions = ag_sessions[:32] + cl_sessions[:20]
     sessions.sort(key=lambda x: x["mtime"], reverse=True)
     seen_titles: set[str] = set()
     for s in sessions:
@@ -1131,11 +1158,17 @@ def scan_live_chats_realtime(limit_sessions: int = 36) -> dict:
     _SESSIONS_INDEX_CACHE["file_map"] = file_map
 
     projects = sorted({s.get("project", "mang xa hoi") for s in sessions if s.get("project")})
+    latest_active = sessions[0]["session_id"] if sessions else ""
     return {
         "ok": True,
         "server_time": time.strftime("%H:%M:%S"),
         "updated_at": time.strftime("%H:%M:%S"),
         "total_active_sessions": len(sessions),
+        "total_ag_on_disk": total_ag_on_disk,
+        "total_claude_on_disk": total_cl_on_disk,
+        "ag_sessions_count": len(ag_sessions),
+        "claude_sessions_count": len(cl_sessions),
+        "latest_active_session_id": latest_active,
         "projects": projects,
         "linked_machines": load_linked_machines(),
         "sessions": sessions[:limit_sessions],
@@ -1638,6 +1671,40 @@ def get_omni_computer_status(fast_cached: bool = True) -> dict:
     return res
 
 
+def capture_quick_desktop_screenshot(prefix: str = "live_screen") -> str | None:
+    """Chụp nhanh màn hình máy tính thực tế (<0.15s) bằng PIL.ImageGrab hoặc agent-desktop để hiển thị trực tiếp trong khung chat."""
+    static_delivs_dir = DASHBOARD_DIR / "assets" / "deliverables"
+    static_delivs_dir.mkdir(parents=True, exist_ok=True)
+    ts_ms = int(time.time() * 1000)
+    jpg_path = static_delivs_dir / f"{prefix}_{ts_ms}.jpg"
+    try:
+        from PIL import ImageGrab
+
+        img = ImageGrab.grab()
+        img = img.convert("RGB")
+        img.save(str(jpg_path), "JPEG", quality=85)
+        if jpg_path.is_file() and jpg_path.stat().st_size > 2000:
+            return f"/assets/deliverables/{jpg_path.name}"
+    except Exception:
+        pass
+
+    ad_bin = get_agent_desktop_bin()
+    if ad_bin:
+        try:
+            subprocess.run(
+                [str(ad_bin), "screenshot", str(jpg_path)],
+                cwd=str(WORKSPACE_ROOT),
+                capture_output=True,
+                timeout=6,
+                check=False,
+            )
+            if jpg_path.is_file() and jpg_path.stat().st_size > 2000:
+                return f"/assets/deliverables/{jpg_path.name}"
+        except Exception:
+            pass
+    return None
+
+
 def execute_omni_pilot_action(
     action: str,
     payload: dict,
@@ -1944,6 +2011,23 @@ def execute_omni_pilot_action(
             f"và {len(ALL_OMNI_AGENTS)} Agent chuyên trách sẵn sàng nhận lệnh ạ!"
         )
 
+    # Luôn đính kèm ảnh chụp màn hình trực tiếp sau khi điều khiển máy tính để Sếp nhìn thấy ngay trên Web
+    live_shot_url = None
+    existing_imgs = [lnk.get("url") for lnk in links_found if lnk.get("kind") == "image"]
+    if existing_imgs:
+        live_shot_url = existing_imgs[0]
+    else:
+        live_shot_url = capture_quick_desktop_screenshot(prefix=f"omni_{act.replace('-', '_')}")
+        if live_shot_url:
+            links_found.insert(
+                0,
+                {
+                    "label": "Xem Màn Hình Máy Tính Trực Tiếp",
+                    "url": live_shot_url,
+                    "kind": "image",
+                },
+            )
+
     clean_reply = strip_all_code_for_boss(reply_text)
     audio_url = synthesize_vietnamese_tts(clean_reply, voice=voice)
     assistant_msg = {
@@ -1953,6 +2037,7 @@ def execute_omni_pilot_action(
         "text": clean_reply,
         "summary_points": extract_executive_summary_points(clean_reply),
         "audio_url": audio_url,
+        "live_screenshot_url": live_shot_url,
         "timestamp": time.strftime("%H:%M:%S"),
         "engine": "Antigravity 2.0",
         "model": "Cánh Tay Omni-Pilot · Điều Khiển Toàn Máy Tính",
@@ -1972,6 +2057,7 @@ def execute_omni_pilot_action(
         "assistant_message": assistant_msg,
         "reply_text": clean_reply,
         "audio_url": audio_url,
+        "live_screenshot_url": live_shot_url,
         "links": links_found,
         "omni_status": get_omni_computer_status(),
     }
@@ -2092,9 +2178,9 @@ def execute_chat_command(
             "Báo cáo sếp: Cầu nối 2 chiều Google Drive qua gws (tài khoản khakhunghiep@gmail.com, thư mục 00_DONG_BO_ANTIGRAVITY_GIUA_CAC_MAY) "
             "đang ở trạng thái sẵn sàng. Theo đúng nguyên tắc sếp đặt ra, em chỉ đẩy hoặc kéo dữ liệu khi có lệnh trực tiếp của sếp."
         )
-    elif any(k in cmd_lower for k in ["chụp màn hình", "xem màn hình", "capture screen", "màn hình máy tính"]):
+    elif any(k in cmd_lower for k in ["chụp màn hình", "xem màn hình", "capture screen", "màn hình máy tính", "/screen"]):
         return execute_omni_pilot_action("capture-screen", {}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["dựng capcut", "quay 60fps", "quay màn hình", "xuất capcut"]):
+    elif any(k in cmd_lower for k in ["dựng capcut", "quay 60fps", "quay màn hình", "xuất capcut", "/capcut"]):
         return execute_omni_pilot_action("record-and-capcut", {"topic": cmd_clean}, session_id=session_id, voice=voice)
     elif any(k in cmd_lower for k in ["mở chrome", "mở trình duyệt", "multi-cdp"]):
         pkey = (
@@ -2107,8 +2193,15 @@ def execute_chat_command(
             )
         )
         return execute_omni_pilot_action("open-cdp-profile", {"profile_key": pkey}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["tất cả agent", "toàn bộ agent", "đồng loạt agent", "broadcast"]):
+    elif any(k in cmd_lower for k in ["tất cả agent", "toàn bộ agent", "đồng loạt agent", "broadcast", "/broadcast"]):
         return execute_omni_pilot_action("broadcast-all-agents", {"directive": cmd_clean}, session_id=session_id, voice=voice)
+    elif any(k in cmd_lower for k in ["điều khiển máy", "mở phần mềm", "mở ứng dụng", "bấm phím", "chạy lệnh hệ thống", "kiểm tra tiến trình"]):
+        return execute_omni_pilot_action(
+            "run-command",
+            {"command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 8 Name, Id"},
+            session_id=session_id,
+            voice=voice,
+        )
     else:
         target_agent = (
             agent_name
@@ -2141,6 +2234,10 @@ def execute_chat_command(
         )
         auto_decisions.append(dec)
         tools_executed.append({"name": f"Điều phối {target_agent}", "summary": f"Chế độ: {permission_mode}"})
+        if target_agent == "windows-omni-pilot":
+            quick_shot = capture_quick_desktop_screenshot(prefix="chat_omni_live")
+            if quick_shot:
+                links_found.insert(0, {"label": "Xem Màn Hình Máy Tính Trực Tiếp", "url": quick_shot, "kind": "image"})
         for d in deliverables[:2]:
             links_found.append({"label": d["title"][:28], "url": d["preview_url"], "kind": d["kind"]})
 
@@ -2161,6 +2258,7 @@ def execute_chat_command(
 
     clean_reply = strip_all_code_for_boss(reply_text)
     audio_url = synthesize_vietnamese_tts(clean_reply, voice=voice)
+    live_shot_in_links = next((lnk.get("url") for lnk in links_found if lnk.get("kind") == "image" and "deliverables" in str(lnk.get("url", ""))), None)
     assistant_msg = {
         "id": f"web-a-{int(time.time()*1000)}",
         "role": "assistant",
@@ -2168,6 +2266,7 @@ def execute_chat_command(
         "text": clean_reply,
         "summary_points": extract_executive_summary_points(clean_reply),
         "audio_url": audio_url,
+        "live_screenshot_url": live_shot_in_links,
         "timestamp": time.strftime("%H:%M:%S"),
         "engine": resolved_engine,
         "model": f"Trợ Lý CEO · Bộ Não Thứ Hai ({resolved_engine})",
@@ -2187,13 +2286,14 @@ def execute_chat_command(
         "assistant_message": assistant_msg,
         "reply_text": assistant_msg["text"],
         "audio_url": audio_url,
+        "live_screenshot_url": live_shot_in_links,
         "auto_decisions_made": auto_decisions,
         "deliverables": deliverables[:8],
     }
 
 
 class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
-    """HTTP Handler phục vụ Giao diện Chat Antigravity/Claude + API Điều khiển 2 chiều (hỗ trợ CORS)."""
+    """HTTP Handler phục vụ Giao diện Chat Antigravity/Claude + API Điều khiển 2 chiều (hỗ trợ CORS & Private Network Access)."""
 
     def log_message(self, format: str, *args) -> None:
         pass
@@ -2201,7 +2301,8 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
     def _send_cors_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Range")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Range, Cache-Control, Pragma")
+        self.send_header("Access-Control-Allow-Private-Network", "true")
 
     def _serve_external_file(self, file_path: Path) -> None:
         if not file_path.exists() or not file_path.is_file():
@@ -2361,7 +2462,7 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
             return
 
         if route in {"/api/live-chats", "/api/sessions"}:
-            limit_val = int(qs.get("limit", ["36"])[0])
+            limit_val = int(qs.get("limit", ["52"])[0])
             res_payload = scan_live_chats_realtime(limit_sessions=limit_val)
             res_payload["machines"] = load_linked_machines()
             res_payload["omni_status"] = get_omni_computer_status()
@@ -2600,13 +2701,13 @@ class VoiceCEORequestHandler(SimpleHTTPRequestHandler):
 
 
 def export_static_snapshot_for_netlify() -> Path:
-    """Xuất gói dữ liệu tĩnh (gồm danh sách phiên + lịch sử chi tiết 18 phiên gần nhất) để bản Netlify hoạt động đầy đủ."""
+    """Xuất gói dữ liệu tĩnh (gồm danh sách phiên Antigravity + Claude và lịch sử chi tiết 36 phiên) để bản Netlify hoạt động đầy đủ."""
     data_dir = DASHBOARD_DIR / "data"
     data_dir.mkdir(parents=True, exist_ok=True)
     brain = load_second_brain()
     deliverables = scan_live_deliverables(limit=24)
     ledger = load_decision_ledger()
-    live_chats = scan_live_chats_realtime(limit_sessions=30)
+    live_chats = scan_live_chats_realtime(limit_sessions=52)
 
     # Thay đường dẫn /media?path=... bằng assets/deliverables/... nếu có bản copy tĩnh
     static_delivs_dir = DASHBOARD_DIR / "assets" / "deliverables"
@@ -2616,8 +2717,11 @@ def export_static_snapshot_for_netlify() -> Path:
         if fname in static_files:
             d["static_preview_url"] = static_files[fname]
 
+    all_sess = live_chats.get("sessions", [])
+    ag_sess = [s for s in all_sess if s.get("engine_code") != "claude"][:20]
+    cl_sess = [s for s in all_sess if s.get("engine_code") == "claude"][:16]
     conversations_by_id: dict[str, dict] = {}
-    for s in live_chats.get("sessions", [])[:18]:
+    for s in ag_sess + cl_sess:
         sid = s["session_id"]
         conv = get_full_conversation_by_id(sid)
         if conv.get("ok"):
