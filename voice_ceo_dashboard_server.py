@@ -1979,30 +1979,43 @@ def execute_omni_pilot_action(
         raw_cmd = str(payload.get("command") or "").strip()
         if raw_cmd:
             try:
-                shell_args = (
-                    ["cmd", "/c", raw_cmd]
-                    if raw_cmd.lower().startswith("tasklist")
-                    else ["powershell", "-NoProfile", "-Command", raw_cmd]
-                )
-                r = subprocess.run(
-                    shell_args,
-                    cwd=str(WORKSPACE_ROOT),
-                    capture_output=True,
-                    text=True,
-                    encoding="utf-8",
-                    errors="replace",
-                    timeout=15,
-                    check=False,
-                )
-                out_preview = strip_all_code_for_boss((r.stdout or r.stderr or "Hoàn tất lệnh hệ thống.").strip())
-                out_preview = re.sub(r"\s+", " ", out_preview)[:220]
+                if raw_cmd.lower().startswith("tasklist"):
+                    r = subprocess.run(
+                        ["tasklist", "/NH"],
+                        cwd=str(WORKSPACE_ROOT),
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        errors="replace",
+                        timeout=10,
+                        check=False,
+                    )
+                    lines_proc = [ln.split()[0] for ln in (r.stdout or "").splitlines() if ln.strip() and ".exe" in ln.lower()]
+                    top_procs = []
+                    for p_name in lines_proc:
+                        if p_name not in top_procs and p_name.lower() not in {"svchost.exe", "conhost.exe", "runtimebroker.exe"}:
+                            top_procs.append(p_name)
+                    out_preview = f"Tổng {len(lines_proc)} tiến trình đang chạy ({', '.join(top_procs[:8])})"
+                else:
+                    r = subprocess.run(
+                        ["powershell", "-NoProfile", "-Command", raw_cmd],
+                        cwd=str(WORKSPACE_ROOT),
+                        capture_output=True,
+                        text=True,
+                        encoding="utf-8",
+                        errors="replace",
+                        timeout=15,
+                        check=False,
+                    )
+                    out_preview = strip_all_code_for_boss((r.stdout or r.stderr or "Hoàn tất lệnh hệ thống.").strip())
+                    out_preview = re.sub(r"\s+", " ", out_preview)[:220]
                 tools_executed.append({
                     "name": "Windows System Control",
                     "summary": f"Exit code {r.returncode}: {raw_cmd[:48]}",
                 })
                 reply_text = (
                     f"Báo cáo sếp: Cánh tay Omni-Pilot đã thực thi trực tiếp lệnh hệ thống trên máy tính của sếp và chụp màn hình trực tiếp. "
-                    f"Các tiến trình đang hoạt động mạnh nhất: {out_preview or 'Lệnh chạy thành công 100%.'}"
+                    f"Kết quả kiểm tra: {out_preview or 'Lệnh chạy thành công 100%.'}"
                 )
             except Exception as exc:
                 reply_text = f"Báo cáo sếp: Đã gửi lệnh hệ thống ({str(exc)[:80]})."
