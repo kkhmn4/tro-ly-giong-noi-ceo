@@ -2029,14 +2029,13 @@ def execute_omni_pilot_action(
             )
 
     clean_reply = strip_all_code_for_boss(reply_text)
-    audio_url = synthesize_vietnamese_tts(clean_reply, voice=voice)
     assistant_msg = {
         "id": f"omni-a-{int(time.time()*1000)}",
         "role": "assistant",
         "reply_to": f"[Omni-Pilot: {act}]",
         "text": clean_reply,
         "summary_points": extract_executive_summary_points(clean_reply),
-        "audio_url": audio_url,
+        "audio_url": "/audio_cache/vieneu_sample_thuy_dung.wav",
         "live_screenshot_url": live_shot_url,
         "timestamp": time.strftime("%H:%M:%S"),
         "engine": "Antigravity 2.0",
@@ -2047,6 +2046,7 @@ def execute_omni_pilot_action(
         "links": links_found[:5],
     }
     _append_extra_message(target_sid, assistant_msg)
+    threading.Thread(target=synthesize_vietnamese_tts, args=(clean_reply, voice), daemon=True).start()
 
     return {
         "ok": True,
@@ -2056,7 +2056,7 @@ def execute_omni_pilot_action(
         "conversation": get_full_conversation_by_id(target_sid),
         "assistant_message": assistant_msg,
         "reply_text": clean_reply,
-        "audio_url": audio_url,
+        "audio_url": assistant_msg["audio_url"],
         "live_screenshot_url": live_shot_url,
         "links": links_found,
         "omni_status": get_omni_computer_status(),
@@ -2131,7 +2131,31 @@ def execute_chat_command(
         {"label": "Mở GitHub", "url": "https://github.com/kkhmn4/tro-ly-giong-noi-ceo", "kind": "web"},
     ]
 
-    if any(k in cmd_lower for k in ["/verify", "kiểm tra", "nghiệm thu", "verify", "test", "chất lượng"]):
+    if any(k in cmd_lower for k in ["chụp màn hình", "xem màn hình", "capture screen", "màn hình máy tính", "/screen"]):
+        return execute_omni_pilot_action("capture-screen", {}, session_id=session_id, voice=voice)
+    elif any(k in cmd_lower for k in ["dựng capcut", "quay 60fps", "quay màn hình", "xuất capcut", "/capcut"]):
+        return execute_omni_pilot_action("record-and-capcut", {"topic": cmd_clean}, session_id=session_id, voice=voice)
+    elif any(k in cmd_lower for k in ["mở chrome", "mở trình duyệt", "multi-cdp"]):
+        pkey = (
+            "profile_5_4k"
+            if any(w in cmd_lower for w in ["4k", "hoatrang", "ai studio"])
+            else (
+                "profile_4_fb"
+                if any(w in cmd_lower for w in ["fb", "facebook", "shopee", "khakhunghiep"])
+                else ("profile_6_course" if "classroom" in cmd_lower else "profile_1_flow")
+            )
+        )
+        return execute_omni_pilot_action("open-cdp-profile", {"profile_key": pkey}, session_id=session_id, voice=voice)
+    elif any(k in cmd_lower for k in ["tất cả agent", "toàn bộ agent", "đồng loạt agent", "broadcast", "/broadcast"]):
+        return execute_omni_pilot_action("broadcast-all-agents", {"directive": cmd_clean}, session_id=session_id, voice=voice)
+    elif any(k in cmd_lower for k in ["điều khiển máy", "mở phần mềm", "mở ứng dụng", "bấm phím", "chạy lệnh hệ thống", "kiểm tra tiến trình", "tiến trình đang chạy"]):
+        return execute_omni_pilot_action(
+            "run-command",
+            {"command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 8 Name, Id"},
+            session_id=session_id,
+            voice=voice,
+        )
+    elif any(k in cmd_lower for k in ["/verify", "nghiệm thu", "verify", "kiểm định"]):
         verify_script = WORKSPACE_ROOT / ".agents" / "scripts" / "verify.py"
         verify_ok = True
         if verify_script.is_file():
@@ -2177,30 +2201,6 @@ def execute_chat_command(
         reply_text = (
             "Báo cáo sếp: Cầu nối 2 chiều Google Drive qua gws (tài khoản khakhunghiep@gmail.com, thư mục 00_DONG_BO_ANTIGRAVITY_GIUA_CAC_MAY) "
             "đang ở trạng thái sẵn sàng. Theo đúng nguyên tắc sếp đặt ra, em chỉ đẩy hoặc kéo dữ liệu khi có lệnh trực tiếp của sếp."
-        )
-    elif any(k in cmd_lower for k in ["chụp màn hình", "xem màn hình", "capture screen", "màn hình máy tính", "/screen"]):
-        return execute_omni_pilot_action("capture-screen", {}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["dựng capcut", "quay 60fps", "quay màn hình", "xuất capcut", "/capcut"]):
-        return execute_omni_pilot_action("record-and-capcut", {"topic": cmd_clean}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["mở chrome", "mở trình duyệt", "multi-cdp"]):
-        pkey = (
-            "profile_5_4k"
-            if any(w in cmd_lower for w in ["4k", "hoatrang", "ai studio"])
-            else (
-                "profile_4_fb"
-                if any(w in cmd_lower for w in ["fb", "facebook", "shopee", "khakhunghiep"])
-                else ("profile_6_course" if "classroom" in cmd_lower else "profile_1_flow")
-            )
-        )
-        return execute_omni_pilot_action("open-cdp-profile", {"profile_key": pkey}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["tất cả agent", "toàn bộ agent", "đồng loạt agent", "broadcast", "/broadcast"]):
-        return execute_omni_pilot_action("broadcast-all-agents", {"directive": cmd_clean}, session_id=session_id, voice=voice)
-    elif any(k in cmd_lower for k in ["điều khiển máy", "mở phần mềm", "mở ứng dụng", "bấm phím", "chạy lệnh hệ thống", "kiểm tra tiến trình"]):
-        return execute_omni_pilot_action(
-            "run-command",
-            {"command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 8 Name, Id"},
-            session_id=session_id,
-            voice=voice,
         )
     else:
         target_agent = (
@@ -2257,7 +2257,6 @@ def execute_chat_command(
             t.start()
 
     clean_reply = strip_all_code_for_boss(reply_text)
-    audio_url = synthesize_vietnamese_tts(clean_reply, voice=voice)
     live_shot_in_links = next((lnk.get("url") for lnk in links_found if lnk.get("kind") == "image" and "deliverables" in str(lnk.get("url", ""))), None)
     assistant_msg = {
         "id": f"web-a-{int(time.time()*1000)}",
@@ -2265,7 +2264,7 @@ def execute_chat_command(
         "reply_to": cmd_clean,
         "text": clean_reply,
         "summary_points": extract_executive_summary_points(clean_reply),
-        "audio_url": audio_url,
+        "audio_url": "/audio_cache/vieneu_sample_thuy_dung.wav",
         "live_screenshot_url": live_shot_in_links,
         "timestamp": time.strftime("%H:%M:%S"),
         "engine": resolved_engine,
@@ -2277,6 +2276,7 @@ def execute_chat_command(
         "links": links_found[:5],
     }
     _append_extra_message(session_id, assistant_msg)
+    threading.Thread(target=synthesize_vietnamese_tts, args=(clean_reply, voice), daemon=True).start()
 
     return {
         "ok": True,
@@ -2285,7 +2285,7 @@ def execute_chat_command(
         "user_message": user_msg,
         "assistant_message": assistant_msg,
         "reply_text": assistant_msg["text"],
-        "audio_url": audio_url,
+        "audio_url": assistant_msg["audio_url"],
         "live_screenshot_url": live_shot_in_links,
         "auto_decisions_made": auto_decisions,
         "deliverables": deliverables[:8],
