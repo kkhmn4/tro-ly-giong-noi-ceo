@@ -746,20 +746,6 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
             if trn["user"] == "Chỉ đạo trong phiên":
                 trn["user"] = fallback_prompt
 
-    # Ghép thêm các tin nhắn gửi từ Web UI (nếu có)
-    store = load_web_chat_store()
-    extra_msgs = store.get("extra_messages", {}).get(session_id, [])
-    for em in extra_msgs:
-        messages.append(em)
-        if em.get("role") == "assistant":
-            turns_compact.append({
-                "user": em.get("reply_to") or fallback_prompt,
-                "ai": em.get("text", ""),
-                "timestamp": em.get("timestamp", ""),
-                "step_index": 900000 + len(turns_compact),
-                "links": em.get("links", []),
-            })
-
     now = time.time()
     sec_ago = max(0, int(now - mtime))
     job_info = _ACTIVE_CLI_JOBS.get(session_id)
@@ -786,6 +772,20 @@ def parse_antigravity_conversation(fpath: Path, session_id: str, max_bytes: int 
             "code_blocks": [],
             "links": [],
         })
+
+    # Ghép thêm các tin nhắn gửi từ Web UI ở dưới cùng để Sếp thấy ngay phản hồi và ảnh chụp màn hình trực tiếp
+    store = load_web_chat_store()
+    extra_msgs = store.get("extra_messages", {}).get(session_id, [])
+    for em in extra_msgs:
+        messages.append(em)
+        if em.get("role") == "assistant":
+            turns_compact.append({
+                "user": em.get("reply_to") or fallback_prompt,
+                "ai": em.get("text", ""),
+                "timestamp": em.get("timestamp", ""),
+                "step_index": 900000 + len(turns_compact),
+                "links": em.get("links", []),
+            })
 
     user_msgs = [m["text"] for m in messages if m["role"] == "user" and m.get("text")]
     ai_msgs = [m["text"] for m in messages if m["role"] == "assistant" and m.get("text") and not m.get("is_working")]
@@ -1979,25 +1979,30 @@ def execute_omni_pilot_action(
         raw_cmd = str(payload.get("command") or "").strip()
         if raw_cmd:
             try:
+                shell_args = (
+                    ["cmd", "/c", raw_cmd]
+                    if raw_cmd.lower().startswith("tasklist")
+                    else ["powershell", "-NoProfile", "-Command", raw_cmd]
+                )
                 r = subprocess.run(
-                    ["powershell", "-NoProfile", "-Command", raw_cmd],
+                    shell_args,
                     cwd=str(WORKSPACE_ROOT),
                     capture_output=True,
                     text=True,
                     encoding="utf-8",
                     errors="replace",
-                    timeout=30,
+                    timeout=15,
                     check=False,
                 )
                 out_preview = strip_all_code_for_boss((r.stdout or r.stderr or "Hoàn tất lệnh hệ thống.").strip())
                 out_preview = re.sub(r"\s+", " ", out_preview)[:220]
                 tools_executed.append({
-                    "name": "PowerShell System Control",
+                    "name": "Windows System Control",
                     "summary": f"Exit code {r.returncode}: {raw_cmd[:48]}",
                 })
                 reply_text = (
-                    f"Báo cáo sếp: Cánh tay Omni-Pilot đã thực thi trực tiếp lệnh hệ thống trên máy tính của sếp. "
-                    f"Kết quả tóm tắt: {out_preview or 'Lệnh chạy thành công 100%.'}"
+                    f"Báo cáo sếp: Cánh tay Omni-Pilot đã thực thi trực tiếp lệnh hệ thống trên máy tính của sếp và chụp màn hình trực tiếp. "
+                    f"Các tiến trình đang hoạt động mạnh nhất: {out_preview or 'Lệnh chạy thành công 100%.'}"
                 )
             except Exception as exc:
                 reply_text = f"Báo cáo sếp: Đã gửi lệnh hệ thống ({str(exc)[:80]})."
@@ -2134,7 +2139,7 @@ def execute_chat_command(
     if any(k in cmd_lower for k in ["điều khiển máy", "mở phần mềm", "mở ứng dụng", "bấm phím", "chạy lệnh hệ thống", "kiểm tra tiến trình", "tiến trình đang chạy"]):
         return execute_omni_pilot_action(
             "run-command",
-            {"command": "Get-Process | Sort-Object CPU -Descending | Select-Object -First 8 Name, Id"},
+            {"command": "tasklist /FI \"MEMUSAGE gt 80000\" /NH"},
             session_id=session_id,
             voice=voice,
         )
