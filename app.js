@@ -1995,6 +1995,9 @@
 
     if (autoScroll || wasNearBottom) {
       streamEl.scrollTop = streamEl.scrollHeight;
+      setTimeout(() => {
+        streamEl.scrollTop = streamEl.scrollHeight;
+      }, 180);
     }
   }
 
