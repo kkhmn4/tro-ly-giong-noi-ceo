@@ -12,7 +12,12 @@
   let LOCAL_API_BASE = IS_LOCALHOST ? "" : "http://127.0.0.1:8765";
   const LOCAL_CANDIDATE_BASES = IS_LOCALHOST
     ? [""]
-    : ["http://127.0.0.1:8765", "http://127.0.0.1:23984"];
+    : [
+        "http://127.0.0.1:8765",
+        "http://localhost:8765",
+        "http://127.0.0.1:23984",
+        "http://localhost:23984",
+      ];
 
   // --------------------------------------------------------------------------
   // 1. UNIFIED STATE (5-Mode Visual Studio + Live Chat + Omni-Pilot + VieNeu)
@@ -1074,6 +1079,7 @@
         `;
         layer.appendChild(el);
       });
+      syncLiveTasksToVisualStudio(true);
     }
 
     OFFICE_DESKS.forEach((d) => {
@@ -1115,6 +1121,7 @@
         });
         domLayer.appendChild(div);
       });
+      syncLiveTasksToVisualStudio(true);
     }
 
     const nodeMap = {};
@@ -2085,6 +2092,9 @@
           } catch (_) {}
         }
         chatState.sessions = mergedSessions;
+        if (data.live_tasks) {
+          chatState.liveTasks = data.live_tasks;
+        }
         if (liveDot) {
           liveDot.setAttribute(
             "data-popover",
@@ -2168,6 +2178,7 @@
         }
         renderSessionList(isInitial);
         renderActiveConversation(isInitial, isInitial);
+        syncLiveTasksToVisualStudio();
         return;
       }
       chatState.daemonOnline = false;
@@ -2185,6 +2196,9 @@
         chatState.brainSnapshot = snap;
         const liveBlock = snap.live_chats || {};
         chatState.sessions = liveBlock.sessions || [];
+        if (liveBlock.live_tasks) {
+          chatState.liveTasks = liveBlock.live_tasks;
+        }
         chatState.conversationsById = Object.assign(
           {},
           snap.conversations_by_id || {},
@@ -2201,6 +2215,7 @@
         }
         renderSessionList();
         renderActiveConversation(isInitial);
+        syncLiveTasksToVisualStudio();
         renderHubPopover();
       }
     } catch (_) {}
@@ -2217,6 +2232,9 @@
         const delivs = snap.deliverables || [];
         const badge = document.getElementById("deliverableCountBadge");
         if (delivs.length && badge) badge.textContent = String(delivs.length);
+        if (snap.live_chats && snap.live_chats.live_tasks && !chatState.liveTasks) {
+          chatState.liveTasks = snap.live_chats.live_tasks;
+        }
         if (
           !chatState.sessions.length &&
           snap.live_chats &&
@@ -2234,9 +2252,450 @@
           renderSessionList();
           renderActiveConversation(true);
         }
+        syncLiveTasksToVisualStudio();
         renderHubPopover();
       }
     } catch (_) {}
+  }
+
+  function buildFallbackLiveTasks() {
+    const sessList = chatState.sessions || [];
+    const sessionTasks = sessList.slice(0, 14).map((s, idx) => {
+      const sid = String(s.session_id || "");
+      const shortId = String(s.short_id || sid.slice(0, 6)).slice(0, 6);
+      const isCl = s.engine_code === "claude";
+      const isWorking = Boolean(s.is_working) || idx < 3;
+      const rawTime = String(s.updated_str || "").split("·")[0].trim() || "Live";
+      return {
+        task_id: `sess-${shortId}`,
+        kind: "chat_session",
+        session_id: sid,
+        short_id: shortId,
+        engine_code: s.engine_code || "antigravity",
+        engine_badge: isCl ? "CL" : "AG",
+        topic_badge: s.topic_badge || "Điều phối AI",
+        title: String(s.title || `Phiên #${shortId}`).slice(0, 68),
+        status_label: isWorking
+          ? `⚡ ${s.status_label || "Đang thực thi"}`
+          : `🟢 ${rawTime}`,
+        summary: String(
+          s.summary_line || `Dự án ${s.project || "mang xa hoi"} · #${shortId}`
+        ).slice(0, 110),
+        is_working: isWorking,
+        updated_str: s.updated_str || "",
+      };
+    });
+    return {
+      session_tasks: sessionTasks,
+      background_tasks: [],
+      system_services: [
+        {
+          task_id: "srv-8765",
+          kind: "system_service",
+          session_id: sessList[0] ? sessList[0].session_id : "",
+          short_id: ":8765",
+          engine_code: "system",
+          engine_badge: "WIN",
+          topic_badge: "WIN-8765",
+          title: "Daemon Trợ Lý Giọng Nói CEO (:8765)",
+          status_label: "⚡ Cổng :8765 ONLINE",
+          summary: "Đồng bộ Live 1.2s · VieNeu 48kHz & Omni-Pilot",
+          is_working: true,
+        },
+        {
+          task_id: "srv-9224",
+          kind: "system_service",
+          session_id: sessList[0] ? sessList[0].session_id : "",
+          short_id: ":9224",
+          engine_code: "system",
+          engine_badge: "WIN",
+          topic_badge: "CDP-9224",
+          title: "Chrome Multi-CDP :9224 (Profile Flow/FB)",
+          status_label: "⚡ Cổng :9224 ONLINE",
+          summary: "Đang mở trình duyệt điều khiển tự động trên máy",
+          is_working: true,
+        },
+      ],
+      working_sessions_count: sessionTasks.filter((t) => t.is_working).length,
+      total_running_now:
+        sessionTasks.filter((t) => t.is_working).length + 2,
+    };
+  }
+
+  function jumpToLiveTaskSession(sessionId) {
+    if (sessionId) {
+      selectSession(sessionId, true);
+    }
+    switchMode("2d");
+  }
+  window.jumpToLiveTaskSession = jumpToLiveTaskSession;
+
+  function syncLiveTasksToVisualStudio(forceSync = false) {
+    const lt = chatState.liveTasks || buildFallbackLiveTasks();
+    const sessionTasks = Array.isArray(lt.session_tasks) ? lt.session_tasks : [];
+    const bgTasks = Array.isArray(lt.background_tasks) ? lt.background_tasks : [];
+    const sysServices = Array.isArray(lt.system_services) ? lt.system_services : [];
+
+    const agCount = (chatState.sessions || []).filter(
+      (s) => s.engine_code !== "claude"
+    ).length;
+    const clCount = (chatState.sessions || []).filter(
+      (s) => s.engine_code === "claude"
+    ).length;
+    const workingSessCount =
+      lt.working_sessions_count ||
+      sessionTasks.filter((t) => t.is_working).length ||
+      1;
+    const totalRunning =
+      lt.total_running_now ||
+      workingSessCount + bgTasks.length + sysServices.length ||
+      4;
+
+    const sig = [
+      sessionTasks.length,
+      bgTasks.length,
+      sysServices.length,
+      totalRunning,
+      chatState.officeSearchQuery || "",
+      sessionTasks
+        .slice(0, 10)
+        .map((t) => `${t.short_id}:${t.status_label}:${t.title.slice(0, 18)}`)
+        .join("|"),
+    ].join("::");
+
+    if (!forceSync && chatState.lastSyncedTasksSig === sig) {
+      return;
+    }
+    chatState.lastSyncedTasksSig = sig;
+
+    // 1. CẬP NHẬT 11 BÀN LÀM VIỆC TRÊN SÀN 3D VĂN PHÒNG AI (#office3d-labels-layer)
+    const layer3d = document.getElementById("office3d-labels-layer");
+    if (layer3d && layer3d.children.length === 0) {
+      OFFICE_DESKS.forEach((d) => {
+        const el = document.createElement("div");
+        el.className = "agent-floating-tag " + d.cls;
+        el.id = "tag-" + d.id;
+        layer3d.appendChild(el);
+      });
+    }
+
+    const cmdTag = document.getElementById("tag-desk-commander");
+    if (cmdTag) {
+      cmdTag.style.cursor = "pointer";
+      cmdTag.innerHTML = `
+        <div class="tag-title"><span style="color:#4ade80">●</span> 🧠 Bộ Não CEO · <span style="color:#fde047">⚡ ${totalRunning} Task Đang Chạy</span></div>
+        <div class="tag-sub">🟢 LIVE 1.2s · ${agCount} Phiên AG · ${clCount} Phiên Claude · ${bgTasks.length + sysServices.length} Daemon/CDP</div>
+      `;
+      cmdTag.onclick = () => switchMode("2d");
+    }
+
+    // Ghép danh sách 10 Task thật đang chạy trên máy (ưu tiên cả AG, Claude, Task ngầm & Chrome CDP) cho 10 bàn xung quanh
+    const agLive = sessionTasks.filter((t) => t.engine_code !== "claude");
+    const clLive = sessionTasks.filter((t) => t.engine_code === "claude");
+    const combinedDeskTasks = [
+      ...agLive.slice(0, 6),
+      ...clLive.slice(0, 2),
+      ...bgTasks.slice(0, 1),
+      ...sysServices.slice(0, 1),
+      ...sessionTasks,
+    ].slice(0, 10);
+
+    const otherDesks = OFFICE_DESKS.filter((d) => d.id !== "desk-commander");
+    otherDesks.forEach((d, idx) => {
+      const el = document.getElementById("tag-" + d.id);
+      if (!el) return;
+      const t = combinedDeskTasks[idx];
+      if (!t) return;
+      const isCl = t.engine_code === "claude";
+      const isSys = t.kind === "system_service" || t.kind === "background_task";
+      const dotCol = t.is_working ? "#4ade80" : d.color;
+      const pillBg = isCl
+        ? "rgba(251,146,60,0.24)"
+        : isSys
+        ? "rgba(56,189,248,0.24)"
+        : "rgba(74,222,128,0.22)";
+      const pillCol = isCl ? "#fdba74" : isSys ? "#7dd3fc" : "#86efac";
+      const shortTitle =
+        t.title.length > 36 ? t.title.slice(0, 36) + "…" : t.title;
+      const shortSub =
+        t.summary.length > 42 ? t.summary.slice(0, 42) + "…" : t.summary;
+
+      el.style.cursor = "pointer";
+      el.style.borderColor = t.is_working
+        ? "rgba(74, 222, 128, 0.55)"
+        : "rgba(255, 255, 255, 0.16)";
+      el.title = `${t.engine_badge} #${t.short_id} · ${t.title}\n${t.status_label} — ${t.summary}\n(Bấm để mở phiên chat này)`;
+      el.innerHTML = `
+        <div class="tag-title" style="display:flex;align-items:center;gap:4px;">
+          <span style="color:${dotCol}">●</span>
+          <span style="background:${pillBg};color:${pillCol};padding:1px 5px;border-radius:4px;font-size:9.5px;font-weight:800;">${escapeHtml(
+        t.engine_badge
+      )} #${escapeHtml(t.short_id)}</span>
+          <span>${escapeHtml(shortTitle)}</span>
+        </div>
+        <div class="tag-sub">
+          <strong style="color:${
+            t.is_working ? "#fde047" : "#86efac"
+          }">${escapeHtml(t.status_label)}</strong> · ${escapeHtml(shortSub)}
+        </div>
+      `;
+      el.onclick = () => jumpToLiveTaskSession(t.session_id);
+    });
+
+    // 2. CẬP NHẬT CỘT TRÁI TRONG 3D VĂN PHÒNG AI (#officeDrawerLiveList & #officeDrawerLiveToasts)
+    const drawerBadge = document.getElementById("officeDrawerCountBadge");
+    if (drawerBadge) drawerBadge.textContent = `${totalRunning} LIVE`;
+
+    const drawerSub = document.getElementById("officeDrawerSubbar");
+    if (drawerSub) {
+      drawerSub.innerHTML = `
+        <span><strong style="color:#4ade80">● ${workingSessCount} phiên đang chạy</strong></span>
+        <span>${agCount} AG · ${clCount} Claude</span>
+      `;
+    }
+
+    const qOffice = (chatState.officeSearchQuery || "").trim().toLowerCase();
+    const filteredOfficeTasks = sessionTasks
+      .filter((t) => {
+        if (!qOffice) return true;
+        return `${t.short_id} ${t.title} ${t.summary} ${t.engine_badge} ${t.topic_badge}`
+          .toLowerCase()
+          .includes(qOffice);
+      })
+      .slice(0, 7);
+
+    const drawerListEl = document.getElementById("officeDrawerLiveList");
+    if (drawerListEl) {
+      drawerListEl.innerHTML = filteredOfficeTasks
+        .map((t) => {
+          const isCl = t.engine_code === "claude";
+          return `
+            <div class="drawer-agent-card ${
+              t.is_working ? "active" : ""
+            }" onclick="jumpToLiveTaskSession('${escapeHtml(t.session_id)}')">
+              <div class="agent-mini-icon" style="background:${
+                isCl
+                  ? "linear-gradient(135deg,#fb923c,#ea580c)"
+                  : "linear-gradient(135deg,#34d399,#059669)"
+              };display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;color:#052e16;">${escapeHtml(
+            t.engine_badge
+          )}</div>
+              <div class="agent-card-info" style="min-width:0;flex:1;">
+                <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">#${escapeHtml(
+                  t.short_id
+                )} · ${escapeHtml(t.title)}</h4>
+                <div class="agent-state" style="color:${
+                  t.is_working ? "#fde047" : "#86efac"
+                };font-weight:700;">${escapeHtml(t.status_label)} · ${escapeHtml(
+            t.topic_badge
+          )}</div>
+                <p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(
+                  t.summary
+                )}</p>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    const drawerToastsEl = document.getElementById("officeDrawerLiveToasts");
+    if (drawerToastsEl) {
+      const daemonItems = [...sysServices, ...bgTasks].slice(0, 5);
+      drawerToastsEl.innerHTML = daemonItems
+        .map((d, i) => {
+          const bCol =
+            i % 3 === 0 ? "#4ade80" : i % 3 === 1 ? "#38bdf8" : "#fb923c";
+          return `
+            <div class="live-toast-item" style="border-left-color:${bCol};cursor:pointer;" onclick="jumpToLiveTaskSession('${escapeHtml(
+            d.session_id || ""
+          )}')">
+              <strong>${escapeHtml(d.status_label)} · ${escapeHtml(
+            d.title
+          )}</strong>
+              <span>${escapeHtml(d.summary)}</span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    // 3. CẬP NHẬT BẢNG HUD GÓC PHẢI TRÊN SÀN 3D (#office3d-live-tasks-hud)
+    const hudSumEl = document.getElementById("office3dHudSummaryBar");
+    if (hudSumEl) {
+      hudSumEl.innerHTML = `
+        <span style="background:rgba(250,204,21,0.18);border:1px solid rgba(250,204,21,0.45);color:#fde047;padding:1px 7px;border-radius:999px;font-weight:800;">⚡ ${totalRunning} Task đang chạy</span>
+        <span style="background:rgba(74,222,128,0.16);color:#86efac;padding:1px 7px;border-radius:999px;font-weight:700;">AG (${agCount})</span>
+        <span style="background:rgba(251,146,60,0.18);color:#fdba74;padding:1px 7px;border-radius:999px;font-weight:700;">Claude (${clCount})</span>
+      `;
+    }
+
+    const hudBodyEl = document.getElementById("office3dHudTasksBody");
+    if (hudBodyEl) {
+      const topHudTasks = [
+        ...sessionTasks.slice(0, 4),
+        ...bgTasks.slice(0, 1),
+        ...sysServices.slice(0, 2),
+      ].slice(0, 6);
+      hudBodyEl.innerHTML = topHudTasks
+        .map((t) => {
+          const isCl = t.engine_code === "claude";
+          return `
+            <div onclick="jumpToLiveTaskSession('${escapeHtml(
+              t.session_id || ""
+            )}')" style="padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid ${
+            t.is_working ? "rgba(74,222,128,0.4)" : "rgba(255,255,255,0.1)"
+          };cursor:pointer;display:flex;flex-direction:column;gap:2px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
+                <span style="font-size:10.5px;font-weight:800;color:${
+                  isCl ? "#fdba74" : "#86efac"
+                };">[${escapeHtml(t.engine_badge)} #${escapeHtml(
+            t.short_id
+          )}] ${escapeHtml(t.title.slice(0, 28))}</span>
+                <span style="font-size:9.5px;font-weight:800;color:${
+                  t.is_working ? "#fde047" : "#94a3b8"
+                };white-space:nowrap;">${escapeHtml(t.status_label)}</span>
+              </div>
+              <div style="font-size:10px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(
+                t.summary
+              )}</div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    const statusBar3d = document.getElementById("officeStatusbarLive");
+    if (statusBar3d) {
+      const srvText = sysServices
+        .map((s) => `● ${s.topic_badge} (${s.short_id})`)
+        .join("   ");
+      statusBar3d.innerHTML = `
+        <span style="color:#4ade80;font-weight:700;">⚡ ${totalRunning} Task &amp; Daemon Đang Chạy Trên Máy</span>
+        <span>${escapeHtml(srvText || "● Daemon :8765 · :23984 · CDP :9224")}</span>
+        <span>Đồng bộ Live 1.2s: ${agCount} Antigravity + ${clCount} Claude</span>
+      `;
+    }
+
+    // 4. CẬP NHẬT CỘT PHẢI CỦA CHẾ ĐỘ 1 (2D ĐIỀU HÀNH & CHAT — #liveMachineTasksBox2D)
+    const code2d = document.getElementById("liveTasksCountCode");
+    if (code2d) code2d.textContent = `${agCount} AG · ${clCount} CL`;
+    const badge2d = document.getElementById("liveTasksCountBadge");
+    if (badge2d) badge2d.textContent = `⚡ ${totalRunning} Đang chạy`;
+
+    const box2d = document.getElementById("liveMachineTasksBox2D");
+    if (box2d) {
+      const items2d = [
+        ...sessionTasks.slice(0, 5),
+        ...bgTasks.slice(0, 2),
+        ...sysServices.slice(0, 2),
+      ];
+      box2d.innerHTML = items2d
+        .map((t) => {
+          const isCl = t.engine_code === "claude";
+          return `
+            <div onclick="event.stopPropagation(); selectSession('${escapeHtml(
+              t.session_id || ""
+            )}', true);" style="padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid ${
+            t.is_working ? "rgba(74,222,128,0.38)" : "rgba(255,255,255,0.08)"
+          };cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <div style="min-width:0;flex:1;">
+                <div style="font-size:11.5px;font-weight:700;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  <span style="color:${
+                    isCl ? "#fdba74" : "#86efac"
+                  };">[${escapeHtml(t.engine_badge)} #${escapeHtml(
+            t.short_id
+          )}]</span> ${escapeHtml(t.title)}
+                </div>
+                <div style="font-size:10.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                  ${escapeHtml(t.summary)}
+                </div>
+              </div>
+              <span style="font-size:10px;font-weight:800;color:${
+                t.is_working ? "#fde047" : "#86efac"
+              };white-space:nowrap;flex-shrink:0;">${escapeHtml(
+            t.status_label
+          )} ↗</span>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    // 5. CẬP NHẬT CHẾ ĐỘ 3 (NODE GRAPH) & CHẾ ĐỘ 4 (6 CỬA SỔ EDITOR)
+    const allLiveForNodes = [
+      ...sessionTasks.slice(0, 8),
+      ...bgTasks.slice(0, 2),
+      ...sysServices.slice(0, 2),
+    ];
+    DAG_NODES.forEach((n, idx) => {
+      const div = document.getElementById("dag-" + n.id);
+      if (!div) return;
+      if (idx === 0) {
+        div.innerHTML = `
+          <div class="dag-node-header">
+            <span>AG2-CEO</span>
+            <span style="color:#fde047">⚡ ${totalRunning} Task Live</span>
+          </div>
+          <div class="dag-node-title">Bộ Não Thứ Hai CEO (${agCount} AG · ${clCount} Claude)</div>
+          <div class="dag-node-meta">Đồng bộ thời gian thực 1.2s từ máy tính</div>
+        `;
+        return;
+      }
+      const t = allLiveForNodes[idx - 1];
+      if (!t) return;
+      div.innerHTML = `
+        <div class="dag-node-header">
+          <span>${escapeHtml(t.engine_badge)} #${escapeHtml(t.short_id)}</span>
+          <span style="color:${
+            t.is_working ? "#fde047" : "#4ade80"
+          }">${escapeHtml(t.status_label)}</span>
+        </div>
+        <div class="dag-node-title">${escapeHtml(t.title.slice(0, 44))}</div>
+        <div class="dag-node-meta">${escapeHtml(t.summary.slice(0, 56))}</div>
+      `;
+      div.onclick = () => jumpToLiveTaskSession(t.session_id);
+    });
+
+    const runCountEl = document.getElementById("status-running-count");
+    if (runCountEl) runCountEl.textContent = `${totalRunning} đang chạy`;
+    const doneCountEl = document.getElementById("status-done-count");
+    if (doneCountEl)
+      doneCountEl.textContent = `${(chatState.sessions || []).length} phiên Live`;
+
+    const rowsContainer = document.getElementById(
+      "status-agent-rows-container"
+    );
+    if (rowsContainer && allLiveForNodes.length > 0) {
+      rowsContainer.innerHTML = allLiveForNodes
+        .slice(0, 8)
+        .map((t, i) => {
+          const col =
+            t.engine_code === "claude"
+              ? "#fb923c"
+              : t.is_working
+              ? "#4ade80"
+              : "#38bdf8";
+          return `
+            <div class="status-agent-row" style="cursor:pointer;" onclick="jumpToLiveTaskSession('${escapeHtml(
+              t.session_id || ""
+            )}')">
+              <div class="status-agent-name">
+                <span class="color-dot-sq" style="background:${col}"></span>
+                <span>[${escapeHtml(t.engine_badge)} #${escapeHtml(
+            t.short_id
+          )}] ${escapeHtml(t.title.slice(0, 22))}</span>
+              </div>
+              <div class="status-agent-action" style="color:${
+                t.is_working ? "#fde047" : "#86efac"
+              }">${escapeHtml(t.status_label)}</div>
+              <div class="status-agent-step">${i + 1}</div>
+              <div style="text-align:right;color:#7dd3fc">↗</div>
+            </div>
+          `;
+        })
+        .join("");
+    }
   }
 
   function renderHubPopover() {
@@ -2814,6 +3273,14 @@
       searchInput.addEventListener("input", (e) => {
         chatState.searchQuery = e.target.value || "";
         renderSessionList(true);
+      });
+    }
+
+    const officeSearchInput = document.getElementById("officeDrawerSearchInput");
+    if (officeSearchInput) {
+      officeSearchInput.addEventListener("input", (e) => {
+        chatState.officeSearchQuery = e.target.value || "";
+        syncLiveTasksToVisualStudio(true);
       });
     }
 

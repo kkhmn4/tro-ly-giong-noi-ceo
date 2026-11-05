@@ -401,8 +401,25 @@
               </div>
             </div>
 
-            <!-- Center Right: Sub-task Accordions for the 12 Real Agents + 1-Click Dispatch -->
+            <!-- Center Right: Live Machine Tasks + Sub-task Accordions for the 12 Real Agents -->
             <div class="cmd2d-subtasks-pane">
+              <div class="subtask-accordion expanded" id="live-machine-tasks-accordion" onclick="this.classList.toggle('expanded')">
+                <div class="subtask-header">
+                  <div class="subtask-title" style="color:#86efac; font-weight:800;">
+                    ▾ ⚡ Các Task &amp; Tiến Trình Đang Chạy Thực Tế Trên Máy (Live 1.2s)
+                  </div>
+                  <div class="subtask-badges">
+                    <span class="badge-code" id="liveTasksCountCode">LIVE</span>
+                    <span class="badge-status running" id="liveTasksCountBadge">Đang quét...</span>
+                  </div>
+                </div>
+                <div class="subtask-detail">
+                  <div class="subtask-log-box" id="liveMachineTasksBox2D" style="display:flex; flex-direction:column; gap:6px;">
+                    <div>Đang đồng bộ danh sách các phiên Antigravity, Claude và tiến trình ngầm đang chạy trên máy...</div>
+                  </div>
+                </div>
+              </div>
+
               <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
                 <div class="subtask-header">
                   <div class="subtask-title">
@@ -543,89 +560,60 @@
          ================================================================== -->
     <section class="mode-section" id="mode-3d">
       <div class="office3d-wrapper">
-        <aside class="office-left-drawer">
+        <aside class="office-left-drawer" id="officeLeftDrawer">
           <div class="drawer-header">
             <div class="drawer-title">
-              <span>‹</span>
-              <span>♟ Đội ngũ AG2</span>
-              <span class="drawer-count-badge">12</span>
+              <span>⚡</span>
+              <span>Task &amp; Phiên Trên Máy</span>
+              <span class="drawer-count-badge" id="officeDrawerCountBadge">LIVE</span>
             </div>
-            <span style="font-size:11px;color:#94a3b8;cursor:pointer" onclick="switchStudioMode('2d')">Về 2D Chat</span>
+            <span style="font-size:11px;color:#7dd3fc;cursor:pointer;font-weight:700;" onclick="switchStudioMode('2d')">Về 2D Chat ↗</span>
           </div>
 
-          <div class="drawer-subbar">
-            <span><strong style="color:#4ade80">● 12 đang làm</strong></span>
-            <span>Subagent thực chiến</span>
+          <div class="drawer-subbar" id="officeDrawerSubbar">
+            <span><strong style="color:#4ade80">● Đang đồng bộ 1.2s</strong></span>
+            <span>Antigravity &amp; Claude</span>
           </div>
 
-          <input type="text" class="drawer-search" placeholder="Tìm Subagent hoặc KOL V6..." />
+          <input type="text" id="officeDrawerSearchInput" class="drawer-search" placeholder="Lọc task, mã #ID, Antigravity / Claude..." />
 
-          <div style="display:flex;justify-content:space-between;font-size:11.5px;color:#cbd5e1;padding:2px 4px">
-            <span>◆ Chỉ huy &amp; Chủ lực</span>
-            <span>4 Profile CDP ↗</span>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;padding:2px 4px;font-weight:700;">
+            <span>◆ Phiên Chat Đang Chạy Trên Máy</span>
+            <span>Bấm để mở ↗</span>
           </div>
 
-          <div class="drawer-agent-list">
+          <div class="drawer-agent-list" id="officeDrawerLiveList">
             <div class="drawer-agent-card active" onclick="switchStudioMode('2d')">
               <div class="agent-mini-icon"></div>
               <div class="agent-card-info">
                 <h4>Bộ Não Thứ Hai CEO</h4>
-                <div class="agent-state">◎ Đang điều phối 12 Agent</div>
-                <p>AG2-CEO · 339 phiên / 774 luật · Giọng VieNeu 48kHz</p>
-              </div>
-            </div>
-
-            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'windows-omni-pilot', directive:'Kiểm tra toàn bộ máy tính & trình duyệt'})">
-              <div class="agent-mini-icon"></div>
-              <div class="agent-card-info">
-                <h4>windows-omni-pilot · Cánh Tay Máy Tính</h4>
-                <div class="agent-state" style="color:#38bdf8">● Đang chạy · UIA + Multi-CDP 9222..9226</div>
-              </div>
-            </div>
-
-            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'flow-video-director', directive:'Chạy Node Studio V3.9 Clone 1080p'})">
-              <div class="agent-mini-icon"></div>
-              <div class="agent-card-info">
-                <h4>flow-video-director · Node V3.9</h4>
-                <div class="agent-state" style="color:#93c5fd">● Đang chạy · 11 Node Clone 8.0s 1.0x</div>
-              </div>
-            </div>
-
-            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'aistudio-4k-upscaler', directive:'Nâng cấp ảnh & video 4K trên hoatrang756'})">
-              <div class="agent-mini-icon"></div>
-              <div class="agent-card-info">
-                <h4>aistudio-4k-upscaler · Profile 5</h4>
-                <div class="agent-state">● Sẵn sàng · Nano Banana 2.1 4K</div>
-              </div>
-            </div>
-
-            <div class="drawer-agent-card" onclick="executeOmniAction('spawn-agent-session', {agent:'fb-viral-scout', directive:'Quét FB Profile 4 (5 Lớp Stealth)'})">
-              <div class="agent-mini-icon"></div>
-              <div class="agent-card-info">
-                <h4>fb-viral-scout · Profile 4</h4>
-                <div class="agent-state">● Sẵn sàng · 5 Lớp Stealth khakhunghiep</div>
+                <div class="agent-state">◎ Đang quét các phiên trực tiếp...</div>
+                <p>AG2-CEO · 356+ phiên / 774 luật · Giọng VieNeu 48kHz</p>
               </div>
             </div>
           </div>
 
-          <div class="drawer-toast-stack">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;padding:4px 4px 0;font-weight:700;">
+            <span>◆ Tiến Trình Ngầm &amp; Cổng Máy Tính</span>
+            <span>Daemon / CDP</span>
+          </div>
+
+          <div class="drawer-toast-stack" id="officeDrawerLiveToasts">
             <div class="live-toast-item">
-              <strong>Cánh Tay Omni-Pilot · đang làm</strong>
-              <span>điều khiển toàn bộ máy tính, CapCut PC &amp; 4 Chrome CDP</span>
-            </div>
-            <div class="live-toast-item" style="border-left-color:#34d399">
-              <strong>Flow Node V3.9 · đang làm</strong>
-              <span>đấu dây ['taoanh-2', 'taoanh-1'] &amp; xóa sao Gemini ✦</span>
-            </div>
-            <div class="live-toast-item" style="border-left-color:#a78bfa">
-              <strong>Swarm Cloner · đang làm</strong>
-              <span>30 Agent đang dựng don-bay-ai-v6.html &amp; ag2-agent-hub.html</span>
-            </div>
-            <div class="live-toast-item" style="border-left-color:#fb923c">
-              <strong>VieNeu-TTS v3 Turbo · 48kHz</strong>
-              <span>đang phát báo cáo giọng Thùy Dung (Miền Nam)</span>
+              <strong>Đang quét tiến trình máy tính...</strong>
+              <span>Ports 8765 · 23984 · Chrome Multi-CDP 9222..9226</span>
             </div>
           </div>
+        </aside>
+
+        <!-- Bảng HUD Góc Phải Trên Sàn 3D: Tóm Tắt Task & Tiến Trình Đang Chạy Thực Tế -->
+        <aside id="office3d-live-tasks-hud" style="position:absolute; top:12px; right:14px; width:310px; max-height:calc(100% - 90px); overflow-y:auto; background:rgba(13, 19, 28, 0.9); backdrop-filter:blur(14px); border:1px solid rgba(74, 222, 128, 0.35); border-radius:12px; padding:10px 12px; z-index:30; box-shadow:0 18px 40px rgba(0,0,0,0.6); display:flex; flex-direction:column; gap:7px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+            <span style="font-size:12px; font-weight:800; color:#86efac;">🖥️ Task Đang Chạy Trên Máy (1.2s)</span>
+            <button type="button" class="replay-pill" style="font-size:10px; padding:2px 7px;" onclick="executeOmniAction('capture-screen', {}); switchStudioMode('2d');">📸 Chụp Màn Hình</button>
+          </div>
+          <div id="office3dHudSummaryBar" style="font-size:11px; color:#cbd5e1; display:flex; gap:6px; flex-wrap:wrap;"></div>
+          <div id="office3dHudTasksBody" style="display:flex; flex-direction:column; gap:5px;"></div>
         </aside>
 
         <canvas id="office3d-canvas" width="1280" height="720"></canvas>
@@ -645,11 +633,11 @@
           </div>
         </div>
 
-        <div class="office-statusbar">
+        <div class="office-statusbar" id="officeStatusbarLive">
           <span>● P1: aichampionhk1</span>
           <span>● P4: khakhunghiep</span>
           <span>● P5: hoatrang756 (4K)</span>
-          <span>Sync: 339+ Phiên Chat &amp; 774 Luật Bộ Não Thứ Hai</span>
+          <span>Sync: 356+ Phiên Chat &amp; 774 Luật Bộ Não Thứ Hai</span>
         </div>
       </div>
     </section>

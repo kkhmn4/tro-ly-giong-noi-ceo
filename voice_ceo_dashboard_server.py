@@ -1039,6 +1039,145 @@ def parse_claude_conversation(fpath: Path, session_id: str, max_bytes: int = 1_5
     }
 
 
+_MACHINE_TASKS_CACHE: dict = {"timestamp": 0.0, "data": None}
+
+
+def scan_live_machine_tasks(sessions: list[dict]) -> dict:
+    """Quét toàn bộ các Task, Phiên Chat (Antigravity & Claude), Background Tasks (.log) và Cổng Dịch Vụ đang chạy thực tế trên máy."""
+    now = time.time()
+    tasks_list: list[dict] = []
+
+    # 1. Quét các Phiên Chat Antigravity & Claude đang chạy hoặc vừa hoạt động trên máy
+    for idx, s in enumerate(sessions[:16]):
+        sid = str(s.get("session_id") or "")
+        short_id = str(s.get("short_id") or sid[:6])[:6]
+        eng_code = str(s.get("engine_code") or "antigravity")
+        eng_badge = "CL" if eng_code == "claude" else "AG"
+        sec_ago = int(s.get("seconds_ago") or max(0, int(now - float(s.get("mtime") or now))))
+        is_working = bool(s.get("is_working")) or (sec_ago < 120 and idx < 4)
+        status_lbl = str(s.get("status_label") or ("Đang thực thi" if is_working else "Vừa hoạt động"))
+        if is_working and not status_lbl.startswith("⚡"):
+            status_lbl = f"⚡ {status_lbl}"
+        elif not is_working:
+            status_lbl = f"🟢 {s.get('updated_str', '').split('·')[0].strip() or 'Sẵn sàng'}"
+
+        raw_title = str(s.get("title") or f"Phiên #{short_id}").strip()
+        summary_line = str(s.get("summary_line") or "").strip()
+        topic_badge = str(s.get("topic_badge") or "Điều phối AI").strip()
+
+        tasks_list.append({
+            "task_id": f"sess-{short_id}",
+            "kind": "chat_session",
+            "session_id": sid,
+            "short_id": short_id,
+            "engine_code": eng_code,
+            "engine_badge": eng_badge,
+            "topic_badge": topic_badge,
+            "title": raw_title[:68],
+            "status_label": status_lbl,
+            "summary": summary_line[:110] if summary_line else f"Dự án {s.get('project', 'mang xa hoi')} · #{short_id}",
+            "is_working": is_working,
+            "seconds_ago": sec_ago,
+            "updated_str": s.get("updated_str", ""),
+        })
+
+    # 2. Quét các Background Task Logs (.system_generated/tasks/task-*.log) đang chạy ngầm trên Antigravity
+    bg_tasks: list[dict] = []
+    ag_root = Path.home() / ".gemini" / "antigravity" / "brain"
+    if ag_root.is_dir():
+        try:
+            task_logs = sorted(
+                ag_root.glob("*/.system_generated/tasks/task-*.log"),
+                key=lambda p: p.stat().st_mtime if p.exists() else 0,
+                reverse=True,
+            )[:8]
+            for tlog in task_logs:
+                try:
+                    t_mtime = tlog.stat().st_mtime
+                    t_age = max(0, int(now - t_mtime))
+                    conv_id = tlog.parent.parent.parent.name
+                    short_cid = conv_id[:6]
+                    tail_ln = ""
+                    for ln in reversed(_tail_lines(tlog, max_bytes=4096)):
+                        clean_ln = ln.strip()
+                        if clean_ln and not clean_ln.startswith("warning:"):
+                            tail_ln = clean_ln[:96]
+                            break
+                    is_bg_active = t_age < 600
+                    bg_tasks.append({
+                        "task_id": f"bg-{tlog.stem}-{short_cid}",
+                        "kind": "background_task",
+                        "session_id": conv_id,
+                        "short_id": short_cid,
+                        "engine_code": "antigravity",
+                        "engine_badge": "TASK",
+                        "topic_badge": tlog.stem,
+                        "title": f"Tiến trình ngầm {tlog.stem} (Phiên #{short_cid})",
+                        "status_label": "⚡ Đang chạy ngầm" if is_bg_active else f"🟢 {time.strftime('%H:%M', time.localtime(t_mtime))}",
+                        "summary": tail_ln or "Đang duy trì daemon / thực thi lệnh hệ thống trên máy",
+                        "is_working": is_bg_active,
+                        "seconds_ago": t_age,
+                        "updated_str": time.strftime("%H:%M:%S", time.localtime(t_mtime)),
+                    })
+                except Exception:
+                    continue
+        except Exception:
+            pass
+
+    # 3. Quét nhanh các cổng dịch vụ & Chrome Multi-CDP đang mở thực tế trên máy (cache 4s)
+    active_services: list[dict] = []
+    if _MACHINE_TASKS_CACHE["data"] is not None and (now - _MACHINE_TASKS_CACHE["timestamp"] < 4.0):
+        active_services = _MACHINE_TASKS_CACHE["data"]
+    else:
+        import socket
+
+        port_checks = [
+            (8765, "WIN-8765", "Daemon Trợ Lý Giọng Nói CEO (:8765)", "Đồng bộ Live 1.2s · VieNeu 48kHz & Omni-Pilot"),
+            (23984, "WIN-23984", "Multi-Agent Visual Studio (:23984)", "Đồng bộ 5 Chế độ 2D/3D/Node/6-Editor/30-Swarm"),
+            (9224, "CDP-9224", "Chrome Multi-CDP :9224 (Profile Flow/FB)", "Đang mở trình duyệt điều khiển tự động trên máy"),
+            (9222, "CDP-9222", "Chrome Multi-CDP :9222 (Google Flow V3.9)", "Kết nối Patchright CDP điều khiển Node Studio"),
+            (9225, "CDP-9225", "Chrome Multi-CDP :9225 (AI Studio 4K)", "hoatrang756@gmail.com · Nano Banana 2.1 4K"),
+            (8788, "WIN-8788", "Local Web & Asset Server (:8788)", "Phục vụ tài nguyên & giao diện cục bộ trên máy"),
+        ]
+        for port_num, code_lbl, srv_title, srv_desc in port_checks:
+            is_open = False
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+                    sock.settimeout(0.03)
+                    is_open = sock.connect_ex(("127.0.0.1", port_num)) == 0
+            except Exception:
+                is_open = False
+            if is_open:
+                active_services.append({
+                    "task_id": f"srv-{port_num}",
+                    "kind": "system_service",
+                    "session_id": sessions[0]["session_id"] if sessions else "",
+                    "short_id": f":{port_num}",
+                    "engine_code": "system",
+                    "engine_badge": "WIN",
+                    "topic_badge": code_lbl,
+                    "title": srv_title,
+                    "status_label": f"⚡ Cổng :{port_num} ONLINE",
+                    "summary": srv_desc,
+                    "is_working": True,
+                    "seconds_ago": 0,
+                    "updated_str": time.strftime("%H:%M:%S"),
+                })
+        _MACHINE_TASKS_CACHE["timestamp"] = now
+        _MACHINE_TASKS_CACHE["data"] = active_services
+
+    working_sessions_count = sum(1 for t in tasks_list if t.get("is_working"))
+    total_running_now = working_sessions_count + sum(1 for b in bg_tasks if b.get("is_working")) + len(active_services)
+
+    return {
+        "session_tasks": tasks_list,
+        "background_tasks": bg_tasks[:6],
+        "system_services": active_services,
+        "working_sessions_count": working_sessions_count,
+        "total_running_now": total_running_now,
+    }
+
+
 def scan_live_chats_realtime(limit_sessions: int = 52) -> dict:
     """Quét danh sách các phiên chat theo thời gian thực trên cả Antigravity 2.0, Claude Code và Phiên tạo mới từ Web."""
     ag_sessions: list[dict] = []
@@ -1159,6 +1298,7 @@ def scan_live_chats_realtime(limit_sessions: int = 52) -> dict:
 
     projects = sorted({s.get("project", "mang xa hoi") for s in sessions if s.get("project")})
     latest_active = sessions[0]["session_id"] if sessions else ""
+    live_tasks_payload = scan_live_machine_tasks(sessions)
     return {
         "ok": True,
         "server_time": time.strftime("%H:%M:%S"),
@@ -1171,6 +1311,7 @@ def scan_live_chats_realtime(limit_sessions: int = 52) -> dict:
         "latest_active_session_id": latest_active,
         "projects": projects,
         "linked_machines": load_linked_machines(),
+        "live_tasks": live_tasks_payload,
         "sessions": sessions[:limit_sessions],
     }
 
