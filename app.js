@@ -32,13 +32,16 @@
     layersBuilt: 60,
     totalLayers: 244,
     popupOpen: false,
-    canvasCollapsed: false,
+    canvasCollapsed: true,
   };
 
   const chatState = {
     sessions: [],
     conversationsById: {},
     activeSessionId: "",
+    selectedBotId: "bot-1",
+    bot1NeedsCeo: true,
+    bot1WalkProgress: 1.0,
     providerFilter: "all",
     searchQuery: "",
     zeroCodeMode: true,
@@ -218,107 +221,271 @@
     "Hoàn thành QC 10/10 (1.0x)",
   ];
 
-  // 3D Office Desks & Floating Tags for the 12 Real Agents (Mode 2)
+  // 6 Specialized Bot Agents + Central Second-Brain CEO Desk for Mode 2 (3D Office), Mode 1 (2D Chat) & Mode 3 (Org/Skill/Task Tree)
+  const SPECIALIZED_BOT_AGENTS = [
+    {
+      id: "bot-1",
+      deskId: "desk-ed-diagram",
+      botNumber: 1,
+      name: "Bot 1 · Đạo Diễn Flow",
+      shortName: "Bot 1 · Flow",
+      shortRole: "Video >10s/15s",
+      agentCode: "flow-video-director",
+      sessionId: "21129617-7584-4209-a696-2a10db001a28",
+      shortId: "21129617",
+      icon: "🎬",
+      color: "#fb923c",
+      voiceName: "Thùy Dung",
+      wavFile: "audio_cache/vieneu_bot1_report.wav",
+      pluginsSkills: ["google-flow-video-studio", "OmniPlus 1.2", "SOP 100/101"],
+      skillCards: [
+        { code: "FL", icon: "🎬", label: "Flow Studio V3.9", color: "#fb923c", tip: "Plugin google-flow-video-studio: Điều khiển đồ thị 11 Node & Clone 1080p" },
+        { code: "OM", icon: "⚡", label: "OmniPlus 1.2", color: "#facc15", tip: "Skill chia đoạn & ghép tự động video >10s (MV10) & >15s (MV12)" },
+        { code: "S1", icon: "🛡️", label: "SOP 100/101", color: "#38bdf8", tip: "Haute-Couture Prompt + avgblur=210 ngay Lượt 1 + Khóa V1 ~1500ml" },
+      ],
+      shortSteps: ["1. Nhân bản", "2. Cắt <=8s", "3. Omni 1.2", "4. Ghép MP4"],
+      nx: -0.42,
+      ny: -0.26,
+      issueText: "Thiếu chọn model Gemini Omni 1.2 Flash trước khi bấm Generate (MV10 & MV12).",
+      ceoDirective: "Ép selector 'Gemini Omni 1.2 Flash' + khóa V1 ~1500ml + avgblur=210.",
+      aiReplySummary: "Đã nhân bản OmniPlus 1.2, cắt đoạn MV10 (13s) & MV12 (15s), xin lệnh CEO khóa model Omni 1.2 Flash.",
+      steps: [
+        { done: true, text: "1. Dùng skill google-flow-video-studio nhân bản Tool OmniPlus 1.2" },
+        { done: true, text: "2. Tự động chia đoạn video >10s (MV10) & >15s (MV12) thành đoạn <=8s" },
+        { done: false, exception: true, text: "3. Chạy về bàn CEO xin lệnh khóa model Gemini Omni 1.2 Flash" },
+        { done: false, text: "4. Quay lại bàn ghép FFmpeg 1080p & nộp Bảng So Sánh Từng Giây" },
+      ],
+      deliverable: {
+        title: "MV10 (>10s) & MV12 (>15s) · Bảng So Sánh",
+        thumb: "local-assets/kol/bao_nhi_4k_anchor.jpg",
+        fileUrl: "/media?path=C:/Users/Manabie/.antigravity-ide/GOOGLE_FLOW_VIDEO_STUDIO/KET_QUA_OMNIPLUS_12_TU_DONG/MV10_CHIEU_MUA_13S/FINAL_OMNIPLUS_MV10_CHIEU_MUA_13S.mp4",
+        qcUrl: "/media?path=C:/Users/Manabie/.antigravity-ide/GOOGLE_FLOW_VIDEO_STUDIO/KET_QUA_OMNIPLUS_12_TU_DONG/BAO_CAO_NGHIEM_THU_2_VIDEO_TREN_10S_15S.html",
+        kind: "video",
+      },
+    },
+    {
+      id: "bot-2",
+      deskId: "desk-run",
+      botNumber: 2,
+      name: "Bot 2 · Trinh Sát FB Stealth",
+      shortName: "Bot 2 · FB Stealth",
+      shortRole: "10 Video 9:16",
+      agentCode: "fb-viral-scout",
+      sessionId: "33c06dc5-6d8d-4bb4-b328-2395de02c780",
+      shortId: "33c06dc5",
+      icon: "🕵️",
+      color: "#4ade80",
+      voiceName: "Mỹ Duyên",
+      wavFile: "audio_cache/vieneu_bot2_report.wav",
+      pluginsSkills: ["ag2-fb-flow-hunter", "5-Layer Stealth P4", "Node Studio V3.9"],
+      skillCards: [
+        { code: "FB", icon: "🕵️", label: "FB Flow Hunter", color: "#4ade80", tip: "Plugin ag2-fb-flow-hunter: Săn Reel triệu view & gắn link Shopee V6" },
+        { code: "P4", icon: "🛡️", label: "5-Layer Stealth", color: "#34d399", tip: "Patchright CDP + Bezier Mouse + Zero .fill() + Kill-Switch Checkpoint" },
+        { code: "SP", icon: "🛍️", label: "Shopee V6 Link", color: "#facc15", tip: "Tự động gắn affiliate_id=17367070550 (kkhmn4) & đăng giờ vàng" },
+      ],
+      shortSteps: ["1. Stealth P4", "2. Gắn Shopee", "3. 10 Video 9:16", "4. QC 10/10"],
+      nx: 0.42,
+      ny: -0.26,
+      issueText: "",
+      ceoDirective: "Duyệt 10/10: Mở Profile 4 qua 5 Lớp Stealth & khóa 10/10 Video 9:16.",
+      aiReplySummary: "Đã quét FB Profile 4 an toàn và hoàn tất 10/10 Video dọc 9:16 (1080×1920).",
+      steps: [
+        { done: true, text: "1. Mở Profile 4 (khakhunghiep) qua 5 Lớp Stealth (Zero .fill())" },
+        { done: true, text: "2. Săn Reel & gắn mã Shopee V6 (affiliate_id=17367070550)" },
+        { done: true, text: "3. Dựng trọn bộ 10/10 Video dọc 9:16 (Bảo Trâm, Khánh Linh, Minh Anh)" },
+        { done: true, text: "4. Bộ Não Thứ Hai CEO nghiệm thu 10/10 — sẵn sàng đăng giờ vàng" },
+      ],
+      deliverable: {
+        title: "10/10 Video Dọc 9:16 (Bảo Trâm · Khánh Linh)",
+        thumb: "local-assets/kol/bao_tram_4k_anchor.jpg",
+        fileUrl: "local-assets/video/01_Bao_Tram/DA_CLONE_1080P_NO_BG_CHANGE/MV25_19xonMDHhG_GYM_CORE_DUMBBELL_4_BAI_SP01_V6__BAO_TRAM_CLONED_1080P.mp4",
+        qcUrl: "/media?path=C:/Users/Manabie/.antigravity-ide/GOOGLE_FLOW_VIDEO_STUDIO/BAO_CAO_NGHIEM_THU_10_VIDEO_9_16_10_10.html",
+        kind: "video",
+      },
+    },
+    {
+      id: "bot-3",
+      deskId: "desk-qa-1920",
+      botNumber: 3,
+      name: "Bot 3 · May Đo Ngược 1500ml",
+      shortName: "Bot 3 · May Đo",
+      shortRole: "15 Video V6",
+      agentCode: "luxury-tailor-bot",
+      sessionId: "f0668997-5e6c-4a38-91dc-9c44b4876311",
+      shortId: "f0668997",
+      icon: "👗",
+      color: "#38bdf8",
+      voiceName: "Thùy Dung",
+      wavFile: "audio_cache/vieneu_bot3_report.wav",
+      pluginsSkills: ["ag2-luxury-allure-hunter", "May Đo Ngược 1500ml", "SOP 099/101"],
+      skillCards: [
+        { code: "LX", icon: "👗", label: "Luxury Allure", color: "#38bdf8", tip: "Plugin ag2-luxury-allure-hunter: Săn đồ hiệu & cắt _HEADLESS.jpg 20%" },
+        { code: "MD", icon: "✂️", label: "May Đo 1500ml", color: "#ec4899", tip: "Engine reverse_tailor_outfit_engine.py: Khóa 105-55-102cm & cơ số 11" },
+        { code: "S9", icon: "🔒", label: "Khóa 5 Lớp V1", color: "#a78bfa", tip: "SOP 099: Đưa taoanh-2 lên đầu, ngắt anh-1 khỏi node video" },
+      ],
+      shortSteps: ["1. Cắt Headless", "2. Haute Prompt", "3. Đấu taoanh-2", "4. 15/15 V6"],
+      nx: -0.46,
+      ny: 0.12,
+      issueText: "",
+      ceoDirective: "Duyệt 10/10: Haute-Couture Prompt + avgblur=210 ngay Lượt 1, giữ V1 ~1500ml.",
+      aiReplySummary: "Đã cắt _HEADLESS.jpg và chạy May Đo Ngược 1500ml cho 15/15 Video V6 (0 lỗi Safety).",
+      steps: [
+        { done: true, text: "1. Cắt Headless 20% (_HEADLESS.jpg) & May Đo Ngược 1500ml" },
+        { done: true, text: "2. Bơm Haute-Couture Prompt + avgblur=210 ngay từ Lượt 1 (SOP 101)" },
+        { done: true, text: "3. Đấu dây ['taoanh-2', 'taoanh-1'] (ngắt anh-1) khóa V1 ~1500ml" },
+        { done: true, text: "4. Hoàn tất 15/15 Video V6 (0 lỗi Safety) — CEO chấm 10/10" },
+      ],
+      deliverable: {
+        title: "Kho May Đo 1500ml & 15/15 Video V6",
+        thumb: "local-assets/shopee/SP01_V6_BAO_TRAM_SET_PICKLEBALL_CROP_BRA_VAY_XEP_LY_MAY_DO_NGUOC_1500ML.jpg",
+        fileUrl: "local-assets/shopee/SP01_V6_BAO_TRAM_SET_PICKLEBALL_CROP_BRA_VAY_XEP_LY_MAY_DO_NGUOC_1500ML.jpg",
+        qcUrl: "local-assets/kol/00_BANG_5_NHAN_VAT_CANONICAL_4K.jpg",
+        kind: "image",
+      },
+    },
+    {
+      id: "bot-4",
+      deskId: "desk-ed-news",
+      botNumber: 4,
+      name: "Bot 4 · Đạo Diễn Hậu Kỳ",
+      shortName: "Bot 4 · Hậu Kỳ",
+      shortRole: "4 TVC Đồ Nam",
+      agentCode: "viral-video-editor",
+      sessionId: "be2e698c-1f28-4847-b6c1-443ca9978102",
+      shortId: "be2e698c",
+      icon: "🎞️",
+      color: "#a78bfa",
+      voiceName: "Adam",
+      wavFile: "audio_cache/vieneu_bot4_report.wav",
+      pluginsSkills: ["ag2-viral-video-editor", "Remotion 4.0", "Auto-Ducking -14dB"],
+      skillCards: [
+        { code: "ED", icon: "🎞️", label: "Viral Editor V3", color: "#a78bfa", tip: "Plugin ag2-viral-video-editor: 10 phong cách edit.fibus.vn & Mike V3" },
+        { code: "RM", icon: "✨", label: "Remotion 4.0", color: "#f472b6", tip: "Ghép đa phân cảnh 24fps, phủ màu 3D LUT (.cube) & Sub Karaoke .ass" },
+        { code: "AD", icon: "🔊", label: "Ducking -14dB", color: "#34d399", tip: "Chèn SFX phòng thu & tự động hạ nhạc nền -14dB khi có giọng đọc" },
+      ],
+      shortSteps: ["1. Ảnh góc 45°", "2. Remotion+LUT", "3. Sub+SFX -14dB", "4. 4/4 TVC Nam"],
+      nx: 0.46,
+      ny: 0.12,
+      issueText: "",
+      ceoDirective: "Duyệt 10/10: Phủ màu 3D LUT, Sub .ass & Auto-Ducking -14dB cho 4 TVC Đồ Nam.",
+      aiReplySummary: "Đã hoàn tất 4 Video TVC Thời Trang Nam Đa Phân Cảnh 9:16 (1080p) & contact-sheet.",
+      steps: [
+        { done: true, text: "1. Tạo bộ ảnh sản phẩm Thời Trang Nam (Polo, Sơ mi, Quần âu) góc 45°" },
+        { done: true, text: "2. Ghép chuyển động Remotion 4.0 + Phủ màu 3D LUT (.cube)" },
+        { done: true, text: "3. Đốt phụ đề Karaoke .ass + Chèn SFX & Auto-Ducking -14dB" },
+        { done: true, text: "4. Xuất 4/4 TVC 1080p (9:16) & duyệt contact-sheet đạt 10/10" },
+      ],
+      deliverable: {
+        title: "4 TVC Thời Trang Nam 9:16 (1080p)",
+        thumb: "local-assets/kol/ha_vy_4k_anchor.jpg",
+        fileUrl: "/media?path=c:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_SAN_PHAM_THOI_TRANG_NAM/VIDEO_TVC_DA_PHAN_CANH_9_16/FINAL_MASTER_ALL_4_TVC_THOI_TRANG_NAM_9_16.mp4",
+        qcUrl: "/media?path=c:/Users/Manabie/.antigravity-ide/mang xa hoi/KHO_SAN_PHAM_THOI_TRANG_NAM/VIDEO_TVC_DA_PHAN_CANH_9_16/FINAL_MASTER_ALL_4_TVC_THOI_TRANG_NAM_9_16.mp4",
+        kind: "video",
+      },
+    },
+    {
+      id: "bot-5",
+      deskId: "desk-ed-cut",
+      botNumber: 5,
+      name: "Bot 5 · Biên Kịch Sitcom 30s",
+      shortName: "Bot 5 · Sitcom",
+      shortRole: "3 Hồi 30s",
+      agentCode: "sitcom-storyboard-bot",
+      sessionId: "08fdb4e6-8209-4972-9552-8c7a9f2d8901",
+      shortId: "08fdb4e6",
+      icon: "🎭",
+      color: "#f472b6",
+      voiceName: "Mỹ Duyên",
+      wavFile: "audio_cache/vieneu_bot5_report.wav",
+      pluginsSkills: ["ag2-ai-sitcom-storyboard", "18 Micro-Beats", "48 FACS"],
+      skillCards: [
+        { code: "SC", icon: "🎭", label: "Sitcom Director", color: "#f472b6", tip: "Plugin ag2-ai-sitcom-storyboard-director: Kịch bản 3 Hồi Plot-Twist" },
+        { code: "MB", icon: "🎬", label: "18 Micro-Beats", color: "#fb923c", tip: "Chia 18 nhịp diễn 1.5s-2.0s + One-Shot 6 Góc Máy iPhone 17 Pro Max" },
+        { code: "FC", icon: "😊", label: "48 FACS Acting", color: "#38bdf8", tip: "Stanislavski Method-Acting + 48 cơ mặt FACS + 104 Luxury Poses" },
+      ],
+      shortSteps: ["1. 18 Đoạn nhỏ", "2. 48 FACS", "3. Sheet 9 cảnh", "4. Master 30s"],
+      nx: -0.28,
+      ny: 0.44,
+      issueText: "",
+      ceoDirective: "Duyệt 10/10: Khớp trục nhìn 180°, Whip-Pan & nhịp diễn 3 chu kỳ lệch pha.",
+      aiReplySummary: "Đã hoàn thành kịch bản 18 đoạn nhỏ, Character Sheet 9 cảnh & Master Sitcom 30s.",
+      steps: [
+        { done: true, text: "1. Biên dịch ý tưởng thành 18 Phân đoạn nhỏ (1.5s-2.0s) × 3 Hồi" },
+        { done: true, text: "2. Ghép 48 Portrait FACS + 104 Luxury Poses tạo NGUON_DIEN_XUAT" },
+        { done: true, text: "3. Sinh Character Sheet 9 phân cảnh & quay Method-Acting Video" },
+        { done: true, text: "4. Ráp nối trục 180°, chèn SFX & xuất Master Sitcom 30s (1080p)" },
+      ],
+      deliverable: {
+        title: "Master Sitcom 3 Hồi 30s (Bảo Trâm × Khánh Linh)",
+        thumb: "local-assets/kol/khanh_linh_4k_anchor.jpg",
+        fileUrl: "/media?path=c:/Users/Manabie/.antigravity-ide/mang xa hoi/SAN_PHAM_SITCOM_AI_3_HOI/20260405_SITCOM_PHONG_TAP_BAO_TRAM_KHANH_LINH/FINAL_SITCOM_3_HOI_30S_MASTER.mp4",
+        qcUrl: "/media?path=c:/Users/Manabie/.antigravity-ide/mang xa hoi/SAN_PHAM_SITCOM_AI_3_HOI/20260405_SITCOM_PHONG_TAP_BAO_TRAM_KHANH_LINH/FINAL_SITCOM_3_HOI_30S_MASTER.mp4",
+        kind: "video",
+      },
+    },
+    {
+      id: "bot-6",
+      deskId: "desk-ed-chart",
+      botNumber: 6,
+      name: "Bot 6 · Kỹ Sư Máy Tính & 4K",
+      shortName: "Bot 6 · 4K & Máy",
+      shortRole: "Ultra 4K + CDP",
+      agentCode: "aistudio-4k-upscaler",
+      sessionId: "ae769ba4-3911-4582-81a9-7c8d1f009b12",
+      shortId: "ae769ba4",
+      icon: "🖥️",
+      color: "#facc15",
+      voiceName: "Minh Triết",
+      wavFile: "audio_cache/vieneu_bot6_report.wav",
+      pluginsSkills: ["ag2-aistudio-ultra-4k", "ag2-windows-omni-pilot", "Profile 5"],
+      skillCards: [
+        { code: "4K", icon: "💎", label: "AI Studio 4K", color: "#facc15", tip: "Plugin ag2-aistudio-ultra-4k: hoatrang756 · 1,000 ảnh 4K/ngày" },
+        { code: "OP", icon: "🦾", label: "Omni-Pilot UIA", color: "#4ade80", tip: "Plugin ag2-windows-omni-pilot: Điều khiển toàn máy tính & quay 60fps" },
+        { code: "CD", icon: "🌐", label: "Multi-CDP 9222+", color: "#38bdf8", tip: "Quản lý 4 cổng Chrome CDP (P1, P4, P5, P6) & dọn sạch RAM" },
+      ],
+      shortSteps: ["1. Dọn RAM", "2. P5 4K Ultra", "3. 4 Cổng CDP", "4. QC 6 Miền"],
+      nx: 0.30,
+      ny: 0.44,
+      issueText: "",
+      ceoDirective: "Duyệt 10/10: Duy trì Profile 5 (1,000 ảnh 4K/ngày), dọn RAM & chạy Cổng QC.",
+      aiReplySummary: "Đã giải phóng RAM, duy trì 4 cổng Multi-CDP (9222..9226) và nâng cấp 5 KOL 4K.",
+      steps: [
+        { done: true, text: "1. Quét tiến trình Windows & dọn sạch Chrome zombie giải phóng RAM" },
+        { done: true, text: "2. Kết nối Profile 5 (hoatrang756 — Google AI Ultra) nâng cấp 4K" },
+        { done: true, text: "3. Duy trì 4 cổng Chrome Multi-CDP (9222..9226) & Cánh tay UIA" },
+        { done: true, text: "4. Kiểm định verify.py & autonomous_qc_gatekeeper.py đạt 10/10" },
+      ],
+      deliverable: {
+        title: "5 Nhân Vật Canonical 4K & QC 6 Miền",
+        thumb: "local-assets/kol/00_BANG_5_NHAN_VAT_CANONICAL_4K.jpg",
+        fileUrl: "local-assets/kol/00_BANG_5_NHAN_VAT_CANONICAL_4K.jpg",
+        qcUrl: "local-assets/kol/00_BANG_5_NHAN_VAT_CANONICAL_4K.jpg",
+        kind: "image",
+      },
+    },
+  ];
+
+  // 3D Office Desks & Floating Tags for the Central CEO + 6 Specialized Bot Agents (Mode 2)
   const OFFICE_DESKS = [
     {
-      id: "desk-soccer",
-      title: "⚽ Giải lao · Cron 15p",
-      sub: "Trả lời Comment miền Nam · 2 Agent",
-      nx: -0.42,
-      ny: -0.36,
-      cls: "tag-soccer",
-      color: "#34d399",
-    },
-    {
-      id: "desk-exec",
-      title: "◆ Multi-CDP 9222..9230 ↗",
-      sub: "Profile 1 · Profile 4 · Profile 5 · P6",
-      nx: 0.14,
-      ny: -0.44,
-      cls: "",
-      color: "#facc15",
-    },
-    {
-      id: "desk-ed-diagram",
-      title: "Flow Director V3.9",
-      sub: "🎬 11 Node Clone 8.0s 1.0x (aichampionhk1)",
-      nx: 0.52,
-      ny: -0.22,
-      cls: "",
-      color: "#a3e635",
-    },
-    {
-      id: "desk-run",
-      title: "🛡️ FB Stealth 5 Lớp (P4)",
-      sub: "khakhunghiep · Zero .fill() · Chống Checkpoint",
-      nx: -0.46,
-      ny: 0.04,
-      cls: "",
-      color: "#4ade80",
-    },
-    {
       id: "desk-commander",
-      title: "Bộ Não Thứ Hai CEO",
-      sub: "AG2-CEO · 339 phiên / 774 luật · VieNeu 48kHz",
-      nx: -0.02,
-      ny: -0.08,
+      title: "🧠 Bàn CEO Bộ Não Thứ Hai",
+      sub: "Trợ lý của Sếp · Duyệt 6 Bot · Giọng VieNeu 48kHz",
+      nx: 0.0,
+      ny: -0.06,
       cls: "tag-commander",
       color: "#fb923c",
     },
-    {
-      id: "desk-ed-chart",
-      title: "AI Studio Ultra 4K (P5)",
-      sub: "✨ hoatrang756 · Nano Banana 2.1 (1000/ngày)",
-      nx: 0.34,
-      ny: 0.02,
+    ...SPECIALIZED_BOT_AGENTS.map((b) => ({
+      id: b.deskId,
+      botId: b.id,
+      title: `${b.icon} ${b.name} (#${b.shortId})`,
+      sub: `🧩 ${b.pluginsSkills.slice(0, 2).join(" · ")}`,
+      nx: b.nx,
+      ny: b.ny,
       cls: "",
-      color: "#fb923c",
-    },
-    {
-      id: "desk-ed-news",
-      title: "Remotion & CapCut Pro",
-      sub: "✂ 6 Style edit.fibus.vn · Auto-Ducking -14dB",
-      nx: 0.62,
-      ny: 0.18,
-      cls: "",
-      color: "#a78bfa",
-    },
-    {
-      id: "desk-qa-1920",
-      title: "May Đo Ngược V3.0",
-      sub: "👗 105-55-102cm (~1500ml) · SP01..SP10_V6",
-      nx: -0.34,
-      ny: 0.32,
-      cls: "",
-      color: "#38bdf8",
-    },
-    {
-      id: "desk-ed-cut",
-      title: "OpenMontage $0 API",
-      sub: "🎙️ 12 Pipelines · Sub .ass + Giọng Leda",
-      nx: 0.04,
-      ny: 0.24,
-      cls: "",
-      color: "#fb7185",
-    },
-    {
-      id: "desk-qa-768",
-      title: "Windows Omni-Pilot",
-      sub: "🖥️ UIA + Quay 60fps & Google Classroom",
-      nx: -0.14,
-      ny: 0.54,
-      cls: "",
-      color: "#60a5fa",
-    },
-    {
-      id: "desk-qa-source",
-      title: "Swarm Cloner 30 Agent",
-      sub: "🐝 Đang vẽ don-bay-ai-v6.html & Clone URL",
-      nx: 0.36,
-      ny: 0.44,
-      cls: "",
-      color: "#34d399",
-    },
+      color: b.color,
+    })),
   ];
 
   // Node Graph Definitions for the 12 Real Agents (Mode 3)
@@ -514,6 +681,7 @@
   }
 
   window.switchStudioMode = switchMode;
+  window.switchMode = switchMode;
 
   function switchWebSubPage(sub) {
     STATE.webSubPage = sub;
@@ -880,10 +1048,16 @@
 
     ctx.clearRect(0, 0, W, H);
 
-    const originX = W * 0.61;
-    const originY = H * 0.49;
-    const floorW = Math.min(W * 0.4, 540);
-    const floorD = Math.min(H * 0.41, 310);
+    // Smoothly interpolate Bot 1's walk between its desk (0.0) and the CEO Desk (1.0)
+    const targetWalk = chatState.bot1NeedsCeo ? 1.0 : 0.0;
+    chatState.bot1WalkProgress += (targetWalk - chatState.bot1WalkProgress) * 0.08;
+
+    const stageLeft = 278;
+    const stageRight = Math.max(stageLeft + 380, W - 368);
+    const originX = (stageLeft + stageRight) * 0.5;
+    const originY = H * 0.45;
+    const floorW = Math.min((stageRight - stageLeft) * 0.46, 315);
+    const floorD = Math.min(H * 0.34, 210);
 
     ctx.beginPath();
     ctx.moveTo(originX, originY - floorD);
@@ -921,23 +1095,23 @@
       ctx.stroke();
     }
 
-    const billX = originX - floorW * 0.42;
-    const billY = originY - floorD * 0.62;
+    const billX = originX - floorW * 0.38;
+    const billY = originY - floorD * 0.64;
     ctx.save();
     ctx.transform(1, -0.52, 0, 1, billX, billY);
-    const bGrad = ctx.createLinearGradient(-150, -70, 150, 0);
+    const bGrad = ctx.createLinearGradient(-130, -60, 130, 0);
     bGrad.addColorStop(0, "#38bdf8");
     bGrad.addColorStop(0.5, "#67e8f9");
     bGrad.addColorStop(1, "#22d3ee");
     ctx.fillStyle = bGrad;
     ctx.shadowColor = "#38bdf8";
-    ctx.shadowBlur = 24;
-    roundRect(ctx, -155, -66, 310, 52, 6, true, false);
+    ctx.shadowBlur = 20;
+    roundRect(ctx, -135, -56, 270, 44, 6, true, false);
     ctx.shadowBlur = 0;
     ctx.fillStyle = "#082f49";
-    ctx.font = "900 20px Inter, sans-serif";
+    ctx.font = "900 17px Inter, sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("ĐÒN BẨY AI × AG2", 0, -33);
+    ctx.fillText("ĐÒN BẨY AI × AG2", 0, -28);
     ctx.restore();
 
     const palms = [
@@ -959,110 +1133,127 @@
       );
     });
 
-    const socX = originX - floorW * 0.36;
-    const socY = originY - floorD * 0.25;
-    const sw = 115;
-    const sd = 66;
+    // Central Second-Brain CEO Desk
+    const cmdX = originX;
+    const cmdY = originY - floorD * 0.06;
+    ctx.fillStyle = chatState.bot1NeedsCeo
+      ? "rgba(234, 88, 12, 0.48)"
+      : "rgba(22, 163, 74, 0.36)";
+    ctx.strokeStyle = chatState.bot1NeedsCeo
+      ? "rgba(250, 204, 21, 0.85)"
+      : "rgba(74, 222, 128, 0.65)";
+    ctx.lineWidth = 2.2;
     ctx.beginPath();
-    ctx.moveTo(socX, socY - sd);
-    ctx.lineTo(socX + sw, socY);
-    ctx.lineTo(socX, socY + sd);
-    ctx.lineTo(socX - sw, socY);
-    ctx.closePath();
-    ctx.fillStyle = "#16a34a";
-    ctx.fill();
-    ctx.strokeStyle = "#bbf7d0";
-    ctx.lineWidth = 2;
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.moveTo(socX - sw * 0.5, socY - sd * 0.5);
-    ctx.lineTo(socX + sw * 0.5, socY + sd * 0.5);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.ellipse(socX, socY, 18, 10, 0, 0, Math.PI * 2);
-    ctx.stroke();
-
-    const ballProgress = (Math.sin(t * 0.06) + 1) * 0.5;
-    const p1x = socX - 38 + Math.sin(t * 0.04) * 10;
-    const p1y = socY - 12;
-    const p2x = socX + 36 - Math.sin(t * 0.04) * 10;
-    const p2y = socY + 14;
-    draw3DAgentAvatar(
-      ctx,
-      p1x,
-      p1y,
-      "#38bdf8",
-      Math.abs(Math.sin(t * 0.12)) * -4
-    );
-    draw3DAgentAvatar(
-      ctx,
-      p2x,
-      p2y,
-      "#f472b6",
-      Math.abs(Math.cos(t * 0.12)) * -4
-    );
-
-    const bx = p1x + (p2x - p1x) * ballProgress;
-    const by =
-      p1y +
-      (p2y - p1y) * ballProgress -
-      Math.sin(ballProgress * Math.PI) * 12;
-    ctx.fillStyle = "#ffffff";
-    ctx.beginPath();
-    ctx.arc(bx, by, 4.5, 0, Math.PI * 2);
-    ctx.fill();
-
-    const cmdX = originX + floorW * 0.06;
-    const cmdY = originY - floorD * 0.02;
-    ctx.fillStyle = "rgba(194, 65, 12, 0.42)";
-    ctx.strokeStyle = "rgba(251, 146, 60, 0.55)";
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.ellipse(cmdX, cmdY + 8, 92, 52, 0, 0, Math.PI * 2);
+    ctx.ellipse(cmdX, cmdY + 8, 78, 44, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.stroke();
 
     ctx.fillStyle = "#e2e8f0";
     ctx.beginPath();
-    ctx.ellipse(cmdX, cmdY - 4, 46, 26, 0, 0, Math.PI * 2);
+    ctx.ellipse(cmdX, cmdY - 4, 40, 22, 0, 0, Math.PI * 2);
     ctx.fill();
     ctx.strokeStyle = "#38bdf8";
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    draw3DAgentAvatar(ctx, cmdX - 36, cmdY - 14, "#fb923c", Math.sin(t * 0.08) * 2);
-    draw3DAgentAvatar(ctx, cmdX + 38, cmdY - 12, "#facc15", Math.cos(t * 0.08) * 2);
-    draw3DAgentAvatar(ctx, cmdX, cmdY + 26, "#4ade80", Math.sin(t * 0.09) * 2);
+    // CEO Second-Brain Avatar at center table
+    draw3DAgentAvatar(ctx, cmdX, cmdY - 12, "#ec4899", Math.sin(t * 0.08) * 2);
 
+    // Non-overlapping screen-space ring coordinates for the 7 floating cards
+    const cardPositionByDesk = {
+      "desk-commander": { x: cmdX, y: Math.max(82, originY - floorD - 22) },
+      "desk-ed-diagram": { x: originX - 206, y: originY - 98 },
+      "desk-run": { x: originX + 206, y: originY - 98 },
+      "desk-qa-1920": { x: originX - 216, y: originY + 18 },
+      "desk-ed-news": { x: originX + 216, y: originY + 18 },
+      "desk-ed-cut": { x: originX - 196, y: originY + 134 },
+      "desk-ed-chart": { x: originX + 196, y: originY + 134 },
+    };
+
+    // Leader line from Central CEO Card to 3D CEO Avatar
+    ctx.save();
+    ctx.strokeStyle = chatState.bot1NeedsCeo ? "rgba(250, 204, 21, 0.72)" : "rgba(236, 72, 153, 0.55)";
+    ctx.lineWidth = 1.6;
+    ctx.setLineDash([4, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cardPositionByDesk["desk-commander"].x, cardPositionByDesk["desk-commander"].y + 24);
+    ctx.lineTo(cmdX, cmdY - 18);
+    ctx.stroke();
+    ctx.restore();
+
+    // Draw the 6 Specialized Bot Desks & Avatars
     OFFICE_DESKS.forEach((d, idx) => {
-      if (d.id === "desk-soccer" || d.id === "desk-commander") return;
+      if (d.id === "desk-commander") return;
       const dx = originX + d.nx * floorW;
       const dy = originY + d.ny * floorD;
+      const isBot1 = d.botId === "bot-1";
+      const walkProg = isBot1 ? chatState.bot1WalkProgress : 0.0;
 
-      ctx.strokeStyle = "rgba(56, 189, 248, 0.22)";
-      ctx.lineWidth = 1.5;
+      // Connection line from Desk to CEO Desk
+      ctx.save();
+      if (isBot1 && walkProg > 0.05) {
+        ctx.strokeStyle = "rgba(250, 204, 21, 0.92)";
+        ctx.lineWidth = 2.8;
+        ctx.setLineDash([6, 6]);
+        ctx.lineDashOffset = -t * 0.8;
+      } else {
+        ctx.strokeStyle = "rgba(56, 189, 248, 0.28)";
+        ctx.lineWidth = 1.5;
+      }
       ctx.beginPath();
       ctx.moveTo(cmdX, cmdY - 4);
       ctx.lineTo(dx, dy);
       ctx.stroke();
+      ctx.restore();
 
+      // Traveling signal dot
       const p = (t * 0.015 + idx * 0.17) % 1;
       const px = cmdX + (dx - cmdX) * p;
       const py = cmdY - 4 + (dy - (cmdY - 4)) * p;
-      ctx.fillStyle = d.color;
+      ctx.fillStyle = isBot1 && walkProg > 0.2 ? "#fde047" : d.color;
       ctx.beginPath();
       ctx.arc(px, py, 3.2, 0, Math.PI * 2);
       ctx.fill();
 
-      draw3DIsoBox(ctx, dx, dy, 28, 16, 10, "#cbd5e1", "#94a3b8", "#64748b");
+      // 3D Desk & Monitor
+      draw3DIsoBox(ctx, dx, dy, 26, 15, 10, "#cbd5e1", "#94a3b8", "#64748b");
       draw3DIsoBox(ctx, dx - 5, dy - 12, 14, 4, 12, d.color, "#0f172a", d.color);
+
+      // Bot Avatar Position: either at its desk (walkProg=0) or walked to CEO Desk (walkProg=1)
+      const targetCeoX = cmdX - 42;
+      const targetCeoY = cmdY + 14;
+      const avX = (dx + 12) * (1 - walkProg) + targetCeoX * walkProg;
+      const avY = (dy + 10) * (1 - walkProg) + targetCeoY * walkProg;
+
+      // Leader line from non-overlapping Bot Card to 3D Bot Avatar
+      const cardPos = cardPositionByDesk[d.id];
+      if (cardPos) {
+        ctx.save();
+        ctx.strokeStyle = isBot1 && walkProg > 0.2 ? "rgba(250, 204, 21, 0.78)" : d.color + "66";
+        ctx.lineWidth = isBot1 && walkProg > 0.2 ? 1.8 : 1.2;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        const anchorSideX = cardPos.x < originX ? cardPos.x + 88 : cardPos.x - 88;
+        ctx.moveTo(anchorSideX, cardPos.y);
+        ctx.lineTo(avX, avY - 6);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      if (isBot1 && walkProg > 0.3) {
+        ctx.strokeStyle = "rgba(250, 204, 21, 0.9)";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(avX, avY + 4, 15, 8, 0, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+
       draw3DAgentAvatar(
         ctx,
-        dx + 12,
-        dy + 10,
+        avX,
+        avY,
         d.color,
-        Math.sin(t * 0.1 + idx) * 1.8
+        Math.sin(t * 0.12 + idx) * (walkProg > 0.1 ? 3.2 : 1.8)
       );
     });
 
@@ -1073,10 +1264,6 @@
         const el = document.createElement("div");
         el.className = "agent-floating-tag " + d.cls;
         el.id = "tag-" + d.id;
-        el.innerHTML = `
-          <div class="tag-title"><span style="color:${d.color}">●</span> ${d.title}</div>
-          <div class="tag-sub">${d.sub}</div>
-        `;
         layer.appendChild(el);
       });
       syncLiveTasksToVisualStudio(true);
@@ -1085,66 +1272,264 @@
     OFFICE_DESKS.forEach((d) => {
       const el = document.getElementById("tag-" + d.id);
       if (!el) return;
-      const dx = originX + d.nx * floorW;
-      const dy = originY + d.ny * floorD - 36;
-      el.style.left = dx + "px";
-      el.style.top = dy + "px";
+      const cardPos = cardPositionByDesk[d.id] || { x: originX, y: originY };
+      el.style.left = cardPos.x + "px";
+      el.style.top = cardPos.y + "px";
     });
   }
 
-  function renderNodeGraph() {
+  // =========================================================================
+  // CÂY SƠ ĐỒ TỔ CHỨC · TASK · PLUGIN & SKILL (HỌC TỪ PAPERCLIP AI & ORGTREE)
+  // 4 Tầng trực quan: 👑 CEO ➔ 6 Bot Đội Trưởng ➔ 18 Plugin/Skill ➔ 6 Task & Sản Phẩm
+  // =========================================================================
+  let orgTreeState = {
+    filter: "all", // 'all' | 'org' | 'skills' | 'tasks'
+    zoom: 1.0,
+    lastRenderSig: "",
+  };
+
+  function setOrgTreeFilter(filterMode, btnEl) {
+    orgTreeState.filter = filterMode || "all";
+    document.querySelectorAll(".orgtree-filter-btn").forEach((b) => {
+      b.classList.toggle("active", b === btnEl);
+    });
+    orgTreeState.lastRenderSig = "";
+    renderNodeGraph(true);
+  }
+  window.setOrgTreeFilter = setOrgTreeFilter;
+
+  function zoomOrgTree(delta) {
+    orgTreeState.zoom = Math.max(0.65, Math.min(1.35, orgTreeState.zoom + delta));
+    const stage = document.getElementById("orgtree-canvas-stage");
+    if (stage) {
+      stage.style.transform = `scale(${orgTreeState.zoom})`;
+      stage.style.transformOrigin = "top center";
+    }
+  }
+  window.zoomOrgTree = zoomOrgTree;
+
+  function resetOrgTreeZoom() {
+    orgTreeState.zoom = 1.0;
+    const stage = document.getElementById("orgtree-canvas-stage");
+    if (stage) {
+      stage.style.transform = "scale(1)";
+    }
+  }
+  window.resetOrgTreeZoom = resetOrgTreeZoom;
+
+  function renderNodeGraph(forceRebuild = false) {
     const domLayer = document.getElementById("nodegraph-dom-layer");
     const svg = document.getElementById("nodegraph-svg");
+    const container = document.getElementById("mode-node");
     if (!domLayer || !svg) return;
 
-    if (domLayer.children.length === 0) {
-      DAG_NODES.forEach((n) => {
-        const div = document.createElement("div");
-        div.className = "dag-node " + n.cls;
-        div.id = "dag-" + n.id;
-        div.style.left = n.x + "px";
-        div.style.top = n.y + "px";
-        div.innerHTML = `
-          <div class="dag-node-header">
-            <span>${n.code}</span>
-            <span style="color:#4ade80">● Đang chạy</span>
+    const w = Math.max(1180, (container && container.clientWidth) || window.innerWidth || 1366);
+    const centerX = Math.round(w * 0.5);
+    const sig = `${w}|${orgTreeState.filter}|${chatState.selectedBotId}|${chatState.bot1NeedsCeo ? 1 : 0}`;
+    const needsDomBuild = forceRebuild || domLayer.children.length === 0 || orgTreeState.lastRenderSig !== sig;
+
+    // Bố cục 6 cột cân đối cho 6 Đội Trưởng Bot
+    const marginX = Math.max(124, Math.round(w * 0.095));
+    const usableW = Math.max(880, w - marginX * 2);
+    const colStep = usableW / 5;
+    const colXs = [0, 1, 2, 3, 4, 5].map((i) => Math.round(marginX + i * colStep));
+
+    const yCeo = 56;
+    const yBot = 166;
+    const ySkillBase = 286;
+    const yTask = orgTreeState.filter === "tasks" ? 290 : 418;
+
+    const showSkills = orgTreeState.filter === "all" || orgTreeState.filter === "skills";
+    const showTasks = orgTreeState.filter === "all" || orgTreeState.filter === "tasks";
+
+    if (needsDomBuild) {
+      orgTreeState.lastRenderSig = sig;
+      let html = "";
+
+      // TẦNG 1: ĐỈNH THÁP — SẾP & BỘ NÃO THỨ HAI CEO
+      const ceoAlert = chatState.bot1NeedsCeo;
+      html += `
+        <div class="orgtree-node-card tier-ceo" style="left:${centerX}px; top:${yCeo}px;"
+             data-popover="Đỉnh Tháp Chỉ Huy: Bộ Não Thứ Hai CEO · 339+ Phiên Chat · 774 Luật Bất Di Bất Dịch · Tự động điều phối 6 Đội Trưởng Bot"
+             onclick="speakCeoOverviewVieNeu()">
+          <div class="org-card-top">
+            <div class="org-card-title">
+              <span>👑</span>
+              <span>Sếp &amp; Bộ Não Thứ Hai CEO</span>
+            </div>
+            <span class="org-card-badge" style="background:${ceoAlert ? "rgba(250,204,21,0.22)" : "rgba(74,222,128,0.2)"};color:${ceoAlert ? "#fde047" : "#86efac"};">
+              ${ceoAlert ? "⚠️ 1 Xin Duyệt" : "🟢 6/6 Tốt"}
+            </span>
           </div>
-          <div class="dag-node-title">${n.title}</div>
-          <div class="dag-node-meta">${n.meta}</div>
+          <div class="org-card-sub">🧠 774 Luật · 🎙️ VieNeu 48kHz · 🛡️ 5-Layer Stealth</div>
+          <div class="org-card-actions" onclick="event.stopPropagation();">
+            <button type="button" class="org-mini-action" onclick="speakCeoOverviewVieNeu()" data-popover="Nghe báo cáo tổng quan CEO">🔊 Nghe CEO</button>
+            ${
+              ceoAlert
+                ? `<button type="button" class="org-mini-action warn" onclick="approveBot1ByCeo()" data-popover="Duyệt lệnh cho Bot 1 về bàn">⚡ Duyệt Bot 1</button>`
+                : `<button type="button" class="org-mini-action" onclick="toggleBot1DemoWalkToCeo()" data-popover="Mô phỏng Bot 1 chạy lại bàn CEO">🏃 Test Báo Cáo</button>`
+            }
+          </div>
+        </div>
+      `;
+
+      // TẦNG 2: 6 ĐỘI TRƯỞNG BOT CHUYÊN TRÁCH (Paperclip Card + Orgtree ContextWheel)
+      SPECIALIZED_BOT_AGENTS.forEach((bot, idx) => {
+        const cx = colXs[idx];
+        const isSel = chatState.selectedBotId === bot.id;
+        const isNeedsCeo = bot.id === "bot-1" && chatState.bot1NeedsCeo;
+        const doneSteps = bot.steps.filter((s) => s.done).length;
+        const pct = Math.round((doneSteps / Math.max(1, bot.steps.length)) * 100);
+        const strokeCol = isNeedsCeo ? "#facc15" : "#4ade80";
+        const dashOffset = Math.round(69.1 - (69.1 * pct) / 100);
+
+        html += `
+          <div class="orgtree-node-card tier-bot ${isSel ? "active" : ""} ${isNeedsCeo ? "needs-ceo" : ""}"
+               style="left:${cx}px; top:${yBot}px;"
+               onclick="selectBotAgentInStudio('${bot.id}', false)"
+               data-popover="${escapeHtml(bot.name)} (#${escapeHtml(bot.shortId)}) · ${escapeHtml(bot.aiReplySummary)}">
+            <div class="org-card-top">
+              <div class="org-card-title">
+                <span>${bot.icon}</span>
+                <span>${escapeHtml(bot.shortName || bot.name)}</span>
+              </div>
+              <svg width="24" height="24" viewBox="0 0 26 26" style="flex-shrink:0;">
+                <circle cx="13" cy="13" r="11" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2.5"/>
+                <circle cx="13" cy="13" r="11" fill="none" stroke="${strokeCol}" stroke-width="2.5"
+                        stroke-dasharray="69.1" stroke-dashoffset="${dashOffset}" transform="rotate(-90 13 13)"/>
+                <text x="13" y="16.5" text-anchor="middle" fill="#f8fafc" font-size="8.5" font-weight="800">${doneSteps}/4</text>
+              </svg>
+            </div>
+            <div class="org-card-sub">
+              <span style="color:${strokeCol};font-weight:800;">●</span> ${escapeHtml(bot.shortRole || "")} · <span style="color:#7dd3fc">#${escapeHtml(bot.shortId)}</span>
+            </div>
+            <div class="org-card-actions" onclick="event.stopPropagation();">
+              <button type="button" class="org-mini-action" onclick="speakBotReportVieNeu('${bot.id}')" data-popover="Nghe giọng ${escapeHtml(bot.voiceName)}">🔊</button>
+              <button type="button" class="org-mini-action" onclick="selectBotAgentInStudio('${bot.id}', true)" data-popover="Mở khung Chat điều hành">💬 Chat</button>
+              ${
+                isNeedsCeo
+                  ? `<button type="button" class="org-mini-action warn" onclick="approveBot1ByCeo()" data-popover="Duyệt lệnh CEO">⚡ Duyệt</button>`
+                  : `<span class="org-mini-action" style="cursor:default;">🎙️ ${escapeHtml(bot.voiceName)}</span>`
+              }
+            </div>
+          </div>
         `;
-        div.addEventListener("click", () => {
-          executeOmniAction("spawn-agent-session", {
-            agent: n.agent || "all-agents",
-            directive: `Chạy ${n.code} (${n.title}): ${n.meta}`,
+
+        // TẦNG 3: CÂY PLUGIN & SKILL GẮN VÀO TỪNG BOT (Paperclip SkillCardIcon)
+        if (showSkills && Array.isArray(bot.skillCards)) {
+          bot.skillCards.forEach((sk, sIdx) => {
+            const sy = ySkillBase + sIdx * 38;
+            html += `
+              <div class="orgtree-node-card tier-skill"
+                   style="left:${cx}px; top:${sy}px;"
+                   onclick="selectBotAgentInStudio('${bot.id}', false)"
+                   data-popover="Plugin/Skill [${escapeHtml(sk.label)}]: ${escapeHtml(sk.tip)}">
+                <div class="org-card-top">
+                  <div class="org-card-title">
+                    <span class="skill-sq-icon" style="background:${sk.color};">${escapeHtml(sk.code)}</span>
+                    <span>${sk.icon} ${escapeHtml(sk.label)}</span>
+                  </div>
+                  <span style="color:#4ade80;font-size:9px;font-weight:900;">● ON</span>
+                </div>
+              </div>
+            `;
           });
-          switchMode("2d");
-        });
-        domLayer.appendChild(div);
+        }
+
+        // TẦNG 4: TASK ĐANG CHẠY + 4 CHẤM TIẾN ĐỘ + THUMBNAIL SẢN PHẨM
+        if (showTasks) {
+          const deliv = bot.deliverable || {};
+          const thumbSrc = deliv.thumb || "local-assets/kol/bao_tram_4k_anchor.jpg";
+          const fileUrl =
+            deliv.fileUrl && deliv.fileUrl.startsWith("/") && LOCAL_API_BASE
+              ? `${LOCAL_API_BASE}${deliv.fileUrl}`
+              : deliv.fileUrl || "#";
+          const qcUrl =
+            deliv.qcUrl && deliv.qcUrl.startsWith("/") && LOCAL_API_BASE
+              ? `${LOCAL_API_BASE}${deliv.qcUrl}`
+              : deliv.qcUrl || fileUrl;
+
+          const stepDotsHtml = (bot.shortSteps || [])
+            .map((st, stIdx) => {
+              const rawSt = bot.steps[stIdx] || {};
+              const stepIco = rawSt.exception ? "🏃" : rawSt.done ? "✅" : "⏳";
+              const stepLbl = typeof st === "string" ? st : st.label || "";
+              const bg = rawSt.exception
+                ? "rgba(250,204,21,0.22)"
+                : rawSt.done
+                ? "rgba(74,222,128,0.16)"
+                : "rgba(255,255,255,0.06)";
+              const col = rawSt.exception ? "#fde047" : rawSt.done ? "#86efac" : "#94a3b8";
+              return `<span style="padding:1px 4px;border-radius:4px;background:${bg};color:${col};font-size:8.5px;font-weight:800;" data-popover="${escapeHtml(rawSt.text || stepLbl)}">${stepIco}</span>`;
+            })
+            .join("");
+
+          html += `
+            <div class="orgtree-node-card tier-task"
+                 style="left:${cx}px; top:${yTask}px;"
+                 onclick="window.open('${escapeHtml(fileUrl)}', '_blank')"
+                 data-popover="Sản phẩm của ${escapeHtml(bot.shortName)}: ${escapeHtml(deliv.title || "")} (Bấm để mở File)">
+              <div class="org-card-top">
+                <div class="org-card-title">
+                  <span>📦</span>
+                  <span>${escapeHtml((deliv.title || "Sản phẩm").slice(0, 22))}</span>
+                </div>
+                <div style="display:flex;gap:2px;">${stepDotsHtml}</div>
+              </div>
+              <img class="org-task-thumb" src="${escapeHtml(thumbSrc)}" alt="Deliverable" loading="lazy" />
+              <div class="org-card-actions" onclick="event.stopPropagation();">
+                <a href="${escapeHtml(fileUrl)}" target="_blank" rel="noopener" class="org-mini-action" style="text-decoration:none;">📂 File</a>
+                <a href="${escapeHtml(qcUrl)}" target="_blank" rel="noopener" class="org-mini-action" style="text-decoration:none;">👁️ QC</a>
+                <button type="button" class="org-mini-action" onclick="selectBotAgentInStudio('${bot.id}', true)">💬 Lệnh</button>
+              </div>
+            </div>
+          `;
+        }
       });
-      syncLiveTasksToVisualStudio(true);
+
+      domLayer.innerHTML = html;
     }
 
-    const nodeMap = {};
-    DAG_NODES.forEach((n) => (nodeMap[n.id] = n));
-
+    // VẼ ĐƯỜNG NỐI CÂY TỔ CHỨC SVG (Orthogonal + Bezier + Animated Signal Dots)
     let svgHtml = "";
-    DAG_EDGES.forEach(([fromId, toId], idx) => {
-      const a = nodeMap[fromId];
-      const b = nodeMap[toId];
-      if (!a || !b) return;
-      const x1 = a.x + 220;
-      const y1 = a.y + 34;
-      const x2 = b.x;
-      const y2 = b.y + 34;
-      const cx1 = x1 + (x2 - x1) * 0.5;
-      const cx2 = x1 + (x2 - x1) * 0.5;
-      const pathD = `M ${x1} ${y1} C ${cx1} ${y1}, ${cx2} ${y2}, ${x2} ${y2}`;
-      const col = idx % 2 === 0 ? "#38bdf8" : "#4ade80";
+    const ceoBottomY = yCeo + 74;
+    const busY = Math.round((ceoBottomY + yBot) * 0.5);
+
+    SPECIALIZED_BOT_AGENTS.forEach((bot, idx) => {
+      const cx = colXs[idx];
+      const isNeedsCeo = bot.id === "bot-1" && chatState.bot1NeedsCeo;
+      const isSel = chatState.selectedBotId === bot.id;
+      const lineCol = isNeedsCeo ? "#facc15" : isSel ? "#38bdf8" : "#4ade80";
+
+      // Nhánh từ Đỉnh CEO -> Từng Đội Trưởng Bot (Orthogonal Tree Connector chuẩn Paperclip OrgChart)
+      const pCeoToBot = `M ${centerX} ${ceoBottomY} L ${centerX} ${busY} L ${cx} ${busY} L ${cx} ${yBot}`;
       svgHtml += `
-        <path d="${pathD}" fill="none" stroke="rgba(148,163,184,0.28)" stroke-width="2" />
-        <path d="${pathD}" fill="none" stroke="${col}" stroke-width="2" stroke-dasharray="8 12" stroke-dashoffset="${-STATE.tick * 2}" />
+        <path d="${pCeoToBot}" fill="none" stroke="rgba(148,163,184,0.24)" stroke-width="2" />
+        <path d="${pCeoToBot}" fill="none" stroke="${lineCol}" stroke-width="${isSel || isNeedsCeo ? "2.4" : "1.6"}"
+              stroke-dasharray="7 11" stroke-dashoffset="${-STATE.tick * 2}" />
       `;
+
+      // Nhánh từ Bot -> Cây Plugin/Skill -> Task/Sản Phẩm
+      const botBottomY = yBot + 82;
+      if (showSkills && Array.isArray(bot.skillCards)) {
+        const lastSkillY = ySkillBase + (bot.skillCards.length - 1) * 38 + 26;
+        const spineEndY = showTasks ? yTask : lastSkillY;
+        const pSpine = `M ${cx} ${botBottomY} L ${cx} ${spineEndY}`;
+        svgHtml += `
+          <path d="${pSpine}" fill="none" stroke="rgba(56,189,248,0.26)" stroke-width="1.8" />
+          <path d="${pSpine}" fill="none" stroke="${lineCol}" stroke-width="1.6"
+                stroke-dasharray="5 9" stroke-dashoffset="${-STATE.tick * 1.8}" />
+        `;
+      } else if (showTasks) {
+        const pDirect = `M ${cx} ${botBottomY} L ${cx} ${yTask}`;
+        svgHtml += `
+          <path d="${pDirect}" fill="none" stroke="rgba(74,222,128,0.28)" stroke-width="1.8" />
+          <path d="${pDirect}" fill="none" stroke="${lineCol}" stroke-width="1.6"
+                stroke-dasharray="5 9" stroke-dashoffset="${-STATE.tick * 1.8}" />
+        `;
+      }
     });
+
     svg.innerHTML = svgHtml;
   }
 
@@ -1477,12 +1862,20 @@
   }
 
   let currentAudioPlayer = null;
-  async function speakVietnameseText(text, forceSampleSlug = "") {
+  async function speakVietnameseText(text, forceSampleSlug = "", customWavUrl = "") {
     if (currentAudioPlayer) {
       try {
         currentAudioPlayer.pause();
       } catch (_) {}
       currentAudioPlayer = null;
+    }
+    if (customWavUrl) {
+      const fullWav = customWavUrl.startsWith("http")
+        ? customWavUrl
+        : `${LOCAL_API_BASE ? LOCAL_API_BASE + "/" : ""}${customWavUrl.replace(/^\/+/, "")}`;
+      currentAudioPlayer = new Audio(fullWav);
+      currentAudioPlayer.play().catch(() => {});
+      return;
     }
     if (forceSampleSlug) {
       const sampleUrl = `audio_cache/vieneu_sample_${forceSampleSlug}.wav`;
@@ -1525,6 +1918,286 @@
     );
     currentAudioPlayer.play().catch(() => {});
   }
+  window.speakVietnameseText = speakVietnameseText;
+
+  function speakCeoOverviewVieNeu() {
+    speakVietnameseText("", "", "audio_cache/vieneu_ceo_overview.wav");
+  }
+  window.speakCeoOverviewVieNeu = speakCeoOverviewVieNeu;
+
+  function speakBotReportVieNeu(botId) {
+    const b =
+      SPECIALIZED_BOT_AGENTS.find((x) => x.id === botId) ||
+      SPECIALIZED_BOT_AGENTS[0];
+    if (b && b.wavFile) {
+      speakVietnameseText("", "", b.wavFile);
+    }
+  }
+  window.speakBotReportVieNeu = speakBotReportVieNeu;
+
+  function triggerOfficeVoiceMic() {
+    const micBtn = document.getElementById("btnVoiceMic");
+    if (micBtn) micBtn.click();
+  }
+  window.triggerOfficeVoiceMic = triggerOfficeVoiceMic;
+
+  function resolveBotForSession(sessionId) {
+    const sid = String(sessionId || chatState.activeSessionId || "");
+    const matched = SPECIALIZED_BOT_AGENTS.find(
+      (b) => sid.startsWith(b.shortId) || b.sessionId === sid
+    );
+    if (matched) return matched;
+    return (
+      SPECIALIZED_BOT_AGENTS.find((b) => b.id === chatState.selectedBotId) ||
+      SPECIALIZED_BOT_AGENTS[0]
+    );
+  }
+
+  function selectBotAgentInStudio(botId, open2D = false) {
+    const bot =
+      SPECIALIZED_BOT_AGENTS.find((b) => b.id === botId) ||
+      SPECIALIZED_BOT_AGENTS[0];
+    if (!bot) return;
+    chatState.selectedBotId = bot.id;
+    const matchSess = (chatState.sessions || []).find(
+      (s) =>
+        String(s.session_id || "").startsWith(bot.shortId) ||
+        String(s.short_id || "").startsWith(bot.shortId.slice(0, 6))
+    );
+    const targetSid = matchSess ? matchSess.session_id : bot.sessionId;
+    selectSession(targetSid, true);
+    syncLiveTasksToVisualStudio(true);
+    if (open2D) {
+      switchMode("2d");
+    }
+  }
+  window.selectBotAgentInStudio = selectBotAgentInStudio;
+
+  async function approveBot1ByCeo() {
+    chatState.bot1NeedsCeo = false;
+    chatState.selectedBotId = "bot-1";
+    const bot1 = SPECIALIZED_BOT_AGENTS[0];
+    bot1.steps[2] = {
+      done: true,
+      text: "3. Đã nhận lệnh CEO khóa model Gemini Omni 1.2 Flash & về bàn chạy lại",
+    };
+    bot1.steps[3] = {
+      done: true,
+      text: "4. Đã ghép FFmpeg 1080p & nộp Bảng So Sánh Từng Giây đạt 10/10",
+    };
+    speakVietnameseText("", "", "audio_cache/vieneu_ceo_approve_bot1.wav");
+    syncLiveTasksToVisualStudio(true);
+    renderBotAndSessionInspector();
+    if (chatState.daemonOnline) {
+      try {
+        await fetch(`${LOCAL_API_BASE}/api/chat/send`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            session_id: bot1.sessionId,
+            command:
+              "[Chỉ đạo từ Bộ Não Thứ Hai CEO] Tự động ép chọn model 'Gemini Omni 1.2 Flash' trong dropdown trước khi bấm Generate, khóa giải phẫu V1 ~1500ml + avgblur=210 và hoàn tất ghép 2 video MV10 (>10s), MV12 (>15s).",
+            engine: "antigravity",
+            agent: "flow-video-director",
+            mode: "accept-edits",
+            voice: "Thùy Dung",
+            speak: false,
+          }),
+        });
+      } catch (_) {}
+    }
+  }
+  window.approveBot1ByCeo = approveBot1ByCeo;
+
+  function toggleBot1DemoWalkToCeo() {
+    chatState.bot1NeedsCeo = !chatState.bot1NeedsCeo;
+    chatState.selectedBotId = "bot-1";
+    const bot1 = SPECIALIZED_BOT_AGENTS[0];
+    if (chatState.bot1NeedsCeo) {
+      bot1.steps[2] = {
+        done: false,
+        exception: true,
+        text: "3. Chạy về bàn CEO xin lệnh khóa model Gemini Omni 1.2 Flash",
+      };
+      bot1.steps[3] = {
+        done: false,
+        text: "4. Quay lại bàn ghép FFmpeg 1080p & nộp Bảng So Sánh Từng Giây",
+      };
+      speakBotReportVieNeu("bot-1");
+    } else {
+      approveBot1ByCeo();
+      return;
+    }
+    syncLiveTasksToVisualStudio(true);
+    renderBotAndSessionInspector();
+  }
+  window.toggleBot1DemoWalkToCeo = toggleBot1DemoWalkToCeo;
+
+  function renderBotAndSessionInspector() {
+    const bot = resolveBotForSession(chatState.activeSessionId);
+    if (!bot) return;
+    chatState.selectedBotId = bot.id;
+    const isNeedsCeo = bot.id === "bot-1" && chatState.bot1NeedsCeo;
+
+    // 1. VẼ CÂY TỔ CHỨC MINI (PAPERCLIP + ORGTREE STYLE) TRONG CỘT PHẢI CHẾ ĐỘ 1 (#orgSkillTaskMiniTree2D)
+    const miniTreeEl = document.getElementById("orgSkillTaskMiniTree2D");
+    if (miniTreeEl) {
+      const ceoDotCol = chatState.bot1NeedsCeo ? "#facc15" : "#4ade80";
+      const ceoRightText = chatState.bot1NeedsCeo ? "⚠️ 1 Xin Duyệt" : "🟢 6/6 Tốt";
+      const botCardsHtml = SPECIALIZED_BOT_AGENTS.map((b) => {
+        const isSel = b.id === bot.id;
+        const bNeedsCeo = b.id === "bot-1" && chatState.bot1NeedsCeo;
+        const doneCnt = b.steps.filter((s) => s.done).length;
+        return `
+          <div class="mini-org-bot-node ${isSel ? "active" : ""} ${bNeedsCeo ? "needs-ceo" : ""}"
+               onclick="selectBotAgentInStudio('${b.id}', false)"
+               data-popover="${escapeHtml(b.name)} (#${escapeHtml(b.shortId)}) · ${escapeHtml(b.aiReplySummary)}"
+               data-popover-pos="left">
+            <div class="bot-avatar-ring">
+              <span>${b.icon}</span>
+              <span class="bot-status-corner-dot ${bNeedsCeo ? "warn" : ""}"></span>
+            </div>
+            <div class="bot-mini-info">
+              <div class="bot-mini-name">${escapeHtml(b.shortName || b.name)}</div>
+              <div class="bot-mini-sub">
+                <span>${escapeHtml(b.shortRole || "")}</span>
+                <span style="color:${bNeedsCeo ? "#fde047" : "#86efac"};font-weight:800;">${doneCnt}/4</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      miniTreeEl.innerHTML = `
+        <div class="mini-org-ceo-row">
+          <div class="mini-org-ceo-pill" onclick="switchMode('node')"
+               data-popover="Đỉnh Tháp CEO Bộ Não Thứ Hai (339+ phiên · 774 luật) · Bấm để mở Cây Tổ Chức & Skill Toàn Cảnh"
+               data-popover-pos="left">
+            <div class="ceo-left">
+              <span>👑</span>
+              <span>CEO Bộ Não Thứ Hai</span>
+              <span style="color:#94a3b8;font-size:9.5px;font-weight:700;">· 774 Luật</span>
+            </div>
+            <div class="ceo-right" style="color:${ceoDotCol};">
+              <span>${ceoRightText}</span>
+              <button type="button" class="mini-icon-btn" style="width:20px;height:20px;font-size:10px;"
+                      onclick="event.stopPropagation(); speakCeoOverviewVieNeu();"
+                      data-popover="Nghe CEO báo cáo tổng quan (VieNeu 48kHz)" data-popover-pos="left">🔊</button>
+            </div>
+          </div>
+          <div class="mini-org-tree-stem"></div>
+          <div class="mini-org-bots-grid">
+            ${botCardsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    // 2. VẼ INSPECTOR SIÊU GỌN ICON-FIRST (#activeSessionBotInspector2D & #office3dSelectedBotInspector)
+    const skillChipsHtml = (bot.skillCards || [])
+      .map(
+        (sk) => `
+          <span class="skill-tree-chip" data-popover="${escapeHtml(sk.label)}: ${escapeHtml(sk.tip)}" data-popover-pos="left">
+            <span class="skill-sq-icon" style="background:${sk.color};">${escapeHtml(sk.code)}</span>
+            <span>${sk.icon} ${escapeHtml(sk.label)}</span>
+          </span>
+        `
+      )
+      .join("");
+
+    const stepPillsHtml = (bot.shortSteps || [])
+      .map((st, idx) => {
+        const rawSt = bot.steps[idx] || {};
+        const stepIco = rawSt.exception ? "🏃" : rawSt.done ? "✅" : "⏳";
+        const stepLbl = typeof st === "string" ? st : st.label || "";
+        const cls = rawSt.exception ? "exception" : rawSt.done ? "done" : "";
+        return `
+          <div class="step-node-pill ${cls}"
+               data-popover="Bước ${idx + 1}: ${escapeHtml(rawSt.text || stepLbl)}"
+               data-popover-pos="left">
+            <span class="step-ico">${stepIco}</span>
+            <span class="step-lbl">${escapeHtml(stepLbl)}</span>
+          </div>
+        `;
+      })
+      .join("");
+
+    const deliv = bot.deliverable || {};
+    const thumbSrc = deliv.thumb || "local-assets/kol/bao_tram_4k_anchor.jpg";
+    const fileUrl =
+      deliv.fileUrl && deliv.fileUrl.startsWith("/") && LOCAL_API_BASE
+        ? `${LOCAL_API_BASE}${deliv.fileUrl}`
+        : deliv.fileUrl || "#";
+    const qcUrl =
+      deliv.qcUrl && deliv.qcUrl.startsWith("/") && LOCAL_API_BASE
+        ? `${LOCAL_API_BASE}${deliv.qcUrl}`
+        : deliv.qcUrl || fileUrl;
+
+    const ceoApproveBannerHtml = isNeedsCeo
+      ? `<button type="button" onclick="approveBot1ByCeo()"
+                 style="width:100%;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;border:none;border-radius:8px;padding:6px 10px;font-size:11px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;box-shadow:0 6px 14px rgba(234,88,12,0.35);"
+                 data-popover="${escapeHtml(bot.issueText)}" data-popover-pos="left">
+           <span>⚡ Duyệt Lệnh CEO · Cho Bot 1 Về Bàn Làm Tiếp</span>
+         </button>`
+      : "";
+
+    const compactInspectorHtml = `
+      <div class="inspector-head-bar">
+        <div class="inspector-head-left" data-popover="${escapeHtml(bot.name)} · Chỉ đạo CEO: ${escapeHtml(bot.ceoDirective)}" data-popover-pos="left">
+          <span style="font-size:15px;">${bot.icon}</span>
+          <span class="bot-title">${escapeHtml(bot.shortName || bot.name)}</span>
+          <span class="bot-hash">#${escapeHtml(bot.shortId)}</span>
+          <span style="font-size:10px;color:${isNeedsCeo ? "#fde047" : "#4ade80"};font-weight:800;">
+            ${isNeedsCeo ? "🏃 Xin ý kiến" : "● 10/10"}
+          </span>
+        </div>
+        <div class="inspector-head-actions">
+          <button type="button" class="mini-icon-btn" onclick="speakBotReportVieNeu('${bot.id}')"
+                  data-popover="Nghe giọng ${escapeHtml(bot.voiceName)} báo cáo: ${escapeHtml(bot.aiReplySummary)}" data-popover-pos="left">🔊</button>
+          <button type="button" class="mini-icon-btn" onclick="selectBotAgentInStudio('${bot.id}', true)"
+                  data-popover="Mở phiên chat #${escapeHtml(bot.shortId)} &amp; Bơm lệnh" data-popover-pos="left">💬</button>
+          <button type="button" class="mini-icon-btn" onclick="switchMode('node')"
+                  data-popover="Xem trên Cây Tổ Chức &amp; Skill Toàn Cảnh" data-popover-pos="left">🌳</button>
+        </div>
+      </div>
+
+      <div class="skill-tree-row">
+        <span class="skill-tree-label" data-popover="Cây Plugin &amp; Skill đang gắn vào Bot" data-popover-pos="left">🧩</span>
+        ${skillChipsHtml}
+      </div>
+
+      <div class="step-node-track">
+        ${stepPillsHtml}
+      </div>
+
+      ${ceoApproveBannerHtml}
+
+      <div class="deliverable-compact-card">
+        <a href="${escapeHtml(fileUrl)}" target="_blank" rel="noopener" class="deliverable-thumb-wrap"
+           data-popover="Bấm mở sản phẩm: ${escapeHtml(deliv.title || "")}" data-popover-pos="left">
+          <img src="${escapeHtml(thumbSrc)}" alt="Deliverable" loading="lazy" />
+        </a>
+        <div class="deliverable-meta">
+          <div class="deliverable-title" title="${escapeHtml(deliv.title || "")}">📦 ${escapeHtml(deliv.title || "Sản phẩm")}</div>
+          <div class="deliverable-sub" title="${escapeHtml(bot.aiReplySummary)}">🎙️ ${escapeHtml(bot.voiceName)} · Zero-Code QC</div>
+          <div class="deliverable-btn-row">
+            <a href="${escapeHtml(fileUrl)}" target="_blank" rel="noopener" class="deliv-icon-btn" data-popover="Mở File Sản Phẩm" data-popover-pos="left">📂 File</a>
+            <a href="${escapeHtml(qcUrl)}" target="_blank" rel="noopener" class="deliv-icon-btn qc" data-popover="Mở Bảng Kiểm Định QC" data-popover-pos="left">👁️ QC</a>
+            <button type="button" class="deliv-icon-btn" onclick="speakBotReportVieNeu('${bot.id}')" data-popover="Nghe đọc báo cáo sản phẩm" data-popover-pos="left">🔊</button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    const el3d = document.getElementById("office3dSelectedBotInspector");
+    if (el3d) el3d.innerHTML = compactInspectorHtml;
+    const el2d = document.getElementById("activeSessionBotInspector2D");
+    if (el2d) el2d.innerHTML = compactInspectorHtml;
+    if (STATE.currentMode === "node") {
+      renderNodeGraph(true);
+    }
+  }
+  window.renderBotAndSessionInspector = renderBotAndSessionInspector;
 
   function getFilteredSessions() {
     return chatState.sessions.filter((s) => {
@@ -1557,9 +2230,9 @@
     const pillAll = document.getElementById("pillFilterAll");
     const pillAg = document.getElementById("pillFilterAg");
     const pillCl = document.getElementById("pillFilterCl");
-    if (pillAll) pillAll.textContent = `Tất cả (${allCount})`;
-    if (pillAg) pillAg.textContent = `Antigravity (${agCount})`;
-    if (pillCl) pillCl.textContent = `Claude (${clCount})`;
+    if (pillAll) pillAll.textContent = `🌐 Tất cả (${allCount})`;
+    if (pillAg) pillAg.textContent = `🟢 AG (${agCount})`;
+    if (pillCl) pillCl.textContent = `🟠 CL (${clCount})`;
   }
 
   function renderSessionList(forceRender = false) {
@@ -1601,17 +2274,10 @@
           .trim()
           .slice(0, 5);
         const topicBadge =
-          s.topic_badge || (isClaude ? "Claude Project" : "Điều phối AI");
+          s.topic_badge || (isClaude ? "Claude" : "AG2");
         const machineLabel = s.machine_name || "Máy Chính";
         const accountLabel =
           s.account_tag || (isClaude ? "Claude Extension" : "khakhunghiep");
-        const popInfo = `${s.engine} · ${machineLabel} (${accountLabel}) · Mã: #${
-          s.short_id || ""
-        } · Ẩn ${s.filtered_count || 4} bước code`;
-        const rawTitle =
-          s.title && s.title !== "Phiên điều phối Antigravity 2.0"
-            ? s.title
-            : `Phiên ${s.project || "Antigravity"} #${s.short_id || ""}`;
         const lastTurn =
           Array.isArray(s.turns) && s.turns.length
             ? s.turns[s.turns.length - 1]
@@ -1622,8 +2288,15 @@
             ? String(lastTurn.ai).replace(/\s+/g, " ").slice(0, 88)
             : "") ||
           `Dự án ${s.project || "mang xa hoi"} · Sẵn sàng nhận lệnh`;
+        const popInfo = `${s.engine} · ${machineLabel} (${accountLabel}) · #${
+          s.short_id || ""
+        }\n${summaryPreview}`;
+        const rawTitle =
+          s.title && s.title !== "Phiên điều phối Antigravity 2.0"
+            ? s.title
+            : `Phiên ${s.project || "Antigravity"} #${s.short_id || ""}`;
         const liveBadgeHtml = isWorking
-          ? `<span style="color:#4ade80;font-weight:800;font-size:10px;">● ĐANG CHẠY</span>`
+          ? `<span style="color:#4ade80;font-weight:800;font-size:10px;" title="Đang thực thi">● LIVE</span>`
           : `<span class="session-item-time">${escapeHtml(shortTime)}</span>`;
         return `
         <button
@@ -1631,21 +2304,21 @@
           class="session-item ${isActive ? "active" : ""}"
           data-session-id="${escapeHtml(s.session_id)}"
           title="${escapeHtml(popInfo)}"
+          style="padding:7px 9px;gap:3px;"
         >
           <div class="session-item-top">
             <div class="session-badges">
               <span class="engine-mini ${isClaude ? "claude" : ""}">${
           isClaude ? "CL" : "AG"
         }</span>
-              <span class="topic-pill">${escapeHtml(topicBadge)}</span>
+              <span class="topic-pill">${escapeHtml(topicBadge.slice(0, 14))}</span>
               <span class="session-item-time">#${escapeHtml(
                 (s.short_id || "").slice(0, 4)
               )}</span>
             </div>
             ${liveBadgeHtml}
           </div>
-          <div class="session-item-title">${escapeHtml(rawTitle)}</div>
-          <div class="session-item-summary">${escapeHtml(summaryPreview)}</div>
+          <div class="session-item-title" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:12px;">${escapeHtml(rawTitle)}</div>
         </button>
       `;
       })
@@ -1872,19 +2545,19 @@
           }
         }
         const liveShotHtml = screenshotUrl
-          ? `<div style="margin-top:8px; border-radius:10px; overflow:hidden; border:1px solid rgba(74,222,128,0.4); background:#090d16;">
+          ? `<div class="live-shot-box" style="margin-top:8px; border-radius:10px; overflow:hidden; border:1px solid rgba(74,222,128,0.4); background:#090d16;">
               <div style="display:flex; align-items:center; justify-content:space-between; padding:5px 10px; background:rgba(74,222,128,0.12); font-size:11px; font-weight:700; color:#86efac;">
-                <span>🖥️ Ảnh Chụp Trực Tiếp Màn Hình Máy Tính</span>
+                <span>🖥️ Ảnh Chụp Màn Hình Trực Tiếp</span>
                 <a href="${escapeHtml(
                   screenshotUrl
-                )}" target="_blank" rel="noopener" style="color:#7dd3fc; text-decoration:none;">Phóng to ↗</a>
+                )}" target="_blank" rel="noopener" style="color:#7dd3fc; text-decoration:none;">↗</a>
               </div>
               <a href="${escapeHtml(
                 screenshotUrl
               )}" target="_blank" rel="noopener" style="display:block;">
                 <img src="${escapeHtml(
                   screenshotUrl
-                )}" alt="Màn hình máy tính trực tiếp" style="width:100%; max-height:240px; object-fit:cover; display:block;" loading="lazy" />
+                )}" alt="Screenshot" onerror="this.closest('.live-shot-box').style.display='none'" style="width:100%; max-height:220px; object-fit:cover; display:block;" loading="lazy" />
               </a>
             </div>`
           : "";
@@ -1918,20 +2591,34 @@
           Array.isArray(m.summary_points) && m.summary_points.length
             ? m.summary_points
             : extractClientSummaryPoints(m.text);
-        const execSummaryHtml =
-          rawSummaryPts.length > 0 && String(m.text || "").length > 130
-            ? `<div class="exec-summary-box">
-                <div class="exec-summary-title">
-                  <span>✓ Tóm tắt báo cáo quan trọng</span>
-                </div>
-                <ul class="exec-summary-list">
-                  ${rawSummaryPts
-                    .slice(0, 3)
-                    .map((pt) => `<li>${escapeHtml(pt)}</li>`)
-                    .join("")}
-                </ul>
-              </div>`
-            : "";
+        const isLongAiText =
+          rawSummaryPts.length > 0 && String(m.text || "").length > 140;
+        const execSummaryHtml = isLongAiText
+          ? `<div class="exec-summary-box">
+              <div class="exec-summary-title">
+                <span>✓ Tóm tắt nhanh</span>
+              </div>
+              <ul class="exec-summary-list">
+                ${rawSummaryPts
+                  .slice(0, 3)
+                  .map((pt) => `<li>${escapeHtml(pt)}</li>`)
+                  .join("")}
+              </ul>
+            </div>`
+          : "";
+
+        const aiBodyHtml = isLongAiText
+          ? `<details style="margin-top:4px;">
+              <summary style="cursor:pointer;font-size:11px;font-weight:700;color:#7dd3fc;user-select:none;">▸ Xem chi tiết nội dung (${Math.round(
+                String(m.text || "").length / 5
+              )} từ)</summary>
+              <div class="ai-text-body" style="margin-top:6px;">
+                ${renderFormattedMarkdown(m.text)}
+              </div>
+            </details>`
+          : `<div class="ai-text-body">
+              ${renderFormattedMarkdown(m.text)}
+            </div>`;
 
         return `
         <div class="msg-row assistant">
@@ -1956,9 +2643,7 @@
             </div>
             ${execSummaryHtml}
             ${stepDetailsHtml}
-            <div class="ai-text-body">
-              ${renderFormattedMarkdown(m.text)}
-            </div>
+            ${aiBodyHtml}
             ${liveShotHtml}
             ${linksHtml}
           </article>
@@ -2011,7 +2696,15 @@
   async function selectSession(sessionId, scrollToEnd = true) {
     if (!sessionId) return;
     chatState.activeSessionId = sessionId;
+    const matchedBot = SPECIALIZED_BOT_AGENTS.find(
+      (b) =>
+        String(sessionId).startsWith(b.shortId) || b.sessionId === sessionId
+    );
+    if (matchedBot) {
+      chatState.selectedBotId = matchedBot.id;
+    }
     renderSessionList(true);
+    renderBotAndSessionInspector();
 
     const targetSess = chatState.sessions.find(
       (s) => s.session_id === sessionId
@@ -2036,6 +2729,7 @@
       } catch (_) {}
     }
     renderActiveConversation(scrollToEnd, true);
+    renderBotAndSessionInspector();
   }
   window.selectSession = selectSession;
 
@@ -2322,11 +3016,16 @@
     };
   }
 
-  function jumpToLiveTaskSession(sessionId) {
+  function jumpToLiveTaskSession(sessionId, force2D = false) {
     if (sessionId) {
       selectSession(sessionId, true);
     }
-    switchMode("2d");
+    if (force2D || STATE.currentMode !== "3d") {
+      switchMode("2d");
+    } else {
+      syncLiveTasksToVisualStudio(true);
+      renderBotAndSessionInspector();
+    }
   }
   window.jumpToLiveTaskSession = jumpToLiveTaskSession;
 
@@ -2357,6 +3056,8 @@
       sysServices.length,
       totalRunning,
       chatState.officeSearchQuery || "",
+      chatState.selectedBotId || "bot-1",
+      chatState.bot1NeedsCeo ? "1" : "0",
       sessionTasks
         .slice(0, 10)
         .map((t) => `${t.short_id}:${t.status_label}:${t.title.slice(0, 18)}`)
@@ -2368,7 +3069,9 @@
     }
     chatState.lastSyncedTasksSig = sig;
 
-    // 1. CẬP NHẬT 11 BÀN LÀM VIỆC TRÊN SÀN 3D VĂN PHÒNG AI (#office3d-labels-layer)
+    renderBotAndSessionInspector();
+
+    // 1. CẬP NHẬT BÀN CEO TRUNG TÂM & 6 BÀN BOT CHUYÊN TRÁCH TRÊN SÀN 3D VĂN PHÒNG AI (#office3d-labels-layer)
     const layer3d = document.getElementById("office3d-labels-layer");
     if (layer3d && layer3d.children.length === 0) {
       OFFICE_DESKS.forEach((d) => {
@@ -2382,86 +3085,79 @@
     const cmdTag = document.getElementById("tag-desk-commander");
     if (cmdTag) {
       cmdTag.style.cursor = "pointer";
+      cmdTag.style.padding = "5px 9px";
+      cmdTag.setAttribute(
+        "data-popover",
+        "Đỉnh Tháp CEO Bộ Não Thứ Hai (339+ phiên · 774 luật) · Canh gác 6 Đội Trưởng Bot · Giọng VieNeu 48kHz"
+      );
+      const ceoQuickBtnHtml = chatState.bot1NeedsCeo
+        ? `<button type="button" onclick="event.stopPropagation(); approveBot1ByCeo();" style="background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;border:none;border-radius:5px;padding:2px 6px;font-size:9.5px;font-weight:800;cursor:pointer;" title="Duyệt lệnh cho Bot 1 về bàn">⚡ Duyệt</button>`
+        : `<span style="color:#86efac;font-size:9.5px;font-weight:800;">🟢 6/6</span>`;
       cmdTag.innerHTML = `
-        <div class="tag-title"><span style="color:#4ade80">●</span> 🧠 Bộ Não CEO · <span style="color:#fde047">⚡ ${totalRunning} Task Đang Chạy</span></div>
-        <div class="tag-sub">🟢 LIVE 1.2s · ${agCount} Phiên AG · ${clCount} Phiên Claude · ${bgTasks.length + sysServices.length} Daemon/CDP</div>
+        <div class="tag-title" style="display:flex;align-items:center;gap:5px;white-space:nowrap;">
+          <span style="color:${chatState.bot1NeedsCeo ? "#facc15" : "#4ade80"}">●</span>
+          <span>👑 Bàn CEO</span>
+          ${ceoQuickBtnHtml}
+          <button type="button" onclick="event.stopPropagation(); speakCeoOverviewVieNeu();" style="background:rgba(244,114,182,0.22);border:1px solid rgba(244,114,182,0.55);color:#f9a8d4;border-radius:4px;padding:1px 5px;font-size:9.5px;font-weight:800;cursor:pointer;" title="Nghe CEO báo cáo tổng quan">🔊</button>
+        </div>
       `;
-      cmdTag.onclick = () => switchMode("2d");
-    }
-
-    // Ghép danh sách 10 Task thật đang chạy trên máy (không trùng lặp, ưu tiên cả AG, Claude, Task ngầm & Chrome CDP) cho 10 bàn xung quanh
-    const agLive = sessionTasks.filter((t) => t.engine_code !== "claude");
-    const clLive = sessionTasks.filter((t) => t.engine_code === "claude");
-    const rawCandidates = [
-      ...agLive.slice(0, 5),
-      ...clLive.slice(0, 2),
-      ...bgTasks.slice(0, 2),
-      ...sysServices.slice(0, 2),
-      ...agLive.slice(5),
-      ...clLive.slice(2),
-      ...bgTasks.slice(2),
-      ...sysServices.slice(2),
-    ];
-    const seenDeskIds = new Set();
-    const combinedDeskTasks = [];
-    for (const item of rawCandidates) {
-      if (!item || seenDeskIds.has(item.task_id)) continue;
-      seenDeskIds.add(item.task_id);
-      combinedDeskTasks.push(item);
-      if (combinedDeskTasks.length >= 10) break;
+      cmdTag.onclick = () => selectBotAgentInStudio("bot-1", false);
     }
 
     const otherDesks = OFFICE_DESKS.filter((d) => d.id !== "desk-commander");
     otherDesks.forEach((d, idx) => {
       const el = document.getElementById("tag-" + d.id);
       if (!el) return;
-      const t = combinedDeskTasks[idx];
-      if (!t) return;
-      const isCl = t.engine_code === "claude";
-      const isSys = t.kind === "system_service" || t.kind === "background_task";
-      const dotCol = t.is_working ? "#4ade80" : d.color;
-      const pillBg = isCl
-        ? "rgba(251,146,60,0.24)"
-        : isSys
-        ? "rgba(56,189,248,0.24)"
-        : "rgba(74,222,128,0.22)";
-      const pillCol = isCl ? "#fdba74" : isSys ? "#7dd3fc" : "#86efac";
-      const shortTitle =
-        t.title.length > 36 ? t.title.slice(0, 36) + "…" : t.title;
-      const shortSub =
-        t.summary.length > 42 ? t.summary.slice(0, 42) + "…" : t.summary;
+      const bot = SPECIALIZED_BOT_AGENTS[idx];
+      if (!bot) return;
+      const isSelected = chatState.selectedBotId === bot.id;
+      const isNeedsCeo = bot.id === "bot-1" && chatState.bot1NeedsCeo;
+      const dotCol = isNeedsCeo ? "#fde047" : "#4ade80";
+      const doneCnt = bot.steps.filter((s) => s.done).length;
 
       el.style.cursor = "pointer";
-      el.style.borderColor = t.is_working
-        ? "rgba(74, 222, 128, 0.55)"
-        : "rgba(255, 255, 255, 0.16)";
-      el.title = `${t.engine_badge} #${t.short_id} · ${t.title}\n${t.status_label} — ${t.summary}\n(Bấm để mở phiên chat này)`;
+      el.style.padding = "4px 8px";
+      el.style.borderColor = isNeedsCeo
+        ? "rgba(250, 204, 21, 0.85)"
+        : isSelected
+        ? "rgba(56, 189, 248, 0.85)"
+        : "rgba(74, 222, 128, 0.45)";
+      el.style.boxShadow = isNeedsCeo
+        ? "0 8px 24px rgba(234, 88, 12, 0.45)"
+        : isSelected
+        ? "0 8px 22px rgba(56, 189, 248, 0.35)"
+        : "0 6px 18px rgba(0, 0, 0, 0.45)";
+      el.setAttribute(
+        "data-popover",
+        `${bot.name} (#${bot.shortId}) · Plugin: ${bot.pluginsSkills.join(", ")} · ${bot.aiReplySummary}`
+      );
       el.innerHTML = `
-        <div class="tag-title" style="display:flex;align-items:center;gap:4px;">
+        <div class="tag-title" style="display:flex;align-items:center;gap:4px;white-space:nowrap;">
           <span style="color:${dotCol}">●</span>
-          <span style="background:${pillBg};color:${pillCol};padding:1px 5px;border-radius:4px;font-size:9.5px;font-weight:800;">${escapeHtml(
-        t.engine_badge
-      )} #${escapeHtml(t.short_id)}</span>
-          <span>${escapeHtml(shortTitle)}</span>
-        </div>
-        <div class="tag-sub">
-          <strong style="color:${
-            t.is_working ? "#fde047" : "#86efac"
-          }">${escapeHtml(t.status_label)}</strong> · ${escapeHtml(shortSub)}
+          <span>${bot.icon} ${escapeHtml(bot.shortName || bot.name)}</span>
+          <span style="color:#7dd3fc;font-size:9.5px;font-weight:800;">#${escapeHtml(bot.shortId)}</span>
+          <span style="color:${isNeedsCeo ? "#fde047" : "#86efac"};font-size:9.5px;font-weight:800;">${
+        isNeedsCeo ? "🏃" : `${doneCnt}/4`
+      }</span>
+          <button type="button" onclick="event.stopPropagation(); speakBotReportVieNeu('${
+            bot.id
+          }');" style="background:rgba(244,114,182,0.22);border:1px solid rgba(244,114,182,0.5);color:#f9a8d4;border-radius:4px;padding:1px 4px;font-size:9px;font-weight:800;cursor:pointer;" title="Nghe giọng ${escapeHtml(
+        bot.voiceName
+      )}">🔊</button>
         </div>
       `;
-      el.onclick = () => jumpToLiveTaskSession(t.session_id);
+      el.onclick = () => selectBotAgentInStudio(bot.id, false);
     });
 
     // 2. CẬP NHẬT CỘT TRÁI TRONG 3D VĂN PHÒNG AI (#officeDrawerLiveList & #officeDrawerLiveToasts)
     const drawerBadge = document.getElementById("officeDrawerCountBadge");
-    if (drawerBadge) drawerBadge.textContent = `${totalRunning} LIVE`;
+    if (drawerBadge) drawerBadge.textContent = `⚡ ${totalRunning}`;
 
     const drawerSub = document.getElementById("officeDrawerSubbar");
     if (drawerSub) {
       drawerSub.innerHTML = `
-        <span><strong style="color:#4ade80">● ${workingSessCount} phiên đang chạy</strong></span>
-        <span>${agCount} AG · ${clCount} Claude</span>
+        <span><strong style="color:#4ade80">● ${workingSessCount} LIVE</strong></span>
+        <span>🟢 ${agCount} AG · 🟠 ${clCount} CL</span>
       `;
     }
 
@@ -2483,8 +3179,10 @@
           return `
             <div class="drawer-agent-card ${
               t.is_working ? "active" : ""
-            }" onclick="jumpToLiveTaskSession('${escapeHtml(t.session_id)}')">
-              <div class="agent-mini-icon" style="background:${
+            }" onclick="jumpToLiveTaskSession('${escapeHtml(t.session_id)}', false)"
+               title="${escapeHtml(t.title)} — ${escapeHtml(t.summary)}"
+               style="padding:6px 8px;">
+              <div class="agent-mini-icon" style="width:24px;height:24px;background:${
                 isCl
                   ? "linear-gradient(135deg,#fb923c,#ea580c)"
                   : "linear-gradient(135deg,#34d399,#059669)"
@@ -2492,17 +3190,14 @@
             t.engine_badge
           )}</div>
               <div class="agent-card-info" style="min-width:0;flex:1;">
-                <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">#${escapeHtml(
+                <h4 style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px;margin:0;">#${escapeHtml(
                   t.short_id
                 )} · ${escapeHtml(t.title)}</h4>
                 <div class="agent-state" style="color:${
                   t.is_working ? "#fde047" : "#86efac"
-                };font-weight:700;">${escapeHtml(t.status_label)} · ${escapeHtml(
-            t.topic_badge
-          )}</div>
-                <p style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(
-                  t.summary
-                )}</p>
+                };font-weight:700;font-size:9.5px;">${
+            t.is_working ? "⚡ LIVE" : "● Sẵn sàng"
+          } · ${escapeHtml(t.topic_badge.slice(0, 14))}</div>
               </div>
             </div>
           `;
@@ -2512,161 +3207,106 @@
 
     const drawerToastsEl = document.getElementById("officeDrawerLiveToasts");
     if (drawerToastsEl) {
-      const daemonItems = [...sysServices, ...bgTasks].slice(0, 5);
+      const daemonItems = [...sysServices, ...bgTasks].slice(0, 4);
       drawerToastsEl.innerHTML = daemonItems
         .map((d, i) => {
           const bCol =
             i % 3 === 0 ? "#4ade80" : i % 3 === 1 ? "#38bdf8" : "#fb923c";
           return `
-            <div class="live-toast-item" style="border-left-color:${bCol};cursor:pointer;" onclick="jumpToLiveTaskSession('${escapeHtml(
-            d.session_id || ""
-          )}')">
-              <strong>${escapeHtml(d.status_label)} · ${escapeHtml(
-            d.title
+            <div class="live-toast-item" style="border-left-color:${bCol};cursor:pointer;padding:4px 7px;"
+                 onclick="jumpToLiveTaskSession('${escapeHtml(d.session_id || "")}', false)"
+                 title="${escapeHtml(d.summary)}">
+              <strong style="font-size:10px;">⚡ ${escapeHtml(d.short_id)} · ${escapeHtml(
+            d.title.slice(0, 26)
           )}</strong>
-              <span>${escapeHtml(d.summary)}</span>
             </div>
           `;
         })
         .join("");
     }
 
-    // 3. CẬP NHẬT BẢNG HUD GÓC PHẢI TRÊN SÀN 3D (#office3d-live-tasks-hud)
+    // 3. CẬP NHẬT THANH ICON 6 BOT TRONG HUD GÓC PHẢI 3D (#office3dHudTasksBody)
     const hudSumEl = document.getElementById("office3dHudSummaryBar");
     if (hudSumEl) {
       hudSumEl.innerHTML = `
-        <span style="background:rgba(250,204,21,0.18);border:1px solid rgba(250,204,21,0.45);color:#fde047;padding:1px 7px;border-radius:999px;font-weight:800;">⚡ ${totalRunning} Task đang chạy</span>
-        <span style="background:rgba(74,222,128,0.16);color:#86efac;padding:1px 7px;border-radius:999px;font-weight:700;">AG (${agCount})</span>
-        <span style="background:rgba(251,146,60,0.18);color:#fdba74;padding:1px 7px;border-radius:999px;font-weight:700;">Claude (${clCount})</span>
+        <span style="background:rgba(250,204,21,0.18);border:1px solid rgba(250,204,21,0.45);color:#fde047;padding:1px 6px;border-radius:999px;font-weight:800;">${
+          chatState.bot1NeedsCeo ? "⚠️ 1 Xin Duyệt" : "🟢 6/6 Tốt"
+        }</span>
       `;
     }
 
     const hudBodyEl = document.getElementById("office3dHudTasksBody");
     if (hudBodyEl) {
-      const topHudTasks = [
-        ...sessionTasks.slice(0, 4),
-        ...bgTasks.slice(0, 1),
-        ...sysServices.slice(0, 2),
-      ].slice(0, 6);
-      hudBodyEl.innerHTML = topHudTasks
-        .map((t) => {
-          const isCl = t.engine_code === "claude";
-          return `
-            <div onclick="jumpToLiveTaskSession('${escapeHtml(
-              t.session_id || ""
-            )}')" style="padding:6px 8px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid ${
-            t.is_working ? "rgba(74,222,128,0.4)" : "rgba(255,255,255,0.1)"
-          };cursor:pointer;display:flex;flex-direction:column;gap:2px;">
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:4px;">
-                <span style="font-size:10.5px;font-weight:800;color:${
-                  isCl ? "#fdba74" : "#86efac"
-                };">[${escapeHtml(t.engine_badge)} #${escapeHtml(
-            t.short_id
-          )}] ${escapeHtml(t.title.slice(0, 28))}</span>
-                <span style="font-size:9.5px;font-weight:800;color:${
-                  t.is_working ? "#fde047" : "#94a3b8"
-                };white-space:nowrap;">${escapeHtml(t.status_label)}</span>
-              </div>
-              <div style="font-size:10px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escapeHtml(
-                t.summary
-              )}</div>
-            </div>
-          `;
-        })
-        .join("");
+      hudBodyEl.innerHTML = SPECIALIZED_BOT_AGENTS.map((b, idx) => {
+        const isSel = chatState.selectedBotId === b.id;
+        const isNeedsCeo = b.id === "bot-1" && chatState.bot1NeedsCeo;
+        return `
+          <div class="office3d-bot-icon-pill ${isSel ? "active" : ""} ${isNeedsCeo ? "needs-ceo" : ""}"
+               onclick="selectBotAgentInStudio('${b.id}', false)"
+               data-popover="${escapeHtml(b.name)} (#${escapeHtml(b.shortId)}) · ${escapeHtml(b.aiReplySummary)}"
+               data-popover-pos="left">
+            <span class="b-ico">${b.icon}</span>
+            <span class="b-num">#${idx + 1}</span>
+            <span style="font-size:8px;color:${isNeedsCeo ? "#fde047" : "#4ade80"};">${
+          isNeedsCeo ? "🏃" : "●"
+        }</span>
+          </div>
+        `;
+      }).join("");
     }
 
     const statusBar3d = document.getElementById("officeStatusbarLive");
     if (statusBar3d) {
-      const srvText = sysServices
-        .map((s) => `● ${s.topic_badge} (${s.short_id})`)
-        .join("   ");
       statusBar3d.innerHTML = `
-        <span style="color:#4ade80;font-weight:700;">⚡ ${totalRunning} Task &amp; Daemon Đang Chạy Trên Máy</span>
-        <span>${escapeHtml(srvText || "● Daemon :8765 · :23984 · CDP :9224")}</span>
-        <span>Đồng bộ Live 1.2s: ${agCount} Antigravity + ${clCount} Claude</span>
+        <span style="color:#4ade80;font-weight:700;">⚡ ${totalRunning} Live</span>
+        <span>🖥️ :8765 · :23984 · 🛡️ P1·P4·P5·P6</span>
+        <span>🟢 ${agCount} AG · 🟠 ${clCount} CL · 🎙️ VieNeu 48kHz</span>
       `;
     }
 
     // 4. CẬP NHẬT CỘT PHẢI CỦA CHẾ ĐỘ 1 (2D ĐIỀU HÀNH & CHAT — #liveMachineTasksBox2D)
     const code2d = document.getElementById("liveTasksCountCode");
-    if (code2d) code2d.textContent = `${agCount} AG · ${clCount} CL`;
+    if (code2d) code2d.textContent = `🟢 ${agCount} · 🟠 ${clCount}`;
     const badge2d = document.getElementById("liveTasksCountBadge");
-    if (badge2d) badge2d.textContent = `⚡ ${totalRunning} Đang chạy`;
+    if (badge2d) badge2d.textContent = `⚡ ${totalRunning}`;
 
     const box2d = document.getElementById("liveMachineTasksBox2D");
     if (box2d) {
       const items2d = [
-        ...sessionTasks.slice(0, 5),
-        ...bgTasks.slice(0, 2),
+        ...sessionTasks.slice(0, 6),
         ...sysServices.slice(0, 2),
       ];
       box2d.innerHTML = items2d
         .map((t) => {
           const isCl = t.engine_code === "claude";
+          const isSrv = t.engine_code === "service";
+          const dotIco = isSrv ? "⚡" : isCl ? "🟠" : "🟢";
           return `
-            <div onclick="event.stopPropagation(); selectSession('${escapeHtml(
-              t.session_id || ""
-            )}', true);" style="padding:6px 8px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid ${
-            t.is_working ? "rgba(74,222,128,0.38)" : "rgba(255,255,255,0.08)"
-          };cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <div style="min-width:0;flex:1;">
-                <div style="font-size:11.5px;font-weight:700;color:#f8fafc;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                  <span style="color:${
-                    isCl ? "#fdba74" : "#86efac"
-                  };">[${escapeHtml(t.engine_badge)} #${escapeHtml(
-            t.short_id
-          )}]</span> ${escapeHtml(t.title)}
-                </div>
-                <div style="font-size:10.5px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                  ${escapeHtml(t.summary)}
-                </div>
+            <button type="button" class="live-chip-btn ${t.is_working ? "working" : ""}"
+                    onclick="event.stopPropagation(); selectSession('${escapeHtml(t.session_id || "")}', true);"
+                    data-popover="${escapeHtml(t.title)} — ${escapeHtml(t.summary)}"
+                    data-popover-pos="left">
+              <div class="chip-left">
+                <span>${dotIco}</span>
+                <span class="chip-code">${escapeHtml(t.engine_badge)} #${escapeHtml((t.short_id || "").slice(0, 5))}</span>
+                <span class="chip-name">${escapeHtml(t.topic_badge || t.title)}</span>
               </div>
-              <span style="font-size:10px;font-weight:800;color:${
-                t.is_working ? "#fde047" : "#86efac"
-              };white-space:nowrap;flex-shrink:0;">${escapeHtml(
-            t.status_label
-          )} ↗</span>
-            </div>
+              <span style="color:#7dd3fc;font-size:9.5px;font-weight:800;">↗</span>
+            </button>
           `;
         })
         .join("");
     }
 
-    // 5. CẬP NHẬT CHẾ ĐỘ 3 (NODE GRAPH) & CHẾ ĐỘ 4 (6 CỬA SỔ EDITOR)
+    // 5. CẬP NHẬT CHẾ ĐỘ 3 (CÂY TỔ CHỨC & SKILL) & CHẾ ĐỘ 4 (6 CỬA SỔ EDITOR)
     const allLiveForNodes = [
       ...sessionTasks.slice(0, 8),
       ...bgTasks.slice(0, 2),
       ...sysServices.slice(0, 2),
     ];
-    DAG_NODES.forEach((n, idx) => {
-      const div = document.getElementById("dag-" + n.id);
-      if (!div) return;
-      if (idx === 0) {
-        div.innerHTML = `
-          <div class="dag-node-header">
-            <span>AG2-CEO</span>
-            <span style="color:#fde047">⚡ ${totalRunning} Task Live</span>
-          </div>
-          <div class="dag-node-title">Bộ Não Thứ Hai CEO (${agCount} AG · ${clCount} Claude)</div>
-          <div class="dag-node-meta">Đồng bộ thời gian thực 1.2s từ máy tính</div>
-        `;
-        return;
-      }
-      const t = allLiveForNodes[idx - 1];
-      if (!t) return;
-      div.innerHTML = `
-        <div class="dag-node-header">
-          <span>${escapeHtml(t.engine_badge)} #${escapeHtml(t.short_id)}</span>
-          <span style="color:${
-            t.is_working ? "#fde047" : "#4ade80"
-          }">${escapeHtml(t.status_label)}</span>
-        </div>
-        <div class="dag-node-title">${escapeHtml(t.title.slice(0, 44))}</div>
-        <div class="dag-node-meta">${escapeHtml(t.summary.slice(0, 56))}</div>
-      `;
-      div.onclick = () => jumpToLiveTaskSession(t.session_id);
-    });
+    if (STATE.currentMode === "node") {
+      renderNodeGraph(false);
+    }
 
     const runCountEl = document.getElementById("status-running-count");
     if (runCountEl) runCountEl.textContent = `${totalRunning} đang chạy`;

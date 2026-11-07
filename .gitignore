@@ -1,6 +1,4 @@
+﻿repos_tham_khao/
 __pycache__/
 *.pyc
-.taste-skill/
-.netlify/
-repos_tham_khao/
-*.tmp
+

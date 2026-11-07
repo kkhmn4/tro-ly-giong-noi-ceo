@@ -28,23 +28,23 @@
     </div>
 
     <nav class="mode-tabs" aria-label="Chế độ hiển thị">
-      <button class="mode-tab active" data-mode="2d" onclick="switchStudioMode('2d')">
-        <span>📋</span> 1. 2D Điều hành &amp; Chat
+      <button class="mode-tab active" data-mode="2d" onclick="switchStudioMode('2d')" data-popover="Chat 2 chiều &amp; Cây điều hành trực quan" data-popover-pos="bottom">
+        <span>💬</span> 1. Điều hành
       </button>
-      <button class="mode-tab" data-mode="3d" onclick="switchStudioMode('3d')">
-        <span>🏢</span> 2. 3D Văn phòng AI
+      <button class="mode-tab" data-mode="3d" onclick="switchStudioMode('3d')" data-popover="Văn phòng 3D · 6 Bot &amp; Bàn CEO" data-popover-pos="bottom">
+        <span>🏢</span> 2. 3D Phòng AI
       </button>
-      <button class="mode-tab" data-mode="node" onclick="switchStudioMode('node')">
-        <span>🕸️</span> 3. Node Graph
+      <button class="mode-tab" data-mode="node" onclick="switchStudioMode('node')" data-popover="Cây Sơ Đồ Tổ Chức · Task · Plugin &amp; Skill (Paperclip × Orgtree)" data-popover-pos="bottom">
+        <span>🌳</span> 3. Cây Tổ Chức &amp; Skill
       </button>
-      <button class="mode-tab" data-mode="editor" onclick="switchStudioMode('editor')">
-        <span>🎬</span> 4. 6 Cửa Sổ Editor
+      <button class="mode-tab" data-mode="editor" onclick="switchStudioMode('editor')" data-popover="6 Cửa sổ Video Studio &amp; Bảng Trạng thái" data-popover-pos="bottom">
+        <span>🎬</span> 4. 6 Editor
       </button>
-      <button class="mode-tab" data-mode="web" onclick="switchStudioMode('web')">
-        <span>🐝</span> 5. 30 Agent Clone Web
+      <button class="mode-tab" data-mode="web" onclick="switchStudioMode('web')" data-popover="30 Agent Clone &amp; Vẽ Trang Web" data-popover-pos="bottom">
+        <span>🐝</span> 5. 30 Agent Web
       </button>
-      <button class="btn-demo-chain" id="btn-demo-chain" onclick="startDemoChain()">
-        ▶ Demo Chain
+      <button class="btn-demo-chain" id="btn-demo-chain" onclick="startDemoChain()" data-popover="Tự động trình diễn 5 chế độ" data-popover-pos="bottom">
+        ▶ Demo
       </button>
     </nav>
 
@@ -241,70 +241,67 @@
   <main class="studio-viewport">
 
     <!-- ==================================================================
-         MODE 1: 2D ĐIỀU HÀNH & CHAT TRỰC TIẾP (339+ PHIÊN ANTIGRAVITY & CLAUDE)
+         MODE 1: ĐIỀU HÀNH & CHAT TRỰC TIẾP + CÂY TỔ CHỨC · TASK · SKILL
          ================================================================== -->
     <section class="mode-section active" id="mode-2d">
       <div class="cmd2d-layout">
-        <!-- Left Sidebar: Live 339+ Antigravity & Claude Sessions -->
+        <!-- Left Sidebar: Compact Icon-First Session List -->
         <aside id="leftSidebar" class="cmd2d-sidebar">
-          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-            <span id="sidebarSessionsHeaderLabel" style="font-size:12px; font-weight:800; color:#86efac;">💬 Lịch Sử 339+ Phiên Chat</span>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; padding:8px 10px 4px;">
+            <span id="sidebarSessionsHeaderLabel" style="font-size:11.5px; font-weight:800; color:#86efac;">💬 Phiên Chat</span>
             <div style="display:flex; gap:4px;">
-              <button type="button" id="btnAutoFollowLive" class="mini-icon-btn" style="background:rgba(148,163,184,0.12); color:#cbd5e1; font-weight:700; width:auto; padding:0 6px; font-size:10px;" data-popover="Bấm để bật Tự động nhảy sang phiên chat vừa có tin nhắn mới trên máy" data-popover-pos="bottom">📌 Đang ghim</button>
-              <button type="button" id="btnRefreshSessions" class="mini-icon-btn" data-popover="Làm mới phiên chat ngay lập tức" data-popover-pos="bottom">↻</button>
-              <button type="button" id="btnNewSession" class="mini-icon-btn" style="background:rgba(134,239,172,0.18); color:#86efac; font-weight:800;" data-popover="Mở phiên trò chuyện mới" data-popover-pos="bottom">＋</button>
+              <button type="button" id="btnAutoFollowLive" class="mini-icon-btn" style="background:rgba(148,163,184,0.12); color:#cbd5e1; font-weight:700; width:auto; padding:0 6px; font-size:10px;" data-popover="Tự động nhảy theo phiên mới trên máy" data-popover-pos="bottom">📌</button>
+              <button type="button" id="btnRefreshSessions" class="mini-icon-btn" data-popover="Làm mới ngay" data-popover-pos="bottom">↻</button>
+              <button type="button" id="btnNewSession" class="mini-icon-btn" style="background:rgba(134,239,172,0.18); color:#86efac; font-weight:800;" data-popover="Mở phiên mới" data-popover-pos="bottom">＋</button>
             </div>
           </div>
 
-          <input type="search" id="sessionSearchInput" class="cmd2d-search" placeholder="Tìm phiên Antigravity, Claude, mã #ID..." />
+          <div style="padding:4px 8px; display:flex; flex-direction:column; gap:5px;">
+            <input type="search" id="sessionSearchInput" class="cmd2d-search" placeholder="🔍 Tìm #ID, tên phiên..." />
 
-          <div class="filter-pills" role="tablist">
-            <button type="button" class="filter-pill active" data-provider="all" id="pillFilterAll">Tất cả</button>
-            <button type="button" class="filter-pill" data-provider="antigravity" id="pillFilterAg">Antigravity</button>
-            <button type="button" class="filter-pill" data-provider="claude" id="pillFilterCl">Claude</button>
+            <div class="filter-pills" role="tablist">
+              <button type="button" class="filter-pill active" data-provider="all" id="pillFilterAll">🌐 Tất cả</button>
+              <button type="button" class="filter-pill" data-provider="antigravity" id="pillFilterAg">🟢 AG</button>
+              <button type="button" class="filter-pill" data-provider="claude" id="pillFilterCl">🟠 CL</button>
+            </div>
           </div>
 
           <div id="sessionListContainer" class="session-list" aria-label="Danh sách cuộc trò chuyện"></div>
 
-          <div style="display:flex; flex-direction:column; gap:5px; padding-top:4px; border-top:1px solid var(--cmd-border);">
-            <div class="cmd2d-channel-card">
-              <strong>🎙️ Bộ Não Thứ Hai CEO · VieNeu 48kHz</strong>
-              <span>339+ phiên · 774 luật · Giọng Thùy Dung</span>
-            </div>
-            <div class="cmd2d-channel-card">
-              <strong>🛡️ Multi-CDP Profile 1 · 4 · 5 · 6</strong>
-              <span>khakhunghiep · aichampionhk1 · hoatrang756</span>
-            </div>
+          <div class="sidebar-icon-footer">
+            <span class="sidebar-status-chip" data-popover="Giọng nói VieNeu-TTS v3 Turbo 48kHz · Thùy Dung (Miền Nam)" data-popover-pos="top">🎙️ 48kHz</span>
+            <span class="sidebar-status-chip" data-popover="4 Cổng Chrome Multi-CDP: P1 Flow · P4 FB · P5 4K · P6 Classroom" data-popover-pos="top">🛡️ P1·P4·P5·P6</span>
+            <span class="sidebar-status-chip" data-popover="Bộ Não Thứ Hai: 356+ Phiên &amp; 774 Luật" data-popover-pos="top">🧠 774</span>
           </div>
         </aside>
 
         <!-- Main Center & Right Area -->
         <div class="cmd2d-main">
           <div class="cmd2d-header">
-            <div class="cmd2d-header-top">
-              <div style="display:flex; align-items:center; gap:8px; min-width:0;">
-                <span id="activeEngineSymbol" class="engine-mini" data-popover="Đang chạy trên Antigravity 2.0" data-popover-pos="bottom">AG</span>
-                <h1 id="activeSessionTitle">Trợ Lý Điều Hành AI · 12 Agent &amp; Cánh Tay Máy Tính</h1>
-                <span id="activeLiveStatusBadge" style="font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:999px; background:rgba(74,222,128,0.16); border:1px solid rgba(74,222,128,0.45); color:#86efac; white-space:nowrap; flex-shrink:0;">🟢 LIVE 1.2s</span>
+            <div class="cmd2d-header-top" style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:8px;">
+              <div style="display:flex; align-items:center; gap:7px; min-width:0; flex:1;">
+                <span id="activeEngineSymbol" class="engine-mini" data-popover="Antigravity 2.0" data-popover-pos="bottom">AG</span>
+                <h1 id="activeSessionTitle">Trợ Lý Điều Hành AI</h1>
+                <span id="activeLiveStatusBadge" style="font-size:10px; font-weight:800; padding:2px 7px; border-radius:999px; background:rgba(74,222,128,0.16); border:1px solid rgba(74,222,128,0.45); color:#86efac; white-space:nowrap; flex-shrink:0;">🟢 LIVE</span>
               </div>
-              <div style="display:flex; gap:6px; flex-shrink:0; flex-wrap:wrap;">
-                <button type="button" class="replay-pill" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="executeOmniAction('capture-screen', {})">📸 Chụp Màn Hình Máy</button>
-                <button type="button" id="btnToggle2DCanvas" class="replay-pill" onclick="toggle2DCanvasStage()">Thu gọn Canvas ▴</button>
-                <button type="button" class="replay-pill" onclick="switchStudioMode('3d')">3D Văn phòng ↗</button>
-                <button type="button" class="replay-pill" onclick="switchStudioMode('editor')">6 Editor ↗</button>
-                <button type="button" class="replay-pill" onclick="switchStudioMode('web')">30 Agent Web ↗</button>
+              <div style="display:flex; gap:5px; flex-shrink:0; align-items:center;">
+                <button type="button" class="replay-pill" style="border-color:rgba(244,114,182,0.55); color:#f9a8d4;" onclick="speakCeoOverviewVieNeu()" data-popover="Nghe Bộ Não Thứ Hai CEO báo cáo tổng hợp (VieNeu 48kHz)" data-popover-pos="bottom">🔊 CEO</button>
+                <button type="button" class="replay-pill" style="border-color:rgba(56,189,248,0.5); color:#7dd3fc;" onclick="executeOmniAction('capture-screen', {})" data-popover="Chụp trực tiếp màn hình máy tính (<0.1s)" data-popover-pos="bottom">📸 Màn hình</button>
+                <button type="button" class="replay-pill" style="border-color:rgba(74,222,128,0.5); color:#86efac;" onclick="switchStudioMode('node')" data-popover="Mở Cây Sơ Đồ Tổ Chức · Task · Plugin &amp; Skill toàn màn hình" data-popover-pos="bottom">🌳 Cây Tổ Chức</button>
+                <button type="button" class="replay-pill" onclick="switchStudioMode('3d')" data-popover="Mở Văn phòng 3D (6 Bot &amp; Bàn CEO)" data-popover-pos="bottom">🏢 3D</button>
+                <button type="button" id="btnToggle2DCanvas" class="replay-pill" onclick="toggle2DCanvasStage()" data-popover="Ẩn / Hiện Canvas 5 AI KOLs V6" data-popover-pos="left">🎬 KOL ▾</button>
               </div>
             </div>
           </div>
 
           <div class="cmd2d-body">
-            <!-- Center Left: Live 5-KOL Canvas + Real-Time Chat Stream + Unified Composer -->
+            <!-- Center Left: Live Chat Stream + Unified Composer -->
             <div class="cmd2d-preview-pane">
-              <div id="cmd2d-video-stage-wrap" class="cmd2d-video-stage">
+              <div id="cmd2d-video-stage-wrap" class="cmd2d-video-stage" style="display:none;">
                 <canvas id="cmd2d-preview-canvas" width="560" height="162" style="width:100%;height:100%;display:block"></canvas>
               </div>
 
-              <!-- Live 2-Way Chat Stream (with Executive Summary Callouts & VieNeu Speaker) -->
+              <!-- Live 2-Way Chat Stream -->
               <section id="chatStreamSection" class="chat-stream" aria-label="Nội dung hội thoại">
                 <div id="messagesListBox" class="chat-stream-inner"></div>
               </section>
@@ -315,27 +312,27 @@
                   <!-- Popover 1: Lệnh Nhanh -->
                   <div id="quickCmdPopover" class="popover-panel" role="menu">
                     <div class="popover-header">
-                      <span>⚡ Chọn nhanh lệnh mẫu</span>
+                      <span>⚡ Lệnh mẫu 1 chạm</span>
                       <button type="button" class="mini-icon-btn" data-close-pop="quickCmdPopover">×</button>
                     </div>
                     <button type="button" class="menu-option" data-quick-cmd="Chụp màn hình máy tính và kiểm tra toàn bộ tiến trình đang chạy">
-                      <span>Chụp &amp; Xem màn hình máy tính</span>
+                      <span>📸 Chụp màn hình máy tính</span>
                       <span class="ai-time">/screen</span>
                     </button>
                     <button type="button" class="menu-option" data-quick-cmd="Quay màn hình 60fps và tự động dựng dự án CapCut PC kèm phụ đề cho tao">
-                      <span>Quay 60fps &amp; Dựng CapCut PC</span>
+                      <span>🎥 Quay 60fps &amp; Dựng CapCut</span>
                       <span class="ai-time">/capcut</span>
                     </button>
                     <button type="button" class="menu-option" data-quick-cmd="Phát lệnh đồng loạt cho tất cả agent kiểm tra sản phẩm 4K và báo cáo nghiệm thu">
-                      <span>Phát lệnh đồng loạt Toàn Bộ Agent</span>
-                      <span class="ai-time">/broadcast</span>
+                      <span>📢 Phát lệnh Toàn Đội Agent</span>
+                      <span class="ai-time">/all</span>
                     </button>
                     <button type="button" class="menu-option" data-quick-cmd="Nâng cấp ảnh và video 4K cho Bảo Trâm và Khánh Linh trên hoatrang756">
-                      <span>Nâng cấp ảnh &amp; video 4K</span>
+                      <span>💎 Nâng cấp ảnh &amp; video 4K</span>
                       <span class="ai-time">/4k</span>
                     </button>
                     <button type="button" class="menu-option" data-quick-cmd="Sản xuất kịch bản và video 3 Hồi cho sản phẩm Shopee V6 trên Google Flow V3.9">
-                      <span>Sản xuất Video 3 Hồi</span>
+                      <span>🎬 Sản xuất Video 3 Hồi</span>
                       <span class="ai-time">/3hoi</span>
                     </button>
                   </div>
@@ -343,211 +340,78 @@
                   <!-- Popover 2: Chọn Người Thực Thi -->
                   <div id="agentPickerPopover" class="popover-panel" role="menu">
                     <div class="popover-header">
-                      <span>🤖 Chọn người thực thi lệnh</span>
+                      <span>🤖 Chọn Agent thực thi</span>
                       <button type="button" class="mini-icon-btn" data-close-pop="agentPickerPopover">×</button>
                     </div>
                     <button type="button" class="menu-option selected" data-agent-val="auto">
-                      <span>Tự động theo phiên chat</span>
+                      <span>⚡ Tự động theo phiên</span>
                       <span class="engine-mini">AUTO</span>
                     </button>
                     <button type="button" class="menu-option" data-agent-val="agent:windows-omni-pilot">
-                      <span>Cánh Tay Omni-Pilot (Toàn Máy Tính)</span>
+                      <span>🖥️ Cánh Tay Omni-Pilot</span>
                       <span class="engine-mini">OMNI</span>
                     </button>
                     <button type="button" class="menu-option" data-agent-val="antigravity">
-                      <span>Antigravity 2.0 CLI / IDE</span>
+                      <span>🟢 Antigravity 2.0</span>
                       <span class="engine-mini">AGY</span>
                     </button>
                     <button type="button" class="menu-option" data-agent-val="claude">
-                      <span>Claude Code CLI</span>
+                      <span>🟠 Claude Code CLI</span>
                       <span class="engine-mini claude">CL</span>
                     </button>
                     <button type="button" class="menu-option" data-agent-val="agent:flow-video-director">
-                      <span>Đạo diễn Video Google Flow V3.9</span>
+                      <span>🎬 Bot 1 · Flow Director V3.9</span>
                       <span class="engine-mini">FLOW</span>
                     </button>
-                    <button type="button" class="menu-option" data-agent-val="agent:aistudio-4k-upscaler">
-                      <span>Chuyên gia AI Studio 4K Ultra</span>
-                      <span class="engine-mini">4K</span>
-                    </button>
                     <button type="button" class="menu-option" data-agent-val="agent:fb-viral-scout">
-                      <span>Săn Viral FB &amp; Shopee 5 Lớp Stealth</span>
+                      <span>🕵️ Bot 2 · FB Stealth P4</span>
                       <span class="engine-mini">FB</span>
                     </button>
                     <button type="button" class="menu-option" data-agent-val="agent:viral-video-editor">
-                      <span>Đạo diễn Hậu kỳ Remotion &amp; CapCut</span>
+                      <span>🎞️ Bot 4 · Remotion &amp; CapCut</span>
                       <span class="engine-mini">EDIT</span>
                     </button>
-                    <button type="button" class="menu-option" data-agent-val="agent:openmontage-director">
-                      <span>Đạo diễn OpenMontage 12 Pipelines</span>
-                      <span class="engine-mini">MONT</span>
+                    <button type="button" class="menu-option" data-agent-val="agent:aistudio-4k-upscaler">
+                      <span>💎 Bot 6 · AI Studio 4K Ultra</span>
+                      <span class="engine-mini">4K</span>
                     </button>
                   </div>
 
                   <button type="button" id="btnQuickCmd" class="icon-btn" data-popover="Lệnh mẫu 1 chạm" aria-label="Lệnh mẫu">⚡</button>
-                  <button type="button" id="btnAgentPicker" class="icon-btn" data-popover="Chọn Trợ lý thực thi" aria-label="Chọn Trợ lý">🤖</button>
+                  <button type="button" id="btnAgentPicker" class="icon-btn" data-popover="Chọn Agent thực thi" aria-label="Chọn Trợ lý">🤖</button>
 
                   <textarea
                     id="composerTextarea"
                     class="composer-input"
                     rows="1"
-                    placeholder="Nhập lệnh cho Antigravity / Claude, bấm Mic để nói, hoặc dán URL để 30 Agent Clone Web..."
+                    placeholder="Nhập lệnh, bấm 🎙️ để nói, hoặc dán URL để 30 Agent Clone Web..."
                   ></textarea>
 
-                  <button type="button" id="btnVoiceMic" class="icon-btn" data-popover="Bấm để nói lệnh tiếng Việt" aria-label="Nói lệnh">🎙️</button>
-                  <button type="button" id="btnAbortJob" class="icon-btn danger" style="display:none;" data-popover="Dừng tác vụ đang chạy" aria-label="Dừng">⏹</button>
+                  <button type="button" id="btnVoiceMic" class="icon-btn" data-popover="Bấm để nói tiếng Việt" aria-label="Nói lệnh">🎙️</button>
+                  <button type="button" id="btnAbortJob" class="icon-btn danger" style="display:none;" data-popover="Dừng tác vụ" aria-label="Dừng">⏹</button>
                   <button type="button" id="btnSendCommand" class="icon-btn primary" data-popover="Gửi lệnh (Enter)" data-popover-pos="left" aria-label="Gửi lệnh">↑</button>
                 </div>
               </div>
             </div>
 
-            <!-- Center Right: Live Machine Tasks + Sub-task Accordions for the 12 Real Agents -->
+            <!-- Center Right: Visual Org-Chart Tree + Icon Bot Inspector (Skills · Steps · Output) + Compact Live Tasks -->
             <div class="cmd2d-subtasks-pane">
-              <div class="subtask-accordion expanded" id="live-machine-tasks-accordion" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title" style="color:#86efac; font-weight:800;">
-                    ▾ ⚡ Các Task &amp; Tiến Trình Đang Chạy Thực Tế Trên Máy (Live 1.2s)
-                  </div>
-                  <div class="subtask-badges">
+              <!-- 1. Cây Sơ Đồ Tổ Chức Trực Quan (CEO -> 6 Bot) -->
+              <div id="orgSkillTaskMiniTree2D" class="visual-org-mini-box"></div>
+
+              <!-- 2. Thẻ Trực Quan Của Bot Đang Chọn (Icon + Cây Skill + 4 Bước + Sản Phẩm) -->
+              <div id="activeSessionBotInspector2D" class="visual-bot-inspector-box"></div>
+
+              <!-- 3. Chip Tiến Trình & Phiên Đang Chạy Thực Tế Trên Máy -->
+              <div class="visual-live-strip-box">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+                  <span style="font-size:11px;font-weight:800;color:#86efac;">⚡ Task &amp; Cổng Máy Live</span>
+                  <div style="display:flex;gap:4px;">
                     <span class="badge-code" id="liveTasksCountCode">LIVE</span>
-                    <span class="badge-status running" id="liveTasksCountBadge">Đang quét...</span>
+                    <span class="badge-status running" id="liveTasksCountBadge">...</span>
                   </div>
                 </div>
-                <div class="subtask-detail">
-                  <div class="subtask-log-box" id="liveMachineTasksBox2D" style="display:flex; flex-direction:column; gap:6px;">
-                    <div>Đang đồng bộ danh sách các phiên Antigravity, Claude và tiến trình ngầm đang chạy trên máy...</div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title">
-                    ▸ FB Viral Scout (Profile 4) · 5 Lớp Stealth khakhunghiep · Tải Reel 1080p &amp; Top Comments
-                  </div>
-                  <div class="subtask-badges">
-                    <span class="badge-code">AG2-101</span>
-                    <span class="badge-status done">Hoàn thành</span>
-                  </div>
-                </div>
-                <div class="subtask-detail">
-                  <div class="subtask-log-box">
-                    <div><strong>Engine:</strong> <code>modules/fb_human_stealth_engine.py</code> (Patchright CDP, Bezier Mouse, Zero .fill(), Kill-Switch 1501092823525282).</div>
-                    <div><strong>Kết quả:</strong> Đã tải 34+ video mẫu 1080p về <code>KHO_VIDEO_TRIEU_VIEW_TPHCM_10_20S/</code>.</div>
-                    <div style="margin-top:6px;">
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'fb-viral-scout', directive:'Quét FB Profile 4 (5 Lớp Stealth) và cập nhật Kho Reel 1080p + Đồ Shopee V6'})">⚡ Phát lệnh chạy AG2-101 ngay</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title">
-                    ▸ May Đo Ngược V3.0 (1500ml) · Cắt _HEADLESS.jpg &amp; Khóa 10 Đồ Shopee V6 (SP01..SP10_V6)
-                  </div>
-                  <div class="subtask-badges">
-                    <span class="badge-code">AG2-102</span>
-                    <span class="badge-status done">Hoàn thành</span>
-                  </div>
-                </div>
-                <div class="subtask-detail">
-                  <div class="subtask-log-box">
-                    <div><strong>Chuẩn giải phẫu:</strong> Khe chữ Y sâu + 2 cạnh ngực phồng rộng 5cm vượt khung sườn + Đáy cầu 3D chữ W + Eo 55cm cơ số 11.</div>
-                    <div><strong>Kho lưu trữ:</strong> <code>KHO_SAN_PHAM_SHOPEE/04_KHO_MAY_DO_NGUOC_1500ML/</code> (Link <code>affiliate_id=17367070550</code>).</div>
-                    <div style="margin-top:6px;">
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'fb-viral-scout', directive:'Chạy May Đo Ngược V3.0 (1500ml) cho bộ sưu tập Shopee V6 SP01..SP10_V6'})">⚡ Phát lệnh chạy AG2-102 ngay</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title">
-                    ▸ Google Flow Director V3.9 · Đồ thị 11 Node Clone Video 8.0s 1.0x &amp; Bộ 4 Ảnh 2K FB
-                  </div>
-                  <div class="subtask-badges">
-                    <span class="badge-code">AG2-201</span>
-                    <span class="badge-status done">Hoàn thành</span>
-                  </div>
-                </div>
-                <div class="subtask-detail">
-                  <div class="subtask-log-box">
-                    <div><strong>Đấu dây chuẩn:</strong> <code>['taoanh-2', 'taoanh-1']</code> (ngắt <code>anh-1</code> khỏi node video), đệm 10s xuất 192 frames @ 24fps = 8.000s tốc độ 1.0x.</div>
-                    <div><strong>Xóa logo:</strong> Tự động chạy <code>kd.xoa_sao_gemini_anh_va_video()</code> xóa sạch sao 4 cánh ✦ góc dưới phải.</div>
-                    <div style="margin-top:6px;">
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'flow-video-director', directive:'Chạy Node Studio V3.9 sản xuất Video 3 Hồi 1080p 1.0x và Bộ 4 Ảnh 2K FB'})">⚡ Phát lệnh chạy AG2-201 ngay</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="subtask-accordion expanded" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title">
-                    ▾ AI Studio Ultra 4K &amp; Viral Video Editor · Nano Banana 2.1 4K + Remotion 4.0 + CapCut PC
-                  </div>
-                  <div class="subtask-badges">
-                    <span class="badge-code">AG2-202..205</span>
-                    <span class="badge-status done">Hoàn thành</span>
-                  </div>
-                </div>
-                <div class="subtask-detail">
-                  <div style="margin:6px 0;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                    <span class="badge-code" style="background:#374151;color:#86efac">🎬 5 KOLs V6</span>
-                    <span style="font-size:11px;color:#9ca69e">Bảo Trâm · Bảo Nhi · Khánh Linh · Hà Vy · Minh Anh</span>
-                  </div>
-                  <div class="subtask-log-box">
-                    <div><strong>AI Studio Ultra (Profile 5):</strong> <code>hoatrang756@gmail.com</code> · <code>Nano Banana 2.1</code> (3072×5504, 1.000 ảnh/ngày) &amp; <code>Omni 1.1 Flash 4K</code>.</div>
-                    <div><strong>Remotion 4.0 &amp; OpenMontage ($0 API):</strong> 6 phong cách <code>edit.fibus.vn</code>, phụ đề Karaoke <code>.ass</code>, giọng <code>VieNeu 48kHz / Leda</code>, SFX Auto-Ducking <code>-14dB</code>.</div>
-                    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'aistudio-4k-upscaler', directive:'Nâng cấp 4K Ultra trên hoatrang756 cho 5 AI KOLs V6'})">⚡ Chạy 4K Ultra</button>
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('spawn-agent-session', {agent:'viral-video-editor', directive:'Hậu kỳ Remotion 4.0 + xuất dự án CapCut PC'})">🎬 Chạy Remotion &amp; CapCut</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title">
-                    ▸ Windows Omni-Pilot &amp; Course Studio · UIA + Multi-CDP 9222..9230 + Quay 60fps Classroom
-                  </div>
-                  <div class="subtask-badges">
-                    <span class="badge-code">AG2-206</span>
-                    <span class="badge-status running">100% Máy</span>
-                  </div>
-                </div>
-                <div class="subtask-detail">
-                  <div class="subtask-log-box">
-                    <div>Cánh tay nối dài điều khiển toàn bộ máy tính, mở phiên mới cho mọi Agent, chụp/quay 60fps <code>cursor_events.json</code> và xuất CapCut PC.</div>
-                    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('capture-screen')">📸 Chụp Màn Hình 60fps</button>
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); executeOmniAction('record-and-capcut')">🎥 Quay &amp; Dựng CapCut</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="subtask-accordion" onclick="this.classList.toggle('expanded')">
-                <div class="subtask-header">
-                  <div class="subtask-title">
-                    ▸ Swarm Web Cloner (30 Agent) · Dựng Web Showroom Đòn Bẩy AI V6, Agent Hub &amp; Clone Mọi URL
-                  </div>
-                  <div class="subtask-badges">
-                    <span class="badge-code">AG2-301</span>
-                    <span class="badge-status running">Đang chạy</span>
-                  </div>
-                </div>
-                <div class="subtask-detail">
-                  <div class="subtask-log-box">
-                    <div>30 con trỏ chuột AI (<code>DhvanilPatel/swarm-cursors</code>) dàn trang trực tiếp trên <code>don-bay-ai-v6.html</code>, <code>ag2-agent-hub.html</code> và hút DOM mọi URL qua <code>/api/clone-web</code>.</div>
-                    <div style="margin-top:6px;">
-                      <button type="button" class="replay-pill" onclick="event.stopPropagation(); switchStudioMode('web')">🐝 Mở Màn 30 Agent Clone Web ↗</button>
-                    </div>
-                  </div>
-                </div>
+                <div id="liveMachineTasksBox2D" class="visual-live-chips-grid"></div>
               </div>
             </div>
           </div>
@@ -556,105 +420,123 @@
     </section>
 
     <!-- ==================================================================
-         MODE 2: 3D VĂN PHÒNG AI (3D ISOMETRIC VIRTUAL OFFICE CHO 12 AGENT)
+         MODE 2: 3D VĂN PHÒNG AI (ICON-FIRST 3D ISOMETRIC OFFICE)
          ================================================================== -->
     <section class="mode-section" id="mode-3d">
       <div class="office3d-wrapper">
         <aside class="office-left-drawer" id="officeLeftDrawer">
           <div class="drawer-header">
             <div class="drawer-title">
-              <span>⚡</span>
-              <span>Task &amp; Phiên Trên Máy</span>
+              <span>🌳</span>
+              <span>Tổ Chức &amp; Cổng</span>
               <span class="drawer-count-badge" id="officeDrawerCountBadge">LIVE</span>
             </div>
-            <span style="font-size:11px;color:#7dd3fc;cursor:pointer;font-weight:700;" onclick="switchStudioMode('2d')">Về 2D Chat ↗</span>
+            <div style="display:flex;gap:4px;">
+              <button type="button" class="mini-icon-btn" onclick="switchStudioMode('node')" data-popover="Mở Cây Sơ Đồ Tổ Chức &amp; Skill" data-popover-pos="bottom">🌳</button>
+              <button type="button" class="mini-icon-btn" onclick="switchStudioMode('2d')" data-popover="Về màn Chat 2D" data-popover-pos="bottom">💬</button>
+            </div>
           </div>
 
           <div class="drawer-subbar" id="officeDrawerSubbar">
-            <span><strong style="color:#4ade80">● Đang đồng bộ 1.2s</strong></span>
-            <span>Antigravity &amp; Claude</span>
+            <span><strong style="color:#4ade80">● Live 1.2s</strong></span>
+            <span>AG · Claude</span>
           </div>
 
-          <input type="text" id="officeDrawerSearchInput" class="drawer-search" placeholder="Lọc task, mã #ID, Antigravity / Claude..." />
+          <input type="text" id="officeDrawerSearchInput" class="drawer-search" placeholder="🔍 Lọc #ID, AG/CL..." />
 
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;padding:2px 4px;font-weight:700;">
-            <span>◆ Phiên Chat Đang Chạy Trên Máy</span>
-            <span>Bấm để mở ↗</span>
+          <div class="drawer-agent-list" id="officeDrawerLiveList"></div>
+
+          <div style="display:flex;justify-content:space-between;font-size:10.5px;color:#94a3b8;padding:3px 2px 0;font-weight:700;">
+            <span>🌐 Cổng &amp; Daemon</span>
+            <span>Active</span>
           </div>
 
-          <div class="drawer-agent-list" id="officeDrawerLiveList">
-            <div class="drawer-agent-card active" onclick="switchStudioMode('2d')">
-              <div class="agent-mini-icon"></div>
-              <div class="agent-card-info">
-                <h4>Bộ Não Thứ Hai CEO</h4>
-                <div class="agent-state">◎ Đang quét các phiên trực tiếp...</div>
-                <p>AG2-CEO · 356+ phiên / 774 luật · Giọng VieNeu 48kHz</p>
-              </div>
-            </div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;font-size:11px;color:#94a3b8;padding:4px 4px 0;font-weight:700;">
-            <span>◆ Tiến Trình Ngầm &amp; Cổng Máy Tính</span>
-            <span>Daemon / CDP</span>
-          </div>
-
-          <div class="drawer-toast-stack" id="officeDrawerLiveToasts">
-            <div class="live-toast-item">
-              <strong>Đang quét tiến trình máy tính...</strong>
-              <span>Ports 8765 · 23984 · Chrome Multi-CDP 9222..9226</span>
-            </div>
-          </div>
+          <div class="drawer-toast-stack" id="officeDrawerLiveToasts"></div>
         </aside>
 
-        <!-- Bảng HUD Góc Phải Trên Sàn 3D: Tóm Tắt Task & Tiến Trình Đang Chạy Thực Tế -->
-        <aside id="office3d-live-tasks-hud" style="position:absolute; top:12px; right:14px; width:310px; max-height:calc(100% - 90px); overflow-y:auto; background:rgba(13, 19, 28, 0.9); backdrop-filter:blur(14px); border:1px solid rgba(74, 222, 128, 0.35); border-radius:12px; padding:10px 12px; z-index:30; box-shadow:0 18px 40px rgba(0,0,0,0.6); display:flex; flex-direction:column; gap:7px;">
+        <!-- Bảng HUD Góc Phải Trên Sàn 3D (Gọn, Trực Quan Bằng Icon & Cây Skill) -->
+        <aside id="office3d-live-tasks-hud" class="office3d-hud-card">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
-            <span style="font-size:12px; font-weight:800; color:#86efac;">🖥️ Task Đang Chạy Trên Máy (1.2s)</span>
-            <button type="button" class="replay-pill" style="font-size:10px; padding:2px 7px;" onclick="executeOmniAction('capture-screen', {}); switchStudioMode('2d');">📸 Chụp Màn Hình</button>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <span style="font-size:11.5px; font-weight:800; color:#86efac;">🤖 Bot &amp; Cây Skill</span>
+              <div id="office3dHudSummaryBar" style="display:flex; gap:4px;"></div>
+            </div>
+            <div style="display:flex; gap:4px;">
+              <button type="button" class="replay-pill" style="font-size:10px; padding:2px 7px; border-color:rgba(244,114,182,0.55); color:#f9a8d4;" onclick="speakCeoOverviewVieNeu()" data-popover="Nghe CEO báo cáo tổng quan (VieNeu 48kHz)" data-popover-pos="left">🔊 CEO</button>
+              <button type="button" class="replay-pill" style="font-size:10px; padding:2px 7px; border-color:rgba(250,204,21,0.55); color:#fde047;" onclick="toggleBot1DemoWalkToCeo()" data-popover="Mô phỏng Bot 1 chạy về bàn CEO xin chỉ đạo" data-popover-pos="left">🏃 Demo</button>
+            </div>
           </div>
-          <div id="office3dHudSummaryBar" style="font-size:11px; color:#cbd5e1; display:flex; gap:6px; flex-wrap:wrap;"></div>
-          <div id="office3dHudTasksBody" style="display:flex; flex-direction:column; gap:5px;"></div>
+          <!-- Thanh 6 Icon Bot chọn nhanh -->
+          <div id="office3dHudTasksBody" class="office3d-bot-icon-bar"></div>
+          <!-- Chi tiết trực quan của Bot đang chọn -->
+          <div id="office3dSelectedBotInspector" style="display:flex; flex-direction:column; gap:6px;"></div>
         </aside>
 
         <canvas id="office3d-canvas" width="1280" height="720"></canvas>
         <div id="office3d-labels-layer"></div>
 
         <div class="office-bottom-prompt">
-          <input type="text" id="office-prompt-input" placeholder="Giao việc cho Bộ Não Thứ Hai CEO hoặc dán link web cần Clone (Enter)..." onkeydown="if(event.key==='Enter') handleOfficePromptSubmit()" />
+          <input type="text" id="office-prompt-input" placeholder="Giao việc cho CEO hoặc Bot đang chọn (Enter)..." onkeydown="if(event.key==='Enter') handleOfficePromptSubmit()" />
           <div class="office-prompt-actions">
-            <div style="display:flex;gap:10px;align-items:center">
-              <span>⚙</span>
-              <span style="background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:5px">12 Agent · Omni-Pilot · VieNeu 48kHz</span>
+            <div style="display:flex;gap:6px;align-items:center">
+              <button type="button" onclick="triggerOfficeVoiceMic()" style="background:rgba(244,114,182,0.18);border:1px solid rgba(244,114,182,0.45);color:#f9a8d4;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;" data-popover="Bấm để nói tiếng Việt" data-popover-pos="top">🎙️ Mic</button>
+              <button type="button" onclick="speakCeoOverviewVieNeu()" style="background:rgba(74,222,128,0.16);border:1px solid rgba(74,222,128,0.45);color:#86efac;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;" data-popover="Nghe VieNeu 48kHz" data-popover-pos="top">🔊 48kHz</button>
+              <button type="button" onclick="switchStudioMode('node')" style="background:rgba(56,189,248,0.16);border:1px solid rgba(56,189,248,0.45);color:#7dd3fc;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;cursor:pointer;" data-popover="Mở Cây Sơ Đồ Tổ Chức · Task · Skill" data-popover-pos="top">🌳 Cây Sơ Đồ</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center">
-              <span>Zero-Code ▾</span>
-              <button type="button" onclick="handleOfficePromptSubmit()" style="background:#38bdf8;color:#0f172a;border:none;border-radius:5px;padding:3px 9px;font-weight:800;cursor:pointer">↑</button>
+              <button type="button" onclick="handleOfficePromptSubmit()" style="background:#38bdf8;color:#0f172a;border:none;border-radius:5px;padding:3px 10px;font-weight:800;cursor:pointer">↑ Giao việc</button>
             </div>
           </div>
         </div>
 
         <div class="office-statusbar" id="officeStatusbarLive">
-          <span>● P1: aichampionhk1</span>
-          <span>● P4: khakhunghiep</span>
-          <span>● P5: hoatrang756 (4K)</span>
-          <span>Sync: 356+ Phiên Chat &amp; 774 Luật Bộ Não Thứ Hai</span>
+          <span>● P1: Flow</span>
+          <span>● P4: FB</span>
+          <span>● P5: 4K</span>
+          <span>● 🧠 774 Luật</span>
         </div>
       </div>
     </section>
 
     <!-- ==================================================================
-         MODE 3: NODE GRAPH (SƠ ĐỒ LUỒNG DỮ LIỆU 12 AGENT TRÊN MÁY)
+         MODE 3: CÂY SƠ ĐỒ TỔ CHỨC · TASK · PLUGIN & SKILL (PAPERCLIP × ORGTREE)
          ================================================================== -->
     <section class="mode-section" id="mode-node">
-      <div class="nodegraph-wrapper">
-        <div style="position:absolute;top:14px;left:18px;z-index:20;background:rgba(15,23,42,0.88);padding:10px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.14)">
-          <div style="font-size:13px;font-weight:800;color:#f8fafc">🕸️ Sơ Đồ Luồng Dữ Liệu Thực Chiến 12 Agent Trên Máy (Bấm vào Node bất kỳ để phát lệnh chạy ngay)</div>
-          <div style="font-size:11.5px;color:#94a3b8;margin-top:3px">
-            Bộ Não Thứ Hai (AG2-CEO) ➔ FB Stealth P4 &amp; May Đo 1500ml (AG2-101..104) ➔ Flow V3.9, 4K Ultra &amp; Omni-Pilot (AG2-201..206) ➔ 30 Agent Clone Web &amp; Đa Kênh (AG2-301..302)
+      <div class="nodegraph-wrapper" id="orgtree-viewport">
+        <!-- Thanh Điều Khiển Nổi Icon-First (Lọc Tầng Cây + Zoom + Duyệt Nhanh) -->
+        <div class="orgtree-floating-toolbar">
+          <div class="orgtree-filter-group">
+            <button type="button" class="orgtree-filter-btn active" data-tree-filter="all" onclick="setOrgTreeFilter('all')" data-popover="Hiển thị toàn bộ 4 tầng: CEO ➔ 6 Bot ➔ 18 Plugin/Skill ➔ Task &amp; Sản phẩm" data-popover-pos="bottom">
+              🌳 Toàn Bộ Cây
+            </button>
+            <button type="button" class="orgtree-filter-btn" data-tree-filter="org" onclick="setOrgTreeFilter('org')" data-popover="Chỉ xem Cây Sơ Đồ Tổ Chức (CEO &amp; 6 Đội Trưởng Bot)" data-popover-pos="bottom">
+              👑 Tổ Chức
+            </button>
+            <button type="button" class="orgtree-filter-btn" data-tree-filter="skills" onclick="setOrgTreeFilter('skills')" data-popover="Tập trung nhánh 18 Plugin &amp; Skill chuyên môn" data-popover-pos="bottom">
+              🧩 Plugin &amp; Skill
+            </button>
+            <button type="button" class="orgtree-filter-btn" data-tree-filter="tasks" onclick="setOrgTreeFilter('tasks')" data-popover="Tập trung nhánh Task đang chạy &amp; Sản phẩm nghiệm thu" data-popover-pos="bottom">
+              ⚡ Task &amp; Sản Phẩm
+            </button>
+          </div>
+
+          <div class="orgtree-action-group">
+            <button type="button" class="orgtree-act-pill warn" id="btnOrgTreeApproveBot1" onclick="approveBot1ByCeo()" data-popover="CEO duyệt &amp; bơm lệnh sửa cho Bot 1 (Omni 1.2 Flash)" data-popover-pos="bottom">
+              ⚡ Duyệt Bot 1
+            </button>
+            <button type="button" class="orgtree-act-pill pink" onclick="speakCeoOverviewVieNeu()" data-popover="Nghe Bộ Não Thứ Hai CEO thuyết minh sơ đồ (VieNeu 48kHz)" data-popover-pos="bottom">
+              🔊 CEO
+            </button>
+            <button type="button" class="orgtree-zoom-btn" onclick="zoomOrgTree(1.14)" data-popover="Phóng to (+)" data-popover-pos="bottom">＋</button>
+            <button type="button" class="orgtree-zoom-btn" onclick="zoomOrgTree(0.88)" data-popover="Thu nhỏ (-)" data-popover-pos="bottom">－</button>
+            <button type="button" class="orgtree-zoom-btn" onclick="resetOrgTreeZoom()" data-popover="Căn giữa toàn màn hình" data-popover-pos="bottom">⛶</button>
           </div>
         </div>
-        <svg id="nodegraph-svg"></svg>
-        <div id="nodegraph-dom-layer"></div>
+
+        <div id="orgtree-canvas-stage" class="orgtree-canvas-stage">
+          <svg id="nodegraph-svg"></svg>
+          <div id="nodegraph-dom-layer"></div>
+        </div>
       </div>
     </section>
 

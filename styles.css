@@ -2162,3 +2162,692 @@ button, input, select, textarea {
     width: calc(100vw - 20px);
   }
 }
+
+/* ==========================================================================
+   ICON-FIRST MINIMALIST UI & VISUAL ORG / TASK / SKILL TREE
+   (Learned from Paperclip AI OrgChart, Maurdekye/Orgtree & Linear.app)
+   ========================================================================== */
+
+.sidebar-icon-footer {
+  padding: 6px 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: #121614;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sidebar-status-chip {
+  font-size: 10px;
+  font-weight: 700;
+  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 6px;
+  padding: 3px 6px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* Compact 1.5-line Session Row in Sidebar */
+.session-item.compact-row {
+  padding: 6px 8px;
+  gap: 3px;
+  border-radius: 7px;
+}
+
+/* Right Column Mode 1: Visual Mini Org-Chart + Icon Bot Inspector + Live Chips */
+.visual-org-mini-box {
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mini-org-ceo-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(234, 88, 12, 0.22), rgba(236, 72, 153, 0.18));
+  border: 1px solid rgba(251, 146, 60, 0.55);
+  cursor: pointer;
+}
+
+.mini-org-tree-stem {
+  height: 10px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-org-tree-stem::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 50%;
+  left: 50%;
+  width: 1.5px;
+  background: rgba(56, 189, 248, 0.5);
+}
+
+.mini-org-tree-stem::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 14%;
+  right: 14%;
+  height: 1.5px;
+  background: rgba(56, 189, 248, 0.45);
+}
+
+.mini-org-bots-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+}
+
+.mini-org-bot-node {
+  position: relative;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 5px 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: transform 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+  min-width: 0;
+}
+
+.mini-org-bot-node:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(56, 189, 248, 0.55);
+}
+
+.mini-org-bot-node.selected {
+  background: rgba(56, 189, 248, 0.15);
+  border-color: #38bdf8;
+  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.22);
+}
+
+.mini-org-bot-node.needs-ceo {
+  background: rgba(250, 204, 21, 0.13);
+  border-color: rgba(250, 204, 21, 0.78);
+}
+
+.bot-avatar-ring {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.bot-status-corner-dot {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #0f172a;
+}
+
+.visual-bot-inspector-box {
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(74, 222, 128, 0.38);
+  border-radius: 10px;
+  padding: 8px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.skill-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.skill-tree-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  color: #e0f2fe;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.skill-tree-chip:hover {
+  background: rgba(56, 189, 248, 0.26);
+  border-color: #38bdf8;
+}
+
+.skill-sq-icon {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 900;
+  color: #090d16;
+  flex-shrink: 0;
+}
+
+/* Visual 4-Step Pipeline Track (Icon + Short Label) */
+.step-node-track {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+
+.step-node-pill {
+  padding: 4px 5px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 3.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: #94a3b8;
+}
+
+.step-node-pill.done {
+  background: rgba(74, 222, 128, 0.11);
+  border-color: rgba(74, 222, 128, 0.36);
+  color: #bbf7d0;
+}
+
+.step-node-pill.exception {
+  background: rgba(250, 204, 21, 0.18);
+  border-color: rgba(250, 204, 21, 0.75);
+  color: #fef08a;
+  font-weight: 800;
+}
+
+/* Visual Live Strip in Mode 1 Right Column */
+.visual-live-strip-box {
+  background: rgba(22, 27, 24, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  padding: 7px 9px;
+}
+
+.visual-live-chips-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 5px;
+}
+
+.live-chip-btn {
+  padding: 5px 7px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  cursor: pointer;
+  min-width: 0;
+  font-size: 10.5px;
+}
+
+.live-chip-btn:hover {
+  background: rgba(74, 222, 128, 0.12);
+  border-color: rgba(74, 222, 128, 0.45);
+}
+
+/* 3D Office Right HUD & 6-Bot Icon Selector Strip */
+.office3d-hud-card {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  width: 332px;
+  max-height: calc(100% - 74px);
+  overflow-y: auto;
+  background: rgba(11, 17, 26, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(74, 222, 128, 0.38);
+  border-radius: 12px;
+  padding: 9px 10px;
+  z-index: 30;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.72);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.office3d-bot-icon-bar {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+
+.office3d-bot-icon-pill {
+  padding: 4px 2px;
+  border-radius: 7px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #cbd5e1;
+  transition: all 0.14s ease;
+}
+
+.office3d-bot-icon-pill.selected {
+  background: rgba(56, 189, 248, 0.18);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.office3d-bot-icon-pill.needs-ceo {
+  background: rgba(250, 204, 21, 0.18);
+  border-color: #facc15;
+  color: #fef08a;
+}
+
+/* Mode 3: Full-Screen 4-Tier Visual Org Chart + Task + Plugin/Skill Tree */
+.orgtree-floating-toolbar {
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  right: 14px;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 10px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+}
+
+.orgtree-filter-group,
+.orgtree-action-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.orgtree-filter-btn {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: #cbd5e1;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.14s ease;
+}
+
+.orgtree-filter-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.orgtree-filter-btn.active {
+  background: rgba(74, 222, 128, 0.18);
+  border-color: #4ade80;
+  color: #86efac;
+}
+
+.orgtree-act-pill {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.orgtree-act-pill.warn {
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  color: #ffffff;
+}
+
+.orgtree-act-pill.pink {
+  background: rgba(244, 114, 182, 0.18);
+  border-color: rgba(244, 114, 182, 0.55);
+  color: #f9a8d4;
+}
+
+.orgtree-zoom-btn {
+  width: 27px;
+  height: 27px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  font-weight: 800;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orgtree-zoom-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+  border-color: #38bdf8;
+}
+
+.orgtree-canvas-stage {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 0%;
+  transition: transform 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.orgtree-node-card {
+  position: absolute;
+  transform: translate(-50%, 0);
+  background: rgba(15, 23, 42, 0.96);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 10px;
+  padding: 7px 9px;
+  pointer-events: auto;
+  cursor: pointer;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
+  transition: transform 0.14s ease, border-color 0.14s ease, box-shadow 0.14s ease;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.orgtree-node-card:hover {
+  transform: translate(-50%, -2px);
+  border-color: #38bdf8;
+  z-index: 30;
+}
+
+.orgtree-node-card.tier-ceo {
+  width: 286px;
+  border-color: rgba(244, 114, 182, 0.65);
+  background: linear-gradient(135deg, rgba(30, 27, 75, 0.96), rgba(15, 23, 42, 0.96));
+  box-shadow: 0 12px 32px rgba(236, 72, 153, 0.28);
+}
+
+.orgtree-node-card.tier-bot {
+  width: 196px;
+}
+
+.orgtree-node-card.tier-bot.active {
+  border-color: #38bdf8;
+  box-shadow: 0 10px 26px rgba(56, 189, 248, 0.32);
+}
+
+.orgtree-node-card.tier-bot.needs-ceo {
+  border-color: #facc15;
+  box-shadow: 0 10px 28px rgba(250, 204, 21, 0.32);
+}
+
+.orgtree-node-card.tier-skill {
+  width: 186px;
+  padding: 4px 8px;
+  border-radius: 7px;
+  background: rgba(17, 24, 39, 0.92);
+  border-color: rgba(56, 189, 248, 0.25);
+}
+
+.orgtree-node-card.tier-task {
+  width: 196px;
+  border-color: rgba(74, 222, 128, 0.36);
+}
+
+.org-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+}
+
+.org-card-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.org-card-badge {
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 1px 6px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.org-card-sub {
+  font-size: 9.5px;
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.org-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.org-mini-action {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #e2e8f0;
+  font-size: 9.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.org-mini-action:hover {
+  background: rgba(56, 189, 248, 0.2);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.org-mini-action.warn {
+  background: linear-gradient(135deg, #f59e0b, #ea580c);
+  border-color: #facc15;
+  color: #ffffff;
+}
+
+.org-task-thumb {
+  width: 100%;
+  height: 62px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: block;
+  background: #090d16;
+}
+
+/* Inspector & Deliverable Compact Cards */
+.inspector-head-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.inspector-head-left {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.inspector-head-left .bot-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #f8fafc;
+  white-space: nowrap;
+}
+
+.inspector-head-left .bot-hash {
+  font-size: 10px;
+  font-weight: 700;
+  color: #7dd3fc;
+}
+
+.inspector-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.deliverable-compact-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.deliverable-thumb-wrap {
+  width: 68px;
+  height: 52px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  flex-shrink: 0;
+  display: block;
+  background: #090d16;
+}
+
+.deliverable-thumb-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.deliverable-meta {
+  min-width: 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.deliverable-title {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deliverable-sub {
+  font-size: 9.5px;
+  color: #94a3b8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.deliverable-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.deliv-icon-btn {
+  padding: 2px 7px;
+  border-radius: 5px;
+  background: rgba(56, 189, 248, 0.16);
+  border: 1px solid rgba(56, 189, 248, 0.45);
+  color: #7dd3fc;
+  font-size: 9.5px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.deliv-icon-btn.qc {
+  background: rgba(74, 222, 128, 0.16);
+  border-color: rgba(74, 222, 128, 0.45);
+  color: #86efac;
+}
+
+.live-chip-btn .chip-left {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.live-chip-btn .chip-code {
+  color: #86efac;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.live-chip-btn .chip-name {
+  color: #cbd5e1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
